@@ -1,4 +1,4 @@
 saatteko pullattua
 joo meikä sai t:Joni
 
-kokeilu
+merge conflictia?
