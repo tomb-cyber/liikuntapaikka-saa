@@ -1,4 +1,4 @@
 saatteko pullattua
 joo meikä sai t:Joni
 
-meika kans t. hannesi
+merge conflictia?
