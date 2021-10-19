@@ -1,25 +1,25 @@
 # liikunta-saa
 TIEA207 projektityö
 
-#### React
+### React
 
 Dokumentaatio: <https://reactjs.org/docs/getting-started.html>
 
-#### Axios
+### Axios
 
 Dokumentaatio: <https://axios-http.com/docs/intro>
 
 
-#### Node.js
+### Node.js
 
 Dokumentaatio: <https://nodejs.org/en/docs/>
 
-#### Express
+### Express
 
 Dokumentaatio: <https://expressjs.com/en/5x/api.html>
 
 
-#### Eslint
+### Eslint
 
 Dokumentaatio: <https://eslint.org/>
 
@@ -35,22 +35,22 @@ Jos työskentelet yhdessä workspacessa eli näkyvillä ovat kansiot backend sek
 Jos avaat omat VS Code ikkunat kummallekin kansiolle ei edellistä pitäisi tarvita
 
 
-#### Leaflet
+### Leaflet
 Dokumentaatio: <https://leafletjs.com/reference-1.7.1.html>
 
-#### MetOLib (mahdollisesti käytetään)
+### MetOLib (mahdollisesti käytetään)
 Dokumentaatio: <https://github.com/fmidev/metolib>
 
 
-##APIt tms
+## APIt tms
 
-#### Lipas
+### Lipas
 <https://github.com/lipas-liikuntapaikat/lipas-api>
 
-#### Ilmatieteen laitos
+### Ilmatieteen laitos
 <https://en.ilmatieteenlaitos.fi/open-data-manual>
 
-#### OpenStreetMap
+### OpenStreetMap
 Dokumentaatio: <https://wiki.openstreetmap.org/wiki/API_v0.6>
 Tuolta wikistä löytyy muutakin dokumentaatiota esim. featureista, mutta tuossa on API
 
