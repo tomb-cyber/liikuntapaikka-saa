@@ -52,6 +52,7 @@ Dokumentaatio: <https://github.com/fmidev/metolib>
 
 ### OpenStreetMap
 Dokumentaatio: <https://wiki.openstreetmap.org/wiki/API_v0.6>
+
 Tuolta wikistä löytyy muutakin dokumentaatiota esim. featureista, mutta tuossa on API
 
 
