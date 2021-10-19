@@ -8,11 +8,11 @@ app.use(cors())
 app.get('/api', (req, res) => {
     const testData = ['testi', 'viesteja', 'backendilta']
     res.send(testData)
-  })
-  
+})
+
 
 //Portteja ja tietokantojen osoitteita kannattaa ymmärtääkseni laittaa .env tiedostoon, sitten kun niin pitkälle päästään...
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-  })
+})
