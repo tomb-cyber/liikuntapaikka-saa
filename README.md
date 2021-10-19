@@ -33,3 +33,25 @@ Jos työskentelet yhdessä workspacessa eli näkyvillä ovat kansiot backend sek
 	]
 ```
 Jos avaat omat VS Code ikkunat kummallekin kansiolle ei edellistä pitäisi tarvita
+
+
+#### Leaflet
+Dokumentaatio: <https://leafletjs.com/reference-1.7.1.html>
+
+#### MetOLib (mahdollisesti käytetään)
+Dokumentaatio: <https://github.com/fmidev/metolib>
+
+
+##APIt tms
+
+#### Lipas
+<https://github.com/lipas-liikuntapaikat/lipas-api>
+
+#### Ilmatieteen laitos
+<https://en.ilmatieteenlaitos.fi/open-data-manual>
+
+#### OpenStreetMap
+Dokumentaatio: <https://wiki.openstreetmap.org/wiki/API_v0.6>
+Tuolta wikistä löytyy muutakin dokumentaatiota esim. featureista, mutta tuossa on API
+
+
