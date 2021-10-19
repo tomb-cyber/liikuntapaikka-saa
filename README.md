@@ -25,7 +25,7 @@ Dokumentaatio: <https://eslint.org/>
 
 VS Code extension: <https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint>
 
-Jos työskentelet yhdessä workspacessa eli näkyvillä ovat kansiot backend sekä frontend, mene VS Coden setting.json ja lisää seuraava:
+Jos työskentelet yhdessä workspacessa eli näkyvillä ovat kansiot backend sekä frontend, mene VS Coden settings.json ja lisää seuraava:
 ```
 "eslint.workingDirectories": [
 		{ "directory": "./frontend", "changeProcessCWD": true },
