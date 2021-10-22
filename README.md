@@ -41,6 +41,11 @@ Dokumentaatio: <https://leafletjs.com/reference-1.7.1.html>
 ### MetOLib (mahdollisesti käytetään)
 Dokumentaatio: <https://github.com/fmidev/metolib>
 
+### Bootstrap
+Dokumentaatio: <https://getbootstrap.com/docs/4.1/getting-started/introduction/>
+
+### React-Bootstrap
+Dokumentaatio: <https://react-bootstrap.github.io/getting-started/introduction/>
 
 ## APIt tms
 
