@@ -38,9 +38,19 @@ Jos avaat omat VS Code ikkunat kummallekin kansiolle ei edellistä pitäisi tarv
 ### Leaflet
 Dokumentaatio: <https://leafletjs.com/reference-1.7.1.html>
 
+### React-Leaflet
+Dokumentaatio: <https://react-leaflet.js.org/docs/start-introduction/>
+
+HUOM. Leafletin uusin versio ei pelaa nätisti React-Leafletin uusimman version kanssa, toimii Leaflet 1.6.0 ja React-Leaflet 3.2.0 versioilla
+
 ### MetOLib (mahdollisesti käytetään)
 Dokumentaatio: <https://github.com/fmidev/metolib>
 
+### Bootstrap
+Dokumentaatio: <https://getbootstrap.com/docs/4.1/getting-started/introduction/>
+
+### React-Bootstrap
+Dokumentaatio: <https://react-bootstrap.github.io/getting-started/introduction/>
 
 ## APIt tms
 
