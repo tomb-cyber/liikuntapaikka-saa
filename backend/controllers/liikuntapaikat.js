@@ -2,19 +2,48 @@ const liikuntapaikkaRouter = require('express').Router()
 const http = require('http')
 
 
-// Default kysely vaihtoehdot, lähinnä vaihdetaan path
+const defaultPath = '/api/sports-places'
+
+// Default kysely vaihtoehdot, lähinnä muunnellaan tarpeen mukaan path
 const options = {
     host: 'lipas.cc.jyu.fi',
-    path: '/api/sports-places?fields=properties',
+    path: defaultPath + '?fields=properties',
     method: 'GET',
     headers: {
         'Content-Type': 'application/json'
     }
 }
 
-// ei valmis; aloituskysely tietyn alueen paikoista
-// paikkoja saa 1-100 per sivu pageSize parametrilla, default 50, sivuja 817 as of 24.10.2021
+// Peruskysely tietyn alueen paikoista (tai muilla parametreillä)
+// Paikkoja saa 1-100 per sivu pageSize parametrilla, default 50, sivuja 817 as of 24.10.2021
+// Kuinka monta ja millä perusteella valitaan näytettävät kun alue kattaa tuhansia paikkoja?
 liikuntapaikkaRouter.get('/', async (request, response) => {
+
+    let longitude = ''
+    let latitude = ''
+    let radius = ''
+
+    if (request.query.lon !== undefined && request.query.lat !== undefined && request.query.rad !== undefined) {
+        longitude = 'closeToLon=' + request.query.lon
+        latitude = 'closeToLat=' + request.query.lat
+        radius = 'closeToDistanceKm=' + request.query.rad
+    }
+
+    let params = [ longitude, latitude, radius ]
+    params = params.filter(elem => elem !== '')
+
+    let paramsString = ''
+
+    params.forEach((param, index) => {
+        if (index === 0)
+            paramsString += '?'
+        else
+            paramsString += '&'
+
+        paramsString += param
+    })
+
+    options.path = defaultPath + paramsString
     getNHandleJSON(options, (input => response.send(input)))
 })
 
@@ -26,8 +55,11 @@ liikuntapaikkaRouter.get('/types', async (request, response) => {
 
 // Yksittäisen paikan kysely idllä
 liikuntapaikkaRouter.get('/:id', async (request, response) => {
-    options.path = '/api/sports-places/' + request.params.id
-    getNHandleJSON(options, (input => response.send(input)))
+    options.path = defaultPath + '/' + request.params.id
+    getNHandleJSON(options, input => response.send(input))
+
+    //'Lon: ' + input.location.coordinates.wgs84.lon +
+    //', Lat: ' + input.location.coordinates.wgs84.lat
 })
 
 
