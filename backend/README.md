@@ -15,3 +15,5 @@ Tämän jälkeen aja
 ```
 npm run dev
 ```
+
+Backendin sivut näkyvät osoitteessa localhost:3001. Eli esim. liikuntapaikat raakana jsonina näkyy osoitteessa localhost:3001/liikuntapaikat (24.10.2021).
