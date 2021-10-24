@@ -3,6 +3,11 @@ const app = express()   //app kannattaa laittaa omaan app.js tiedostoon, jos con
 const cors = require('cors')
 app.use(cors())
 
+
+const liikuntapaikkaRouter = require('./controllers/liikuntapaikat')
+app.use('/liikuntapaikat', liikuntapaikkaRouter)
+
+
 //Konventio kai on laittaa sivukohtaiset pyynnöt omiin tiedostoihin, 'controllers' kansioon.
 //Tämä nyt alkuun...
 app.get('/api', (req, res) => {

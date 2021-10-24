@@ -1,7 +1,7 @@
 import './App.css'
 import React, { useEffect, useState } from 'react'
 import homeService from './services/home'
-
+//import liikuntapaikkaService from './services/liikuntapaikat'
 
 const App = () => {
 

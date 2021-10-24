@@ -1,9 +1,7 @@
 import axios from 'axios'
 
-//Tämän nimistä serviceä ei varmaan tule olemaan. Pelkkä esimerkki; voi poistaa kun haluaa. -T
-
 const getAll = () => {
-    const request = axios.get('/api')
+    const request = axios.get('/liikuntapaikat')
     return request.then(response => response.data)
 }
 
