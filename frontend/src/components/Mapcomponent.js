@@ -1,8 +1,9 @@
-﻿import { Component } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents} from 'react-leaflet';
+﻿import { Component } from 'react'
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
+import React from 'react'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
-const jycenter = [62.241636, 25.746703];
+const jycenter = [62.241636, 25.746703]
 
 //Luodaan kartalle oma komponenttinsa, joka sisältyy React-Leafletin MapContainerin sisälle
 class Mapcomponent extends Component {
@@ -10,7 +11,7 @@ class Mapcomponent extends Component {
         return (
             <MapContainer
                 className="mainmap"
-                //Keskitetään kartta 
+                //Keskitetään kartta
                 center={jycenter}
                 zoom={10}
                 //Voiko hiirellä zoomata kartalla
@@ -30,12 +31,17 @@ class Mapcomponent extends Component {
 function ExampleEventComponent() {
     const map = useMapEvents({
         click: (e) => {
-            var coords = e.latlng;
-            //console.log(coords);
-            console.log(JSON.stringify(coords));
+            var coords = e.latlng
+            //console.log(coords)
+            console.log(JSON.stringify(coords))
+        },
+        //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
+        zoom: () => {
+            var boundcoords = map.getBounds()
+            console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
         }
     })
-    return null;
+    return null
 }
 
 
