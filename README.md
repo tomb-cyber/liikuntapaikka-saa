@@ -41,7 +41,35 @@ Dokumentaatio: <https://leafletjs.com/reference-1.7.1.html>
 ### React-Leaflet
 Dokumentaatio: <https://react-leaflet.js.org/docs/start-introduction/>
 
-HUOM. Leafletin uusin versio ei pelaa nätisti React-Leafletin uusimman version kanssa, toimii Leaflet 1.6.0 ja React-Leaflet 3.2.0 versioilla
+React-Leafletin pitäisi nyt toimia, mutta jos nullish coalescing -ongelmaa esiintyy sen alkuperäinen ratkaisu oli seuraavanlainen:
+
+Kohta 1: Package.json tiedoston kohta
+
+"browserslist": {
+   "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+},
+
+muokataan seuraavanlaiseksi
+
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  
+Kohta 2: Seuraavaksi poistetaan node_modules/.cache -kansio.
+
+Kohta 3: Viimeiseksi ajetaan npm install, jonka jälkeen npm start ja suorituksen ei pitäisi pysähtyä nullish coalescing -ongelmaan.
+
 
 ### MetOLib (mahdollisesti käytetään)
 Dokumentaatio: <https://github.com/fmidev/metolib>
