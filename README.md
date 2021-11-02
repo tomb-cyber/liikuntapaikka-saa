@@ -45,6 +45,7 @@ React-Leafletin pitäisi nyt toimia, mutta jos nullish coalescing -ongelmaa esii
 
 Kohta 1: Package.json tiedoston kohta
 
+```
 "browserslist": {
    "production": [
       ">0.2%",
@@ -57,14 +58,17 @@ Kohta 1: Package.json tiedoston kohta
       "last 1 safari version"
     ]
 },
+```
 
 muokataan seuraavanlaiseksi
 
+```
   "browserslist": [
     ">0.2%",
     "not dead",
     "not op_mini all"
   ],
+  ```
   
 Kohta 2: Seuraavaksi poistetaan node_modules/.cache -kansio.
 
