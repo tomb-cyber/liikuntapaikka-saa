@@ -34,22 +34,44 @@ const Sidebar = () => {
 }
 
 const VenueCard = ( venue, weather ) => {
+    // viittaa juuri taman liikuntapaikan saatietojen collapseen
     const weatherInfoElementId = `weather-info-${venue.id}`
     return (
-        <div className='card mb-2'>
+        <div className='card mb-2 shadow'>
             <h3 className='card-title'>{venue.name}</h3>
-            <div className='card-body'>
-                <p>{ venue.description }</p>
-                <p>{ weather[0].type } { weather[0].temp } °C</p>
-                <button className='btn btn-primary' type='button' data-bs-toggle='collapse' data-bs-target={`#${weatherInfoElementId}`} aria-expanded='false' aria-controls={weatherInfoElementId}>
-                Sääennuste
-                </button>
+            <div className='card-body p-0'>
+                <div className='container w-100'>
+                    <div className='row'>
+                        <div className='col-10 p-0'>{ venue.description }</div>
+                        <div className='col-2 p-0 '>{ venue.indoors ? 'sisä' : 'ulko' }</div>
+                    </div>
+                </div>
+                <div className='ms-3'>{ weather[0].type } { weather[0].temp } °C</div>
                 <div className='collapse' id={weatherInfoElementId}>
-                    <div className='card card-body'>
-                        { weather.map((x, i) => i === 0 ? '' : <div>{i*20} min {x.type} {x.temp} °C</div>) }
+                    {/* <div className='card card-body m-2 p-1'> */}
+                    <div className='list-group'>
+                        <div className='list-group-item'>
+                            Sääennuste
+                            { weather.map((x, i) => i === 0 ? '' : <div>{i*20} min {x.type} {x.temp} °C</div>) }
+                        </div>
+                        <div className='list-group-item'>
+                            Muuta lisätietoa?
+                        </div>
+                        <div className='list-group-item'>
+                            Lisää muuta tietoa?
+                        </div>
                     </div>
                 </div>
             </div>
+            <button
+                type='button'
+                className='btn btn-secondary btn-sm w-100'
+                data-bs-toggle='collapse'
+                data-bs-target={`#${weatherInfoElementId}`}
+                aria-expanded='false'
+                aria-controls={weatherInfoElementId}>
+                ↕
+            </button>
         </div>
     )
 }
