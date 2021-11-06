@@ -7,8 +7,8 @@ app.use(cors())
 const liikuntapaikkaRouter = require('./controllers/liikuntapaikat')
 app.use('/liikuntapaikat', liikuntapaikkaRouter)
 
-const saatietoRouter = require('./controllers/saatiedot')
-app.use('/saatiedot', saatietoRouter) // ota pois jos ei toimi (ei vielä testattu)
+//const saatietoRouter = require('./controllers/saatiedot')
+//app.use('/saatiedot', saatietoRouter) // ota pois jos ei toimi (ei vielä testattu)
 
 
 //Portteja ja tietokantojen osoitteita kannattaa ymmärtääkseni laittaa .env tiedostoon, sitten kun niin pitkälle päästään...
