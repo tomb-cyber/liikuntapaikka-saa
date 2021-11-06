@@ -10,7 +10,8 @@ class Mapcomponent extends Component {
     render() {
         return (
             <MapContainer
-                className="mainmap"
+                className="rlmap"
+                id="mainmap"
                 //Keskitetään kartta
                 center={jycenter}
                 zoom={10}
@@ -33,7 +34,7 @@ function ExampleEventComponent() {
         click: (e) => {
             var coords = e.latlng
             //console.log(coords)
-            console.log(JSON.stringify(coords))
+            console.log('Klikattu piste: ' + JSON.stringify(coords))
         },
         //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
         zoom: () => {

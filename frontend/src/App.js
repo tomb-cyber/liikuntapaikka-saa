@@ -3,8 +3,8 @@ import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
 import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
-// import Mapcomponent from './components/Mapcomponent'
 import { getGeoJSON } from './utils/extractLiikunta'
+import Mapcomponent from './components/Mapcomponent'
 
 const App = () => {
 
@@ -29,7 +29,7 @@ const App = () => {
                     <Sidebar />
                 </div>
                 <div className='col bg-info'>
-                    <p>Map Placeholder</p>
+                    <Mapcomponent />
                     { data.map(i => JSON.stringify(i) + ' ')
                     }
                 </div>
