@@ -1,19 +1,25 @@
 import './App.css'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
-import homeService from './services/home'
-//import liikuntapaikkaService from './services/liikuntapaikat'
+import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
 // import Mapcomponent from './components/Mapcomponent'
+import { getGeoJSON } from './utils/extractLiikunta'
 
 const App = () => {
 
     const [data, setData] = useState([])
 
+    // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
-        homeService
+        liikuntaService
             .getAll()
-            .then(res => setData(res))
+            .then(res => {
+                //console.log(res.map(each => getGeoJSON(each)))
+                console.log(res)
+                return setData(res.map(each => getGeoJSON(each)))
+            })
+
     }, [])
 
     return (
@@ -24,7 +30,8 @@ const App = () => {
                 </div>
                 <div className='col bg-info'>
                     <p>Map Placeholder</p>
-                    { data.map(i => i + ' ') }
+                    { data.map(i => JSON.stringify(i) + ' ')
+                    }
                 </div>
             </div>
         </div>

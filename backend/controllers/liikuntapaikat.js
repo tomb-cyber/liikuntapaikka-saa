@@ -14,6 +14,14 @@ const options = {
     }
 }
 
+
+// Väliaikainen default WFS hyödyntävä kysely
+liikuntapaikkaRouter.get('/wfs', async (request, response) => {
+    options.path = '/geoserver/ows?service=wfs&version=2.0.0&request=Getfeature&typename=lipas_kaikki_pisteet&count=5&outputformat=application/json'
+    getNHandleJSON(options, (input => response.send(stripCollection(input))))
+})
+
+
 // Peruskysely tietyn alueen paikoista (tai muilla parametreillä)
 // Paikkoja saa 1-100 per sivu pageSize parametrilla, default 50, sivuja 817 as of 24.10.2021
 // Kuinka monta ja millä perusteella valitaan näytettävät kun alue kattaa tuhansia paikkoja?
@@ -49,18 +57,65 @@ liikuntapaikkaRouter.get('/', async (request, response) => {
 
 // Palauttaa kaikki liikuntapaikkatyypit
 liikuntapaikkaRouter.get('/types', async (request, response) => {
-    options.path = '/api/sports-place-types?lang=fi'
+    options.path = '/api/sports-place-types' //?lang=fi'
     getNHandleJSON(options, (input => response.send(input)))
 })
 
+
+// Palauttaa kaikki liikuntapaikkakategoriat
+liikuntapaikkaRouter.get('/categories', async (request, response) => {
+    options.path = '/api/categories'
+    getNHandleJSON(options, (input => response.send(input)))
+})
+
+
 // Yksittäisen paikan kysely idllä
 liikuntapaikkaRouter.get('/:id', async (request, response) => {
-    options.path = defaultPath + '/' + request.params.id
-    getNHandleJSON(options, input => response.send(input))
-
+    //options.path = defaultPath + '/' + request.params.id
+    //getNHandleJSON(options, input => response.send(input))
     //'Lon: ' + input.location.coordinates.wgs84.lon +
     //', Lat: ' + input.location.coordinates.wgs84.lat
+
+    options.path = getWFSQuery('pisteet', request.params.id)
+
+
+    // TODO if-else-paska järkeväksi!!
+    getNHandleJSON(options, (input => {
+        if (input.numberMatched !== 0)
+            response.send(stripCollection(input))
+        else {
+            options.path = getWFSQuery('alueet', request.params.id)
+
+            getNHandleJSON(options, (input => {
+                if (input.numberMatched !== 0)
+                    response.send(stripCollection(input))
+                else {
+                    options.path = getWFSQuery('reitit', request.params.id)
+                    getNHandleJSON(options, (input => {
+                        response.send(stripCollection(input))
+                    }))
+                }
+            }))
+        }
+    }))
 })
+
+
+/**
+ * Palauttaa WFS hakuqueryn. Liikuntapaikat jaettu lipas_kaikki_pisteet, -alueet ja -reitit, joten "geometriatyyppi" pitää määritellä.
+ * @param geometria Täsmällisesti joko 'pisteet', 'alueet' tai 'reitit'
+ * @param id Liikuntapaikan id
+ * @returns WFS hakuquery
+ */
+const getWFSQuery = (geometria, id) => `/geoserver/ows?service=wfs&version=2.0.0&request=Getfeature&typename=lipas_kaikki_${ geometria }&CQL_FILTER=id=${ id }&outputformat=application/json`
+
+
+/**
+ * Extractaa liikuntapaikat Featureina FeatureCollectionista
+ * @param collection FeatureCollection
+ * @returns Liikuntapaikat Featureina
+ */
+const stripCollection = (collection) => collection.features
 
 
 /**
@@ -80,6 +135,7 @@ const getNHandleJSON = (options, handleResult) => {
         })
 
         response.on('end', () => {
+            //console.log(output)
             let obj = JSON.parse(output)
             handleResult(obj)
         })
