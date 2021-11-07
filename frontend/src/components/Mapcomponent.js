@@ -1,6 +1,9 @@
 ﻿import { Component } from 'react'
-import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, useMapEvents, useMap } from 'react-leaflet'
 import React from 'react'
+import Leaflet from 'leaflet'
+import liikuntaService from '../services/liikuntapaikat'
+import { getGeoJSON } from '../utils/extractLiikunta'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
@@ -10,8 +13,8 @@ class Mapcomponent extends Component {
     render() {
         return (
             <MapContainer
-                className="rlmap"
-                id="mainmap"
+                className='rlmap'
+                id='mainmap'
                 //Keskitetään kartta
                 center={jycenter}
                 zoom={10}
@@ -19,6 +22,7 @@ class Mapcomponent extends Component {
                 scrollWheelZoom={true}
             >
                 <ExampleEventComponent />
+                <GeojsonOnStart />
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -42,6 +46,24 @@ function ExampleEventComponent() {
             console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
         }
     })
+    return null
+}
+
+//Geojsonin piirtämisen testaukseen heti kartan alustuessa
+function GeojsonOnStart() {
+    const map = useMap()
+    //Haetaan esimerkissä liikuntaServicestä saatavat datat
+    liikuntaService
+        .getAll()
+        .then(res => {
+            res.forEach( geoelement => {
+                //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
+                var geo = getGeoJSON(geoelement)
+                //console.log('Ollaan lisäämässä: ' + JSON.stringify(geo))
+                //lisätään muuttuja karttaan
+                Leaflet.geoJSON(geo).addTo(map)
+            })
+        })
     return null
 }
 
