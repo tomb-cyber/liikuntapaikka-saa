@@ -51,17 +51,35 @@ function ExampleEventComponent() {
 
 //Geojsonin piirtämisen testaukseen heti kartan alustuessa
 function GeojsonOnStart() {
+    //Testaukseen pisteiden piirtämiseksi
+    var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: '#ff7800',
+        color: '#000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    }
+
     const map = useMap()
     //Haetaan esimerkissä liikuntaServicestä saatavat datat
     liikuntaService
         .getAll()
         .then(res => {
-            res.forEach( geoelement => {
+            res.forEach( geojsonelement => {
                 //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
-                var geo = getGeoJSON(geoelement)
+                var geo = getGeoJSON(geojsonelement)
+                //Alustavana esimerkkinä, jos tyyppinä on piste, luodaan sille circlemarker
+                if(geojsonelement.location.geometries.features[0].geometry.type === 'Point') {
+                    Leaflet.geoJSON(geo, {
+                        pointToLayer: function (feature, latlng) {
+                            return Leaflet.circleMarker(latlng, geojsonMarkerOptions)
+                        }
+                    }).addTo(map)
+                }
+                //Muut kuin pisteet piirretään suoraan karttaan
+                else Leaflet.geoJSON(geo).addTo(map)
                 //console.log('Ollaan lisäämässä: ' + JSON.stringify(geo))
-                //lisätään muuttuja karttaan
-                Leaflet.geoJSON(geo).addTo(map)
             })
         })
     return null
