@@ -10,6 +10,7 @@ import Mapcomponent from './components/Mapcomponent'
 const App = () => {
 
     const [data, setData] = useState([])
+    const [mapBounds, setMapBounds] = useState()
 
     // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
@@ -23,6 +24,8 @@ const App = () => {
 
     }, [])
 
+
+
     return (
         <div className='container-fluid'>
             <div className='row'>
@@ -30,7 +33,7 @@ const App = () => {
                     <Sidebar />
                 </div>
                 <div className='col bg-info'>
-                    <Mapcomponent />
+                    <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={setMapBounds} />
                     { data.map(i => JSON.stringify(i) + ' ')
                     }
                 </div>

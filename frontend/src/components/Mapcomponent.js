@@ -33,7 +33,7 @@ const jycenter = [62.241636, 25.746703]
 }*/
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
-const Mapcomponent = () => {
+const Mapcomponent = (props) => {
     return (
         <MapContainer
             className='rlmap'
@@ -44,7 +44,7 @@ const Mapcomponent = () => {
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
         >
-            <ExampleEventComponent />
+            <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
             <GeojsonOnStart />
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -55,7 +55,7 @@ const Mapcomponent = () => {
 }
 
 //Esimerkkikomponentti tapahtumille, tässä tapauksessa hiiren klikkaus kertoo klikatun pisteen kordinaatit
-function ExampleEventComponent() {
+function ExampleEventComponent(props) {
     const map = useMapEvents({
         click: (e) => {
             var coords = e.latlng
@@ -65,13 +65,15 @@ function ExampleEventComponent() {
         //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
         zoom: () => {
             var boundcoords = map.getBounds()
-            console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
+            //console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
+            props.onMapBoundsChange(boundcoords)
+            console.log(props.mapBounds)
         }
     })
     return null
 }
 
-//Geojsonin piirtämisen testaukseen heti kartan alustuessa
+//Geojsonin piirtämisen testaukseen heti kartan alustuessa, tällä hetkellä App.js mapBounds-päivittäminen ajaa tämänkin uudestaan.
 function GeojsonOnStart() {
     //Testaukseen pisteiden piirtämiseksi
     var geojsonMarkerOptions = {
@@ -84,6 +86,7 @@ function GeojsonOnStart() {
     }
 
     const map = useMap()
+
     //Haetaan esimerkissä liikuntaServicestä saatavat datat
     liikuntaService
         .getAll()
