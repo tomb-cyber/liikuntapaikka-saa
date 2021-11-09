@@ -1,5 +1,5 @@
 ﻿//import { Component } from 'react'
-import { MapContainer, TileLayer, useMapEvents, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
 import React from 'react'
 import Leaflet from 'leaflet'
 import liikuntaService from '../services/liikuntapaikat'
@@ -43,9 +43,11 @@ const Mapcomponent = (props) => {
             zoom={10}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
+            whenCreated={(map) => {
+                GeojsonOnStart(map)
+            }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
-            <GeojsonOnStart />
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -74,7 +76,7 @@ function ExampleEventComponent(props) {
 }
 
 //Geojsonin piirtämisen testaukseen heti kartan alustuessa, tällä hetkellä App.js mapBounds-päivittäminen ajaa tämänkin uudestaan.
-function GeojsonOnStart() {
+function GeojsonOnStart(map) {
     //Testaukseen pisteiden piirtämiseksi
     var geojsonMarkerOptions = {
         radius: 8,
@@ -84,9 +86,6 @@ function GeojsonOnStart() {
         opacity: 1,
         fillOpacity: 0.8
     }
-
-    const map = useMap()
-
     //Haetaan esimerkissä liikuntaServicestä saatavat datat
     liikuntaService
         .getAll()
@@ -94,8 +93,9 @@ function GeojsonOnStart() {
             res.forEach( geojsonelement => {
                 //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
                 var geo = getGeoJSON(geojsonelement)
+                console.log(geo)
                 //Alustavana esimerkkinä, jos tyyppinä on piste, luodaan sille circlemarker
-                if(geojsonelement.location.geometries.features[0].geometry.type === 'Point') {
+                if(geo.type === 'Point') {
                     var geopoint = Leaflet.geoJSON(geo, {
                         pointToLayer: function (feature, latlng) {
                             return Leaflet.circleMarker(latlng, geojsonMarkerOptions)
@@ -115,6 +115,5 @@ function GeojsonOnStart() {
         })
     return null
 }
-
 
 export default Mapcomponent
