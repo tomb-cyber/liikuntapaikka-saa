@@ -21,7 +21,7 @@ class Mapcomponent extends Component {
                 //Voiko hiirellä zoomata kartalla
                 scrollWheelZoom={true}
             >
-                <ExampleEventComponent />
+                <ExampleEventComponent updateCoords={this.props.updateCoords} />
                 <GeojsonOnStart />
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -32,8 +32,9 @@ class Mapcomponent extends Component {
     }
 }
 
+
 //Esimerkkikomponentti tapahtumille, tässä tapauksessa hiiren klikkaus kertoo klikatun pisteen kordinaatit
-function ExampleEventComponent() {
+const ExampleEventComponent = ({ updateCoords }) => {
     const map = useMapEvents({
         click: (e) => {
             var coords = e.latlng
@@ -44,6 +45,7 @@ function ExampleEventComponent() {
         zoom: () => {
             var boundcoords = map.getBounds()
             console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
+            updateCoords(boundcoords)
         }
     })
     return null
@@ -70,7 +72,7 @@ function GeojsonOnStart() {
                 //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
                 var geo = getGeoJSON(geojsonelement)
                 //Alustavana esimerkkinä, jos tyyppinä on piste, luodaan sille circlemarker
-                if(geojsonelement.location.geometries.features[0].geometry.type === 'Point') {
+                if(geojsonelement.location.geometries.features[0].geometry.type === 'Point') { // Eikös sama tieto löydy geo.type? -T
                     Leaflet.geoJSON(geo, {
                         pointToLayer: function (feature, latlng) {
                             return Leaflet.circleMarker(latlng, geojsonMarkerOptions)

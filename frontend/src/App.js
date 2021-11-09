@@ -10,6 +10,16 @@ import Mapcomponent from './components/Mapcomponent'
 const App = () => {
 
     const [data, setData] = useState([])
+    const [coords, setCoords] = useState(
+        { _southWest: {
+            lat: 61.642944780115585,
+            lng: 23.779907226562504
+        },
+        _northEast: {
+            lat: 63.23115344024988,
+            lng: 25.8837890625
+        } })
+
 
     // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
@@ -23,6 +33,7 @@ const App = () => {
 
     }, [])
 
+
     return (
         <div className='container-fluid'>
             <div className='row'>
@@ -30,8 +41,10 @@ const App = () => {
                     <Sidebar />
                 </div>
                 <div className='col bg-info'>
-                    <Mapcomponent />
-                    { data.map(i => JSON.stringify(i) + ' ')
+                    <Mapcomponent updateCoords={ setCoords }/>
+                    { //data.map(i => JSON.stringify(i) + ' ')
+                    }
+                    { JSON.stringify(coords)
                     }
                 </div>
             </div>
