@@ -6,20 +6,16 @@ import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
 import { getGeoJSON } from './utils/extractLiikunta'
 import Mapcomponent from './components/Mapcomponent'
+import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 
 const App = () => {
 
     const [data, setData] = useState([])
-    const [coords, setCoords] = useState(
-        { _southWest: {
-            lat: 61.642944780115585,
-            lng: 23.779907226562504
-        },
-        _northEast: {
-            lat: 63.23115344024988,
-            lng: 25.8837890625
-        } })
+    const [mapBounds, setMapBounds] = useState()
 
+    // Ikkunan leveys kuunteluun sidebaria varten.
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+    useEffect(() => window.addEventListener('resize', () => setWindowWidth(window.innerWidth)), [])
 
     // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
@@ -33,20 +29,19 @@ const App = () => {
 
     }, [])
 
+    console.log('data', data)
+
 
     return (
-        <div className='container-fluid'>
-            <div className='row'>
-                <div id='sidebar' className='bg-light'>
-                    <Sidebar />
-                </div>
-                <div className='col bg-info'>
-                    <Mapcomponent updateCoords={ setCoords }/>
-                    { //data.map(i => JSON.stringify(i) + ' ')
-                    }
-                    { JSON.stringify(coords)
-                    }
-                </div>
+        <div>
+            <div>
+                <Sidebar windowWidth={windowWidth} />
+            </div>
+            <div
+                className='w-100 h-100 bg-info'
+                // levealla ruudulla paddingia, ettei karttaa piirry sidebarin alle piiloon
+                style={ WIDE_SCREEN_THRESHOLD <= windowWidth ? ({ paddingLeft: SIDEBAR_WIDTH }) : ({  })} >
+                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={setMapBounds} />
             </div>
         </div>
     )

@@ -1,10 +1,27 @@
+html, body {
+  /* alla olevat kolme rivia pakolliset. 
+  muutoin offcanvas-sidebarin liu'uttaminen hajoaa mobiiliselaimissa */
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
 #sidebar {
-  width: 300px;
-  height: 100vh;
   overflow-y: scroll;
+  z-index: 1001;
+}
+
+#offcanvas-open-button {
+  z-index: 1000;
 }
 
 #mainmap {
-  width: (100vw - 300px);
   height: 100vh;
+}
+
+@media screen and (max-width: 768px) {
+  #mainmap {
+    /* valiaikainen mysteerivakio 38px = offcanvasin toggle-buttonin korkeus */
+    height: calc(100vh - 38px);
+  }
 }
