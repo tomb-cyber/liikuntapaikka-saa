@@ -1,14 +1,12 @@
 ﻿//import { Component } from 'react'
-import { MapContainer, TileLayer, useMapEvents, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
 import React from 'react'
-import Leaflet from 'leaflet'
-import liikuntaService from '../services/liikuntapaikat'
-import { getGeoJSON } from '../utils/extractLiikunta'
+import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
 
-//Luodaan kartalle oma komponenttinsa, joka sisältyy React-Leafletin MapContainerin sisälle, jos käytetään funktiomallista komponenttia niin voidaan poistaa.
+//Luodaan kartalle oma komponenttinsa, joka sisältyy React-Leafletin MapContainerin sisälle, jos käytetään funktiomallista komponenttia niin voidaan myöhemmin poistaa.
 /*class Mapcomponent extends Component {
     render() {
         return (
@@ -33,7 +31,7 @@ const jycenter = [62.241636, 25.746703]
 }*/
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
-const Mapcomponent = () => {
+const Mapcomponent = (props) => {
     return (
         <MapContainer
             className='rlmap'
@@ -43,9 +41,11 @@ const Mapcomponent = () => {
             zoom={10}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
+            whenCreated={(map) => {
+                geoJsonOnStart(map)
+            }}
         >
-            <ExampleEventComponent />
-            <GeojsonOnStart />
+            <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -55,7 +55,7 @@ const Mapcomponent = () => {
 }
 
 //Esimerkkikomponentti tapahtumille, tässä tapauksessa hiiren klikkaus kertoo klikatun pisteen kordinaatit
-function ExampleEventComponent() {
+function ExampleEventComponent(props) {
     const map = useMapEvents({
         click: (e) => {
             var coords = e.latlng
@@ -65,53 +65,12 @@ function ExampleEventComponent() {
         //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
         zoom: () => {
             var boundcoords = map.getBounds()
-            console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
+            //console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
+            props.onMapBoundsChange(boundcoords)
+            console.log(props.mapBounds)
         }
     })
     return null
 }
-
-//Geojsonin piirtämisen testaukseen heti kartan alustuessa
-function GeojsonOnStart() {
-    //Testaukseen pisteiden piirtämiseksi
-    var geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: '#ff7800',
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    }
-
-    const map = useMap()
-    //Haetaan esimerkissä liikuntaServicestä saatavat datat
-    liikuntaService
-        .getAll()
-        .then(res => {
-            res.forEach( geojsonelement => {
-                //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
-                var geo = getGeoJSON(geojsonelement)
-                //Alustavana esimerkkinä, jos tyyppinä on piste, luodaan sille circlemarker
-                if(geojsonelement.location.geometries.features[0].geometry.type === 'Point') {
-                    var geopoint = Leaflet.geoJSON(geo, {
-                        pointToLayer: function (feature, latlng) {
-                            return Leaflet.circleMarker(latlng, geojsonMarkerOptions)
-                        }
-                    })
-                    //Voidaan lisätä esim. tooltip tässä vaiheessa
-                    geopoint.bindTooltip(geojsonelement.name)
-                    geopoint.addTo(map)
-                }
-                //Muut kuin pisteet piirretään suoraan karttaan
-                else {
-                    var geoarea = Leaflet.geoJSON(geo)
-                    geoarea.bindTooltip(geojsonelement.name)
-                    geoarea.addTo(map)
-                }
-            })
-        })
-    return null
-}
-
 
 export default Mapcomponent

@@ -11,6 +11,7 @@ import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 const App = () => {
 
     const [data, setData] = useState([])
+    const [mapBounds, setMapBounds] = useState()
 
     // Ikkunan leveys kuunteluun sidebaria varten.
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -30,17 +31,17 @@ const App = () => {
 
     console.log(data)
 
+
     return (
         <div>
-            <div id='sidebar-container' className='bg-light'>
+            <div>
                 <Sidebar windowWidth={windowWidth} />
             </div>
             <div
-                id='map-container'
                 className='w-100 h-100 bg-info'
                 // levealla ruudulla paddingia, ettei karttaa piirry sidebarin alle piiloon
                 style={ WIDE_SCREEN_THRESHOLD <= windowWidth ? ({ paddingLeft: SIDEBAR_WIDTH }) : ({  })} >
-                <Mapcomponent />
+                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={setMapBounds} />
             </div>
         </div>
     )
