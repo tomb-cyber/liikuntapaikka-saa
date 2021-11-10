@@ -53,7 +53,7 @@ const SidebarRegular = () => {
     return (
         <div
             id='sidebar'
-            className='position-fixed top-o left-0 visible h-100 bg-light p-1 shadow'
+            className='position-fixed top-0 left-0 visible h-100 bg-light p-1 shadow'
             style={{ width: SIDEBAR_WIDTH }}
         >
             <SidebarContent />
