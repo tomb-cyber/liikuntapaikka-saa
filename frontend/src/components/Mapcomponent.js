@@ -1,14 +1,12 @@
 ﻿//import { Component } from 'react'
 import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
 import React from 'react'
-import Leaflet from 'leaflet'
-import liikuntaService from '../services/liikuntapaikat'
-import { getGeoJSON } from '../utils/extractLiikunta'
+import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
 
-//Luodaan kartalle oma komponenttinsa, joka sisältyy React-Leafletin MapContainerin sisälle, jos käytetään funktiomallista komponenttia niin voidaan poistaa.
+//Luodaan kartalle oma komponenttinsa, joka sisältyy React-Leafletin MapContainerin sisälle, jos käytetään funktiomallista komponenttia niin voidaan myöhemmin poistaa.
 /*class Mapcomponent extends Component {
     render() {
         return (
@@ -44,7 +42,7 @@ const Mapcomponent = (props) => {
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
             whenCreated={(map) => {
-                GeojsonOnStart(map)
+                geoJsonOnStart(map)
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
@@ -72,47 +70,6 @@ function ExampleEventComponent(props) {
             console.log(props.mapBounds)
         }
     })
-    return null
-}
-
-//Geojsonin piirtämisen testaukseen heti kartan alustuessa, tällä hetkellä App.js mapBounds-päivittäminen ajaa tämänkin uudestaan.
-function GeojsonOnStart(map) {
-    //Testaukseen pisteiden piirtämiseksi
-    var geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: '#ff7800',
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-    }
-    //Haetaan esimerkissä liikuntaServicestä saatavat datat
-    liikuntaService
-        .getAll()
-        .then(res => {
-            res.forEach( geojsonelement => {
-                //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
-                var geo = getGeoJSON(geojsonelement)
-                console.log(geo)
-                //Alustavana esimerkkinä, jos tyyppinä on piste, luodaan sille circlemarker
-                if(geo.type === 'Point') {
-                    var geopoint = Leaflet.geoJSON(geo, {
-                        pointToLayer: function (feature, latlng) {
-                            return Leaflet.circleMarker(latlng, geojsonMarkerOptions)
-                        }
-                    })
-                    //Voidaan lisätä esim. tooltip tässä vaiheessa
-                    geopoint.bindTooltip(geojsonelement.name)
-                    geopoint.addTo(map)
-                }
-                //Muut kuin pisteet piirretään suoraan karttaan
-                else {
-                    var geoarea = Leaflet.geoJSON(geo)
-                    geoarea.bindTooltip(geojsonelement.name)
-                    geoarea.addTo(map)
-                }
-            })
-        })
     return null
 }
 
