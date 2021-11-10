@@ -1,5 +1,5 @@
 import { React, useState } from 'react'
-import { Offcanvas, Button } from 'react-bootstrap'
+import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } from 'react-bootstrap'
 import {
     WIDE_SCREEN_THRESHOLD,
     OFFCANVAS_TOGGLE_THRESHOLD,
@@ -94,7 +94,7 @@ const SidebarOffcanvas = () => {
                         onTouchEnd={(event) => tlClose.end(event)}
                     >↓</Button>
                 </Offcanvas.Header>
-                <Offcanvas.Body>
+                <Offcanvas.Body className='p-2'>
                     <SidebarContent />
                 </Offcanvas.Body>
             </Offcanvas>
@@ -121,7 +121,7 @@ const SidebarContent = () => {
     return (
         <div>
             <h4>Search & Filter Placeholder</h4>
-            {mockData.paikat.map(x => VenueCard(x, mockData.saatilat))}
+            {mockData.paikat.map((x, i) => <VenueCard key={i} venue={x} weather={mockData.saatilat} />)}
         </div>
     )
 }
@@ -129,46 +129,50 @@ const SidebarContent = () => {
 /**
  * Liikuntapaikka-kortti, joita näytetään sidebarissa.
  */
-const VenueCard = ( venue, weather ) => {
-    // viittaa juuri taman liikuntapaikan saatietojen collapseen
-    const weatherInfoElementId = `weather-info-${venue.id}`
+const VenueCard = ( { venue, weather } ) => {
+    const [open, setOpen] = useState(false)
+    const collapseId = `collapse-${venue.id}`
+    console.log(weather)
+
     return (
-        <div className='card mb-2 shadow'>
-            <h3 className='card-title'>{venue.name}</h3>
-            <div className='card-body p-0'>
-                <div className='container w-100'>
-                    <div className='row'>
-                        <div className='col-10 p-0'>{ venue.description }</div>
-                        <div className='col-2 p-0 '>{ venue.indoors ? 'sisä' : 'ulko' }</div>
-                    </div>
-                </div>
-                <div className='ms-3'>{ weather[0].type } { weather[0].temp } °C</div>
-                <div className='collapse' id={weatherInfoElementId}>
-                    {/* <div className='card card-body m-2 p-1'> */}
-                    <div className='list-group'>
-                        <div className='list-group-item'>
-                            Sääennuste
-                            { weather.map((x, i) => i === 0 ? '' : <div>{i*20} min {x.type} {x.temp} °C</div>) }
+        <>
+            <Card className='mb-2 shadow'>
+                <Card.Title>{venue.name}</Card.Title>
+                <Card.Body className='p-0'>
+                    <Container className='w-100'>
+                        <Row>
+                            <Col xs={10} className='p-0 ps-1 pe-4'>{venue.description}</Col>
+                            <Col xs={2} className='p-0'>{venue.indoors ? 'sisä' : 'ulko'}</Col>
+                        </Row>
+                        <Row>
+                            <Col xs={12} className='p-0 pt-1 ps-1'>{weather[0].type} {weather[0].temp} °C</Col>
+                        </Row>
+                    </Container>
+                    <Collapse in={open}>
+                        <div id={collapseId}>
+                            <ListGroup>
+                                <ListGroup.Item>
+                                    { weather.map((x, i) => (
+                                        <div key={i}>{i*20} min {x.type} {x.temp} °C</div>
+                                    ))}
+                                </ListGroup.Item>
+                                <ListGroup.Item>Muuta lisätietoa?</ListGroup.Item>
+                                <ListGroup.Item>Lisää muuta tietoa?</ListGroup.Item>
+                            </ListGroup>
                         </div>
-                        <div className='list-group-item'>
-                            Muuta lisätietoa?
-                        </div>
-                        <div className='list-group-item'>
-                            Lisää muuta tietoa?
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button
-                type='button'
-                className='btn btn-secondary btn-sm w-100'
-                data-bs-toggle='collapse'
-                data-bs-target={`#${weatherInfoElementId}`}
-                aria-expanded='false'
-                aria-controls={weatherInfoElementId}>
-                ↕
-            </button>
-        </div>
+                    </Collapse>
+                </Card.Body>
+                <Button
+                    variant={'secondary'}
+                    size='sm'
+                    onClick={() => setOpen(!open)}
+                    aria-controls={collapseId}
+                    aria-expanded={open}
+                >
+                    { open ? '↑' : '↓'}
+                </Button>
+            </Card>
+        </>
     )
 }
 
