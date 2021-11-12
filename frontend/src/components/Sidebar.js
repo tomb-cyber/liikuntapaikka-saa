@@ -3,7 +3,7 @@ import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } fro
 import {
     WIDE_SCREEN_THRESHOLD,
     OFFCANVAS_TOGGLE_THRESHOLD,
-    OFFCANVAS_TOGGLE_ON_END,
+    OFFCANVAS_TRANSITION_TIME,
     OFFCANVAS_DEFAULT_VISIBILITY,
     SIDEBAR_WIDTH,
     TOGGLE_BUTTON_HEIGHT } from '../constants'
@@ -81,6 +81,8 @@ const SidebarOffcanvas = () => {
                 placement='bottom'
                 backdrop={false}
                 className='h-50 overflow-hidden'
+                // style overridettää bootstrapin offcanvasin oletusanimaation
+                style={{ transition: `transform ${OFFCANVAS_TRANSITION_TIME}s ease-in-out` }}
             >
                 <Offcanvas.Header className='p-0'>
                     {/* Offcanvasin piilottamiseen kaytettava painike */}
@@ -91,7 +93,6 @@ const SidebarOffcanvas = () => {
                         onClick={handleClose}
                         onTouchStart={(event) => tlClose.start(event)}
                         onTouchMove={(event) => tlClose.move(event)}
-                        onTouchEnd={(event) => tlClose.end(event)}
                     >↓</Button>
                 </Offcanvas.Header>
                 <Offcanvas.Body className='p-2'>
@@ -107,7 +108,6 @@ const SidebarOffcanvas = () => {
                 onClick={handleOpen}
                 onTouchStart={(event) => tlOpen.start(event)}
                 onTouchMove={(event) => tlOpen.move(event)}
-                onTouchEnd={(event) => tlOpen.end(event)}
             >↑</Button>
         </>
     )
@@ -185,11 +185,8 @@ const VenueCard = ( { venue, weather } ) => {
 const touchListener = (threshold, onThresholdPassed) => {
     let startY      // muuttuja johon touchin nykyista y-arvoa verrataan
 
-    // kumpaan suuntaan kunkin hetkista y-arvoa verrataan
-    const thresholdPassed =
-        threshold < 0
-            ? (y) => y < startY + threshold
-            : (y) => y > startY + threshold
+    // true jos threshold tayttynyt
+    const thresholdPassed = (y) => (y - startY) / threshold >= 1
 
     // kosketuksen alkaessa alustetaan startY-muuttuja
     const start = (event) => (startY = event.touches[0].screenY)
@@ -199,19 +196,9 @@ const touchListener = (threshold, onThresholdPassed) => {
         if (thresholdPassed(event.touches[0].screenY)) onThresholdPassed()
     }
 
-    const end = (event) => {
-        // sipaisun loppuessa kuljettu u-etaisyys
-        const dY = event.changedTouches[0].screenY - startY
-        // jos "toggle on end" on kaytossa ja sipaisu on tapahtunut thresholdin y-suuntaan lahtopisteesta
-        if (OFFCANVAS_TOGGLE_ON_END && dY / Math.abs(dY) === threshold / Math.abs(threshold)) {
-            onThresholdPassed()
-        }
-    }
-
     return {
         start,
         move,
-        end
     }
 }
 
