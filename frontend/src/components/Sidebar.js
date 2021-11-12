@@ -3,7 +3,7 @@ import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } fro
 import {
     WIDE_SCREEN_THRESHOLD,
     OFFCANVAS_TOGGLE_THRESHOLD,
-    OFFCANVAS_TOGGLE_ON_END,
+    OFFCANVAS_TRANSITION_TIME,
     OFFCANVAS_DEFAULT_VISIBILITY,
     SIDEBAR_WIDTH,
     TOGGLE_BUTTON_HEIGHT } from '../constants'
@@ -38,25 +38,25 @@ const mockData = {
  * @param {int} windowWidth - nykyinen ikkunan leveys
  * @returns SidebarOffcanvas, jos ikkunan leveys alle thresholdin. Muutoin SidebarRegular
  */
-const Sidebar = ({ windowWidth }) => {
+const Sidebar = ({ windowWidth, liikuntapaikat, handleVCC }) => {
     return windowWidth < WIDE_SCREEN_THRESHOLD ? (
-        <SidebarOffcanvas />
+        <SidebarOffcanvas liikuntapaikat={liikuntapaikat} handleVCC={handleVCC} />
     ) : (
-        <SidebarRegular />
+        <SidebarRegular liikuntapaikat={liikuntapaikat} handleVCC={handleVCC}/>
     )
 }
 
 /**
  * Leveällä ruudulla näytettävä sidebar
  */
-const SidebarRegular = () => {
+const SidebarRegular = (props) => {
     return (
         <div
             id='sidebar'
             className='position-fixed top-0 left-0 visible h-100 bg-light p-1 shadow'
             style={{ width: SIDEBAR_WIDTH }}
         >
-            <SidebarContent />
+            <SidebarContent {...props} />
         </div>
     )
 }
@@ -64,7 +64,7 @@ const SidebarRegular = () => {
 /**
  * Kapealla ruudulla näytettävä sidebar
  */
-const SidebarOffcanvas = () => {
+const SidebarOffcanvas = (props) => {
     const [visible, setVisible] = useState(OFFCANVAS_DEFAULT_VISIBILITY)
     const handleOpen = () => setVisible(true)
     const handleClose = () => setVisible(false)
@@ -81,6 +81,8 @@ const SidebarOffcanvas = () => {
                 placement='bottom'
                 backdrop={false}
                 className='h-50 overflow-hidden'
+                // style overridettää bootstrapin offcanvasin oletusanimaation
+                style={{ transition: `transform ${OFFCANVAS_TRANSITION_TIME}s ease-in-out` }}
             >
                 <Offcanvas.Header className='p-0'>
                     {/* Offcanvasin piilottamiseen kaytettava painike */}
@@ -91,11 +93,10 @@ const SidebarOffcanvas = () => {
                         onClick={handleClose}
                         onTouchStart={(event) => tlClose.start(event)}
                         onTouchMove={(event) => tlClose.move(event)}
-                        onTouchEnd={(event) => tlClose.end(event)}
                     >↓</Button>
                 </Offcanvas.Header>
                 <Offcanvas.Body className='p-2'>
-                    <SidebarContent />
+                    <SidebarContent {...props} />
                 </Offcanvas.Body>
             </Offcanvas>
             {/* Offcanvasin avaamiseen kaytettava painike */}
@@ -107,7 +108,6 @@ const SidebarOffcanvas = () => {
                 onClick={handleOpen}
                 onTouchStart={(event) => tlOpen.start(event)}
                 onTouchMove={(event) => tlOpen.move(event)}
-                onTouchEnd={(event) => tlOpen.end(event)}
             >↑</Button>
         </>
     )
@@ -116,12 +116,11 @@ const SidebarOffcanvas = () => {
 /**
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
-const SidebarContent = () => {
-    //TODO: Oikeaa dataa sisaan
+const SidebarContent = ({ handleVCC, liikuntapaikat }) => {
     return (
         <div>
             <h4>Search & Filter Placeholder</h4>
-            {mockData.paikat.map((x, i) => <VenueCard key={i} venue={x} weather={mockData.saatilat} />)}
+            {liikuntapaikat.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} />)}
         </div>
     )
 }
@@ -129,15 +128,14 @@ const SidebarContent = () => {
 /**
  * Liikuntapaikka-kortti, joita näytetään sidebarissa.
  */
-const VenueCard = ( { venue, weather } ) => {
+const VenueCard = ( { venue, handleVCC, weather } ) => {
     const [open, setOpen] = useState(false)
     const collapseId = `collapse-${venue.id}`
-    console.log(weather)
 
     return (
         <>
             <Card className='mb-2 shadow'>
-                <Card.Title>{venue.name}</Card.Title>
+                <Card.Title>{venue.name}<span onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end'>🧐</span></Card.Title>
                 <Card.Body className='p-0'>
                     <Container className='w-100'>
                         <Row>
@@ -185,11 +183,8 @@ const VenueCard = ( { venue, weather } ) => {
 const touchListener = (threshold, onThresholdPassed) => {
     let startY      // muuttuja johon touchin nykyista y-arvoa verrataan
 
-    // kumpaan suuntaan kunkin hetkista y-arvoa verrataan
-    const thresholdPassed =
-        threshold < 0
-            ? (y) => y < startY + threshold
-            : (y) => y > startY + threshold
+    // true jos threshold tayttynyt
+    const thresholdPassed = (y) => (y - startY) / threshold >= 1
 
     // kosketuksen alkaessa alustetaan startY-muuttuja
     const start = (event) => (startY = event.touches[0].screenY)
@@ -199,19 +194,9 @@ const touchListener = (threshold, onThresholdPassed) => {
         if (thresholdPassed(event.touches[0].screenY)) onThresholdPassed()
     }
 
-    const end = (event) => {
-        // sipaisun loppuessa kuljettu u-etaisyys
-        const dY = event.changedTouches[0].screenY - startY
-        // jos "toggle on end" on kaytossa ja sipaisu on tapahtunut thresholdin y-suuntaan lahtopisteesta
-        if (OFFCANVAS_TOGGLE_ON_END && dY / Math.abs(dY) === threshold / Math.abs(threshold)) {
-            onThresholdPassed()
-        }
-    }
-
     return {
         start,
         move,
-        end
     }
 }
 
