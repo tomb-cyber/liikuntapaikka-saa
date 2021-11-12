@@ -38,25 +38,25 @@ const mockData = {
  * @param {int} windowWidth - nykyinen ikkunan leveys
  * @returns SidebarOffcanvas, jos ikkunan leveys alle thresholdin. Muutoin SidebarRegular
  */
-const Sidebar = ({ windowWidth }) => {
+const Sidebar = ({ windowWidth, liikuntapaikat, handleVCC }) => {
     return windowWidth < WIDE_SCREEN_THRESHOLD ? (
-        <SidebarOffcanvas />
+        <SidebarOffcanvas liikuntapaikat={liikuntapaikat} handleVCC={handleVCC} />
     ) : (
-        <SidebarRegular />
+        <SidebarRegular liikuntapaikat={liikuntapaikat} handleVCC={handleVCC}/>
     )
 }
 
 /**
  * Leveällä ruudulla näytettävä sidebar
  */
-const SidebarRegular = () => {
+const SidebarRegular = (props) => {
     return (
         <div
             id='sidebar'
             className='position-fixed top-0 left-0 visible h-100 bg-light p-1 shadow'
             style={{ width: SIDEBAR_WIDTH }}
         >
-            <SidebarContent />
+            <SidebarContent {...props} />
         </div>
     )
 }
@@ -64,7 +64,7 @@ const SidebarRegular = () => {
 /**
  * Kapealla ruudulla näytettävä sidebar
  */
-const SidebarOffcanvas = () => {
+const SidebarOffcanvas = (props) => {
     const [visible, setVisible] = useState(OFFCANVAS_DEFAULT_VISIBILITY)
     const handleOpen = () => setVisible(true)
     const handleClose = () => setVisible(false)
@@ -96,7 +96,7 @@ const SidebarOffcanvas = () => {
                     >↓</Button>
                 </Offcanvas.Header>
                 <Offcanvas.Body className='p-2'>
-                    <SidebarContent />
+                    <SidebarContent {...props} />
                 </Offcanvas.Body>
             </Offcanvas>
             {/* Offcanvasin avaamiseen kaytettava painike */}
@@ -116,12 +116,11 @@ const SidebarOffcanvas = () => {
 /**
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
-const SidebarContent = () => {
-    //TODO: Oikeaa dataa sisaan
+const SidebarContent = ({ handleVCC, liikuntapaikat }) => {
     return (
         <div>
             <h4>Search & Filter Placeholder</h4>
-            {mockData.paikat.map((x, i) => <VenueCard key={i} venue={x} weather={mockData.saatilat} />)}
+            {liikuntapaikat.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} />)}
         </div>
     )
 }
@@ -129,15 +128,14 @@ const SidebarContent = () => {
 /**
  * Liikuntapaikka-kortti, joita näytetään sidebarissa.
  */
-const VenueCard = ( { venue, weather } ) => {
+const VenueCard = ( { venue, handleVCC, weather } ) => {
     const [open, setOpen] = useState(false)
     const collapseId = `collapse-${venue.id}`
-    console.log(weather)
 
     return (
         <>
             <Card className='mb-2 shadow'>
-                <Card.Title>{venue.name}</Card.Title>
+                <Card.Title>{venue.name}<span onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end'>🧐</span></Card.Title>
                 <Card.Body className='p-0'>
                     <Container className='w-100'>
                         <Row>

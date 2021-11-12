@@ -17,6 +17,15 @@ const App = () => {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => window.addEventListener('resize', () => setWindowWidth(window.innerWidth)), [])
 
+    // sidebarin vakertamista varten valiaikainen liikuntapaikkavarasto
+    const [liikuntapaikat, setLiikuntapaikat] = useState([])
+    useEffect(() => {
+        liikuntaService
+            .getAll()
+            .then(res => setLiikuntapaikat(res))
+    }, [])
+    console.log('sidebarin lp-data: ', liikuntapaikat)
+
     // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
         liikuntaService
@@ -31,11 +40,16 @@ const App = () => {
 
     console.log('data', data)
 
+    // funktio, jota kutsutaan kun liikuntapaikka aktivoidaan sidebarista kasin
+    const handleVenueCardClick = (sportsPlaceId) => {
+        console.log(`Sidebarissa klikattiin liikuntapaikkaa, id:${sportsPlaceId}`)
+    }
+
 
     return (
         <div>
             <div>
-                <Sidebar windowWidth={windowWidth} />
+                <Sidebar windowWidth={windowWidth} liikuntapaikat={liikuntapaikat} handleVCC={handleVenueCardClick} />
             </div>
             <div
                 className='w-100 h-100 bg-info'
