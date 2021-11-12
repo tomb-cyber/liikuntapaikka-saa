@@ -20,19 +20,23 @@ const options = {
 // Kuinka monta ja millä perusteella valitaan näytettävät kun alue kattaa tuhansia paikkoja?
 liikuntapaikkaRouter.get('/', async (request, response) => {
 
-    options.path = defaultPath + '?fields=location.geometries&fields=name'
+    options.path = defaultPath + '?fields=name&pageSize=100' //fields=location.geometries&
 
     let longitude = ''
     let latitude = ''
     let radius = ''
+    let page = ''
 
     if (request.query.lon !== undefined && request.query.lat !== undefined && request.query.rad !== undefined) {
         longitude = 'closeToLon=' + request.query.lon
         latitude = 'closeToLat=' + request.query.lat
         radius = 'closeToDistanceKm=' + request.query.rad
     }
+    if (request.query.pageNumber !== undefined) {
+        page = 'page=' + request.query.pageNumber
+    }
 
-    let params = [ longitude, latitude, radius ]
+    let params = [ longitude, latitude, radius, page ]
     params = params.filter(elem => elem !== '')
 
     let paramsString = ''
@@ -47,10 +51,11 @@ liikuntapaikkaRouter.get('/', async (request, response) => {
     })
 
     options.path = options.path + paramsString
-    getNHandleJSON(options, (input => {
-        //console.log(input)
-        response.send(input.filter(each => each.location !== undefined)
-        )}))
+    getNHandleJSON(options, (input, status) => {
+        //console.log(status)
+        response.status(status)
+        response.send(input//.filter(each => each.location !== undefined)
+        )})
 })
 
 // Palauttaa kaikki liikuntapaikkatyypit
@@ -95,7 +100,7 @@ const getNHandleJSON = (options, handleResult) => {
         response.on('end', () => {
             //console.log(output)
             let obj = JSON.parse(output)
-            handleResult(obj)
+            handleResult(obj, response.statusCode)
         })
     })
 
