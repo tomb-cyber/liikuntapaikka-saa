@@ -15,8 +15,8 @@ function geoJsonOnStart(map) {
     }
     //Haetaan esimerkissä liikuntaServicestä saatavat datat
     liikuntaService
-        .getAll()
-        .then(res => {
+        .getTempStart() // Vaihda tämä getAll(), niin tulee kaikki paikat
+        .then(res => {  // (menee hetki, sillä se lataa ne backendissä ja lähettää fronttiin kerralla)
             res.forEach( geojsonelement => {
                 //Luodaan extractLiikunta.js:n tarjoamalla funktiolla geojson-tyyppinen muuttuja
                 var geo = getGeoJSON(geojsonelement)

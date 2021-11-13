@@ -1,21 +1,29 @@
 import axios from 'axios'
 
-const getAll = () => {
-    const request = axios.get('/liikuntapaikat')
+const getTempStart = () => {
+    const request = axios.get('/liikuntapaikat/')
     return request.then(response => {
         console.log(response.status)
-        return { data: response.data, status: response.status }
+        return response.data    //{ data: response.data, status: response.status }
+    })
+}
+
+
+const getAll = () => {
+    const request = axios.get('/liikuntapaikat/all')
+    return request.then(response => {
+        console.log(response.status)
+        return response.data    //{ data: response.data, status: response.status }
     })
 }
 
 const getPage = (pageNumber) => {
     const request = axios.get('/liikuntapaikat?pageNumber=' + pageNumber)
     return request.then(response => {
-        console.log(response.status)
-        return { data: response.data, status: response.status }
+        return response.data
     })}
 
 
-const exported =  { getAll, getPage }
+const exported =  { getTempStart, getAll, getPage }
 
 export default exported

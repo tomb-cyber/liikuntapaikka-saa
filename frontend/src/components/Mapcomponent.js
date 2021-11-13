@@ -42,7 +42,7 @@ const Mapcomponent = (props) => {
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
             whenCreated={(map) => {
-                //geoJsonOnStart(map)
+                geoJsonOnStart(map)
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>

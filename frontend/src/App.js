@@ -4,7 +4,7 @@ import 'leaflet/dist/images/marker-icon.png'
 import React, { useEffect, useState } from 'react'
 import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
-import { getGeoJSON, getPage } from './utils/extractLiikunta'
+import { getGeoJSON } from './utils/extractLiikunta'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 
@@ -21,37 +21,21 @@ const App = () => {
     const [liikuntapaikat, setLiikuntapaikat] = useState([])
     useEffect(() => {
         liikuntaService
-            .getAll()
+            .getTempStart()
             .then(res => setLiikuntapaikat(res))
     }, [])
     console.log('sidebarin lp-data: ', liikuntapaikat)
 
     // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
-        let pageNum = 0
-        let newFusion = []
-        let status
+        liikuntaService
+            .getTempStart()
+            .then(res => {
+                //console.log(res.map(each => getGeoJSON(each)))
+                console.log(res)
+                return setData(res.map(each => getGeoJSON(each)))
+            })
 
-        let requestData = () => {
-            pageNum += 1
-            liikuntaService
-                //.getAll()
-                .getPage(pageNum)
-                .then(res => {
-                    status = res.status
-                    newFusion = newFusion.concat(res.data)
-                }).then(() => {
-                    if (status === 206) {
-                        requestData()
-                    }
-                    else {
-                        setData(newFusion)
-                        setTimeout(console.log(data), 3000)
-                    }
-                })
-            console.log(status === 206)
-        }
-        requestData()
     }, [])
 
     console.log('data', data)
