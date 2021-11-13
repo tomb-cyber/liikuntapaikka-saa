@@ -1,6 +1,8 @@
 import './App.css'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet/dist/images/marker-icon.png'
+import '../node_modules/leaflet.markercluster/dist/MarkerCluster.css'
+import '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
 import React, { useEffect, useState } from 'react'
 import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
