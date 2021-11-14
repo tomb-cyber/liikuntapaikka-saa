@@ -1,6 +1,7 @@
 const liikuntapaikkaRouter = require('express').Router()
 const http = require('http')
-
+const utils = require('../utils/utilityFuncs')
+const Liikuntapaikka = require('../models/liikuntapaikka')
 
 const defaultPath = '/api/sports-places'
 
@@ -14,12 +15,20 @@ const options = {
     }
 }
 
+liikuntapaikkaRouter.get('/mongo', async (request, response) => {
+
+    const paikat = await Liikuntapaikka
+        .find({})//.limit(10)
+
+    response.json(paikat.map(paikka => paikka.toJSON()))
+})
+
 
 
 // Peruskysely tietyn alueen paikoista (tai muilla parametreillä)
 // Paikkoja saa 1-100 per sivu pageSize parametrilla, default 50, sivuja 817 as of 24.10.2021
 // Kuinka monta ja millä perusteella valitaan näytettävät kun alue kattaa tuhansia paikkoja?
-liikuntapaikkaRouter.get('/', async (request, response) => {
+liikuntapaikkaRouter.get('/', (request, response) => {
 
     options.path = defaultPath + '?fields=name&fields=location.geometries&page=1&pageSize=100'
 
@@ -58,6 +67,7 @@ liikuntapaikkaRouter.get('/', async (request, response) => {
         console.log(status)
         let filtered = input.filter(each => each.location !== undefined)
         response.status(status)
+        console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
         response.send(filtered)
     })
 })
@@ -81,14 +91,14 @@ liikuntapaikkaRouter.get('/all', async (request, response) => {
                 status === 206)
             {
                 //counter++
-                options.path = nextPage(options.path)
+                options.path = utils.nextPage(options.path)
                 perusGet(options)
             }
             else {
                 const idArray = objArray.map(paikka => paikka.sportsPlaceId)
                 //idArray.push(idArray[0])
                 //objArray.push(objArray[0])
-                console.log('Has duplicates: ' + hasDuplicates(idArray))
+                console.log('Has duplicates: ' + utils.hasDuplicates(idArray))
                 console.log('Length: ' + idArray.length)
                 response.status(status)
                 response.send(objArray)
@@ -154,39 +164,6 @@ const getNHandleJSON = (options, handleResult) => {
 }
 
 
-/**
- * Käy taulukon läpi duplikaattien varalta.
- * @param array Tutkittava taulukko
- * @returns True jos löytyi duplikaatteja, false jos ei
- */
-const hasDuplicates = (array) => {
-    var lapiKayty = []
-    for (var i = 0; i < array.length; ++i) {
-        var current = array[i]
-        if (lapiKayty.indexOf(current) !== -1) {
-            return true
-        }
-        lapiKayty.push(current)
-    }
-    return false
-}
-
-
-/**
- * Antaa path, joka palauttaa seuraavan sivun
- * @param path Osoiteen path osa, jonka page parametria kasvatetaan yhdellä
- * @returns Path yhtä isommalla page parametrilla
- */
-const nextPage = (path) => {
-    const param = 'page='
-    const startIndex = path.indexOf(param)
-    const nextParamStart = path.indexOf('&', startIndex + param.length)
-    const ending = nextParamStart < 0 ? '' : path.substring(nextParamStart)
-    let pageNum = parseInt(path.substring(startIndex + param.length, nextParamStart))
-    pageNum += 1
-    const newPath = path.substring(0, startIndex) + param + pageNum + ending
-    return newPath
-}
 
 
 // säilytetään varulta, kunnes tiedetään varmaksi, ettei WFS tarvita

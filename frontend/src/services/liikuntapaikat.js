@@ -10,7 +10,7 @@ const getTempStart = () => {
 
 
 const getAll = () => {
-    const request = axios.get('/liikuntapaikat/all')
+    const request = axios.get('/liikuntapaikat')
     return request.then(response => {
         console.log(response.status)
         return response.data    //{ data: response.data, status: response.status }
