@@ -1,25 +1,35 @@
 const saatietoRouter = require('express').Router()
 const Metolib = require('@fmidev/metolib')
 
-saatietoRouter.get('/:latlon', async (request, response) => {
-    let inputLatlon = ''
-    inputLatlon = request.query.latlon
-    response.send(parser.getData({ latlon: inputLatlon })) // toimiva toteutus?
-})
-
+const parser = new Metolib.WfsRequestParser()
 const url = 'http://opendata.fmi.fi/wfs'
-const query = 'fmi::forecast::hirlam::surface::point::simple'
-var parser = new Metolib.WfsRequestParser()
-parser.getData({
+const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
+var defaultPath = {
     url: url,
     storedQueryId: query,
     requestParameter: 'Temperature,WeatherSymbol3,WindSpeedMS',
-    timestep: 20,
-    latlon: (62,25), // defaulttina Jyväskylän latlon
-    callback : function(data) {
-        const weather = data
-        return weather
+    begin: new Date(),
+    end: new Date((new Date()).getTime() + 24 * 60 * 60 * 1000),
+    timestep: 20 * 60 * 1000,
+    latlon: '62.24147,25.72088',
+    callback : function(data, errors) {
+        if (data) {
+            console.log(data)
+            return data
+        }
+        if (errors) {
+            console.log(errors)
+        }
     }
+}
+
+saatietoRouter.get('/:latlon', async (request, response) => {
+    defaultPath.latlon = request.params.latlon
+    response.send(parser.getData(defaultPath))
+})
+
+saatietoRouter.get('/', async (request, response) => {
+    response.send(parser.getData(defaultPath))
 })
 
 module.exports = {
