@@ -134,7 +134,7 @@ const VenueCard = ( { venue, handleVCC, weather } ) => {
 
     return (
         <>
-            <Card className='mb-2 shadow'>
+            <Card id={`sidebar-vc-id-${venue.sportsPlaceId}`} className='mb-2 shadow'>
                 <Card.Title>{venue.name}<span onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end'>🧐</span></Card.Title>
                 <Card.Body className='p-0'>
                     <Container className='w-100'>

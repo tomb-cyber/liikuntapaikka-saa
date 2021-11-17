@@ -47,6 +47,11 @@ const App = () => {
         console.log(`Sidebarissa klikattiin liikuntapaikkaa, id:${sportsPlaceId}`)
     }
 
+    // TODO: tähän funktioon jos sais liikuntapaikan sportsPlaceId:n kartalla klikatessa
+    const activateVenueCard = (sportsPlaceId) => {
+        console.log(`Kartalla klikattiin liikuntapaikkaa, id: ${sportsPlaceId}`)
+    }
+
 
     return (
         <div>
