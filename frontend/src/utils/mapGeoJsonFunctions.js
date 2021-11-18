@@ -4,6 +4,7 @@ import markerIconShadow from '../../node_modules/leaflet/dist/images/marker-shad
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 import liikuntaService from '../services/liikuntapaikat'
 import { getGeoJSON } from './extractLiikunta'
+import { getDistance } from 'geolib'
 
 //Geojsonin piirtämisen testaukseen heti kartan alustuessa.
 function geoJsonOnStart(map) {
@@ -69,4 +70,20 @@ function geoJsonOnStart(map) {
     return null
 }
 
-export { geoJsonOnStart }
+/**
+ * Muutetaan bounds pisteeksi ja säteeksi.
+ * @param bounds Kartan bounds, sisältää southWest ja northEast koordinaatit
+ * @returns Bounds keskikohta ja säde keskikohdasta kulmiin
+ */
+const boundsToCoordsNRad = (bounds) => {
+    const midLat = bounds._southWest.lat + (bounds._northEast.lat - bounds._southWest.lat)/2
+    const midLon = bounds._southWest.lng + (bounds._northEast.lng - bounds._southWest.lng)/2
+    const rad = getDistance(
+        { latitude: bounds._southWest.lat, longitude: bounds._southWest.lng },
+        { latitude: bounds._northEast.lat, longitude: bounds._northEast.lng })/2
+
+    return { lat: midLat, lon: midLon, rad: rad/1000 }
+}
+
+
+export { geoJsonOnStart, boundsToCoordsNRad }

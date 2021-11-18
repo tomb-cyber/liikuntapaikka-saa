@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar'
 import { getGeoJSON } from './utils/extractLiikunta'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
+import { boundsToCoordsNRad } from './utils/mapGeoJsonFunctions'
 
 const App = () => {
 
@@ -52,6 +53,19 @@ const App = () => {
         console.log(`Kartalla klikattiin liikuntapaikkaa, id: ${sportsPlaceId}`)
     }
 
+    const updateBounds = (bounds) => {
+        setMapBounds(bounds)
+        const coords = boundsToCoordsNRad(bounds)
+        //console.log(coords)
+        liikuntaService
+            .getPlacesWithin(coords.lat, coords.lon, coords.rad)
+            .then(res => {
+                //console.log(res.map(each => getGeoJSON(each)))
+                console.log(res)
+                return setData(res.map(each => getGeoJSON(each)))
+            })
+    }
+
 
     return (
         <div>
@@ -62,7 +76,7 @@ const App = () => {
                 className='w-100 h-100 bg-info'
                 // levealla ruudulla paddingia, ettei karttaa piirry sidebarin alle piiloon
                 style={ WIDE_SCREEN_THRESHOLD <= windowWidth ? ({ paddingLeft: SIDEBAR_WIDTH }) : ({  })} >
-                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={setMapBounds} />
+                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds} />
             </div>
         </div>
     )
