@@ -63,13 +63,39 @@ liikuntapaikkaRouter.get('/', (request, response) => {
     options.path = options.path + paramsString
 
 
-    getNHandleJSON(options, (input, status) => {
-        console.log(status)
-        let filtered = input.filter(each => each.location !== undefined)
-        response.status(status)
-        console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
-        response.send(filtered)
-    })
+    // getNHandleJSON(options, (input, status, count) => {
+    //     console.log(status, 'Number of places:', count) // Jos undefined kaikki palautettu
+    //     let filtered = input.filter(each => each.location !== undefined)
+    //     response.status(status)
+    //     console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
+    //     response.send(filtered)
+    // })
+
+    let objArray = []
+
+    const perusGet = options => {
+        getNHandleJSON(options, (input, status, count) => {
+            console.log(status, 'Number of places:', count)
+            let filtered = input.filter(each => each.location !== undefined)
+            objArray = objArray.concat(filtered)
+            const fetchMore = count < 800 | count === undefined
+            if (fetchMore && status === 206)
+            {
+                options.path = utils.nextPage(options.path)
+                perusGet(options)
+            }
+            else {
+                const idArray = objArray.map(paikka => paikka.sportsPlaceId)
+                console.log('Has duplicates: ' + utils.hasDuplicates(idArray))
+                response.status(status)
+                objArray = fetchMore ? objArray : []
+                console.log('Length: ' + objArray.length)
+                response.send(objArray)
+            }
+        })
+    }
+
+    perusGet(options)
 })
 
 
@@ -152,7 +178,7 @@ const getNHandleJSON = (options, handleResult) => {
         response.on('end', () => {
             //console.log(output)
             let obj = JSON.parse(output)
-            handleResult(obj, response.statusCode)
+            handleResult(obj, response.statusCode, response.headers['x-total-count'])
         })
     })
 
