@@ -97,14 +97,20 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray) {
         setLatLng: function () {}
     })
 
-    /*givenMap.eachLayer((layer) => {
-        if(layer.className !== 'osmTileLayer')
-        givenMap.removeLayer(layer)
-    })*/
+
+    givenMap.eachLayer((eachL) => {
+        if(eachL.className !== 'osmTileLayer')
+            givenMap.removeLayer(eachL)
+    })
+
+    var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
+    givenMap.addLayer(basetile)
 
     var markerLG = Leaflet.markerClusterGroup()
+    markerLG.id = 'markerLayer'
 
-    var geoJsonArray2 = new Array()
+    var geoJsonDrawArray = new Array()
 
     //Oletettu että sisään tuleva taulukko on jo GeoJSON-muodossa
     givenGeoJsonArray.forEach(geoJson => {
@@ -115,11 +121,11 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray) {
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
         else {
-            geoJsonArray2.push(geoJson)
+            geoJsonDrawArray.push(geoJson)
         }
         givenMap.addLayer(markerLG)
 
-        var geoJsonLayer = Leaflet.geoJson(geoJsonArray2)
+        var geoJsonLayer = Leaflet.geoJson(geoJsonDrawArray)
         markerLG.addLayer(geoJsonLayer)
     })
     return null
