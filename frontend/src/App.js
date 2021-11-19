@@ -64,12 +64,7 @@ const App = () => {
             .then(res => {
                 //console.log(res.map(each => getGeoJSON(each)))
                 console.log(res)
-                /*var testi = []
-                liikuntaService.getTempStart().then(respo => {
-                    console.log(respo)
-                    testi = respo.map(each => getGeoJSON(each))
-                })
-                console.log('piirretään!!!')*/
+
                 var testi = res.map(each => getGeoJSON(each))
                 drawGeoJsonOnMap(mainMap, testi)
                 return setData(res.map(each => getGeoJSON(each)))
