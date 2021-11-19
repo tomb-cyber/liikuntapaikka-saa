@@ -9,9 +9,6 @@ require('dotenv').config()
 const liikuntapaikkaRouter = require('./controllers/liikuntapaikat')
 app.use('/liikuntapaikat', liikuntapaikkaRouter)
 
-//const saatietoRouter = require('./controllers/saatiedot')
-//app.use('/saatiedot', saatietoRouter) // ota pois jos ei toimi (ei vielä testattu)
-
 const password = process.env.PASS
 const url = `mongodb+srv://liikuntaDBUser:${password}@liikunta.y69b6.mongodb.net/liikuntapaikat?retryWrites=true&w=majority`
 
