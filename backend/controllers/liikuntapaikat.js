@@ -81,6 +81,7 @@ liikuntapaikkaRouter.get('/', (request, response) => {
             const fetchMore = count < 800 | count === undefined
             if (fetchMore && status === 206)
             {
+                //response.write(JSON.stringify(filtered))
                 options.path = utils.nextPage(options.path)
                 perusGet(options)
             }
