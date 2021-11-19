@@ -17,6 +17,7 @@ const App = () => {
     const [mapBounds, setMapBounds] = useState()
 
     const [mainMap, setMainMap] = useState()
+    const [markerLayerGroup, setMarkerLayerGroup] = useState()
 
     // Ikkunan leveys kuunteluun sidebaria varten.
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -66,7 +67,7 @@ const App = () => {
                 console.log(res)
 
                 var testi = res.map(each => getGeoJSON(each))
-                drawGeoJsonOnMap(mainMap, testi)
+                drawGeoJsonOnMap(mainMap, testi, markerLayerGroup)
                 return setData(res.map(each => getGeoJSON(each)))
             })
     }
@@ -81,7 +82,7 @@ const App = () => {
                 className='w-100 h-100 bg-info'
                 // levealla ruudulla paddingia, ettei karttaa piirry sidebarin alle piiloon
                 style={ WIDE_SCREEN_THRESHOLD <= windowWidth ? ({ paddingLeft: SIDEBAR_WIDTH }) : ({  })} >
-                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds} mapInUse={mainMap} setMapInUse={setMainMap} />
+                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds} mapInUse={mainMap} setMapInUse={setMainMap} markerLG={markerLayerGroup} setMarkerLG={setMarkerLayerGroup} />
             </div>
         </div>
     )

@@ -2,37 +2,19 @@
 import { MapContainer, useMapEvents } from 'react-leaflet'
 import React from 'react'
 import Leaflet from 'leaflet'
+import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 //import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
 
+//TileLayer
 var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
 
-//Luodaan kartalle oma komponenttinsa, joka sisältyy React-Leafletin MapContainerin sisälle, jos käytetään funktiomallista komponenttia niin voidaan myöhemmin poistaa.
-/*class Mapcomponent extends Component {
-    render() {
-        return (
-            <MapContainer
-                className='rlmap'
-                id='mainmap'
-                //Keskitetään kartta
-                center={jycenter}
-                zoom={10}
-                //Voiko hiirellä zoomata kartalla
-                scrollWheelZoom={true}
-            >
-                <ExampleEventComponent updateCoords={this.props.updateCoords} />
-                <GeojsonOnStart />
-                <TileLayer
-                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-            </MapContainer>
-        )
-    }
-}*/
+    //Klusteroitavia objekteja varten, annetaan hookin kautta App.js:lle asti
+var markerLG = Leaflet.markerClusterGroup()
+
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
@@ -43,13 +25,15 @@ const Mapcomponent = (props) => {
             //Keskitetään kartta
             center={jycenter}
             zoom={10}
-            maxZoom={20}
+            maxZoom={17}
             minZoom={6}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
             whenCreated={(map) => {
                 //geoJsonOnStart(map)
                 map.addLayer(basetile)
+                map.addLayer(markerLG)
+                props.setMarkerLG(markerLG)
                 props.setMapInUse(map)
             }}
         >

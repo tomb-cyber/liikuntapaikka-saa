@@ -76,7 +76,7 @@ function geoJsonOnStart(map) {
  * @param {*} geoJsonArray Taulukko GeoJSON-muodossa olevia objekteja
  * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
-function drawGeoJsonOnMap(givenMap, givenGeoJsonArray) {
+function drawGeoJsonOnMap(givenMap, givenGeoJsonArray, givenMarkerLayerGroup) {
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
         iconUrl: markerIcon,
@@ -97,19 +97,10 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray) {
         setLatLng: function () {}
     })
 
+    //Tyhjennetään aiempi LayerGroup, annettu funktiolle kutsuttaessa
+    givenMarkerLayerGroup.clearLayers()
 
-    givenMap.eachLayer((eachL) => {
-        if(eachL.className !== 'osmTileLayer')
-            givenMap.removeLayer(eachL)
-    })
-
-    var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
-    givenMap.addLayer(basetile)
-
-    var markerLG = Leaflet.markerClusterGroup()
-    markerLG.id = 'markerLayer'
-
+    //Esim. Polygonien piirtämistä varten
     var geoJsonDrawArray = new Array()
 
     //Oletettu että sisään tuleva taulukko on jo GeoJSON-muodossa
@@ -117,16 +108,16 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray) {
         if(geoJson.type === 'Point') {
             var geopoint = Leaflet.marker([geoJson.coordinates[1], geoJson.coordinates[0]])
             //Voidaan lisätä esim. tooltip tässä vaiheessa
-            markerLG.addLayer(geopoint)
+            givenMarkerLayerGroup.addLayer(geopoint)
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
         else {
             geoJsonDrawArray.push(geoJson)
         }
-        givenMap.addLayer(markerLG)
 
+        //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
         var geoJsonLayer = Leaflet.geoJson(geoJsonDrawArray)
-        markerLG.addLayer(geoJsonLayer)
+        givenMarkerLayerGroup.addLayer(geoJsonLayer)
     })
     return null
 }
