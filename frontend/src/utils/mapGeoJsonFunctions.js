@@ -70,6 +70,61 @@ function geoJsonOnStart(map) {
     return null
 }
 
+/**Funktio piirtää annetut GeoJSONit karttaan
+ *
+ * @param {*} givenMap Kartta, jolle GeoJSONit halutaan piirtää
+ * @param {*} geoJsonArray Taulukko GeoJSON-muodossa olevia objekteja
+ * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
+ */
+function drawGeoJsonOnMap(givenMap, givenGeoJsonArray) {
+    //Default-markeria varten
+    var defaultIcon = Leaflet.icon( {
+        iconUrl: markerIcon,
+        shadowUrl: markerIconShadow
+    } )
+
+    Leaflet.Marker.prototype.options.icon = defaultIcon
+
+    //Polylinien klusteroinniksi asetetaan keskuskohta
+    Leaflet.Polyline.addInitHook(function () {
+        this._latlng = this.getBounds().getCenter()
+    })
+
+    Leaflet.Polyline.include({
+        getLatLng: function () {
+            return this._latlng
+        },
+        setLatLng: function () {}
+    })
+
+    /*givenMap.eachLayer((layer) => {
+        if(layer.className !== 'osmTileLayer')
+        givenMap.removeLayer(layer)
+    })*/
+
+    var markerLG = Leaflet.markerClusterGroup()
+
+    var geoJsonArray2 = new Array()
+
+    //Oletettu että sisään tuleva taulukko on jo GeoJSON-muodossa
+    givenGeoJsonArray.forEach(geoJson => {
+        if(geoJson.type === 'Point') {
+            var geopoint = Leaflet.marker([geoJson.coordinates[1], geoJson.coordinates[0]])
+            //Voidaan lisätä esim. tooltip tässä vaiheessa
+            markerLG.addLayer(geopoint)
+        }
+        //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
+        else {
+            geoJsonArray2.push(geoJson)
+        }
+        givenMap.addLayer(markerLG)
+
+        var geoJsonLayer = Leaflet.geoJson(geoJsonArray2)
+        markerLG.addLayer(geoJsonLayer)
+    })
+    return null
+}
+
 /**
  * Muutetaan bounds pisteeksi ja säteeksi.
  * @param bounds Kartan bounds, sisältää southWest ja northEast koordinaatit
@@ -86,4 +141,4 @@ const boundsToCoordsNRad = (bounds) => {
 }
 
 
-export { geoJsonOnStart, boundsToCoordsNRad }
+export { geoJsonOnStart, drawGeoJsonOnMap, boundsToCoordsNRad }

@@ -9,12 +9,14 @@ import Sidebar from './components/Sidebar'
 import { getGeoJSON } from './utils/extractLiikunta'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
-import { boundsToCoordsNRad } from './utils/mapGeoJsonFunctions'
+import { boundsToCoordsNRad, drawGeoJsonOnMap } from './utils/mapGeoJsonFunctions'
 
 const App = () => {
 
     const [data, setData] = useState([])
     const [mapBounds, setMapBounds] = useState()
+
+    const [mainMap, setMainMap] = useState()
 
     // Ikkunan leveys kuunteluun sidebaria varten.
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -62,6 +64,14 @@ const App = () => {
             .then(res => {
                 //console.log(res.map(each => getGeoJSON(each)))
                 console.log(res)
+                /*var testi = []
+                liikuntaService.getTempStart().then(respo => {
+                    console.log(respo)
+                    testi = respo.map(each => getGeoJSON(each))
+                })
+                console.log('piirretään!!!')*/
+                var testi = res.map(each => getGeoJSON(each))
+                drawGeoJsonOnMap(mainMap, testi)
                 return setData(res.map(each => getGeoJSON(each)))
             })
     }
@@ -76,7 +86,7 @@ const App = () => {
                 className='w-100 h-100 bg-info'
                 // levealla ruudulla paddingia, ettei karttaa piirry sidebarin alle piiloon
                 style={ WIDE_SCREEN_THRESHOLD <= windowWidth ? ({ paddingLeft: SIDEBAR_WIDTH }) : ({  })} >
-                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds} />
+                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds} mapInUse={mainMap} setMapInUse={setMainMap} />
             </div>
         </div>
     )
