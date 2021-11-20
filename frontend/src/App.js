@@ -6,7 +6,6 @@ import '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
 import React, { useEffect, useState } from 'react'
 import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
-import { getGeoJSON } from './utils/extractLiikunta'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 import { boundsToCoordsNRad, drawGeoJsonOnMap } from './utils/mapGeoJsonFunctions'
@@ -124,8 +123,7 @@ const App = () => {
                 setStatus(res.status)
                 updateData(res.data)//.map(each => getGeoJSON(each)))
 
-                var testi = data.map(each => getGeoJSON(each))
-                drawGeoJsonOnMap(mainMap, testi, markerLayerGroup)
+                drawGeoJsonOnMap(data, markerLayerGroup)
 
                 if (res.count < threshold)
                     setPage(page)

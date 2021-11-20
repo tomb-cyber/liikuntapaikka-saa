@@ -2,21 +2,22 @@
 import markerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png'
 import markerIconShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
-import liikuntaService from '../services/liikuntapaikat'
+//import liikuntaService from '../services/liikuntapaikat'
 import { getGeoJSON } from './extractLiikunta'
 import { getDistance } from 'geolib'
 
+/*
 //Geojsonin piirtämisen testaukseen heti kartan alustuessa.
 function geoJsonOnStart(map) {
     //Testaukseen pisteiden piirtämiseksi, ei tällä hetkellä käytössä
-    /*var geojsonMarkerOptions = {
+    var geojsonMarkerOptions = {
         radius: 8,
         fillColor: '#ff7800',
         color: '#000',
         weight: 1,
         opacity: 1,
         fillOpacity: 0.8
-    }*/
+    }
 
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
@@ -68,15 +69,15 @@ function geoJsonOnStart(map) {
             markerLG.addLayer(geoJsonLayer)
         })
     return null
-}
+}*/
 
 /**Funktio piirtää annetut GeoJSONit karttaan
  *
- * @param {*} givenMap Kartta, jolle GeoJSONit halutaan piirtää
- * @param {*} geoJsonArray Taulukko GeoJSON-muodossa olevia objekteja
+ * @param {*} givenGeoJsonArray Taulukko GeoJSON-muodossa olevia objekteja
+ * @param {*} givenMarkerLayerGroup markerLayerGroup, jolle GeoJSON-oliot piirretään
  * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
-function drawGeoJsonOnMap(givenMap, givenGeoJsonArray, givenMarkerLayerGroup) {
+function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
         iconUrl: markerIcon,
@@ -106,21 +107,42 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray, givenMarkerLayerGroup) {
     //Esim. Polygonien piirtämistä varten
     var geoJsonDrawArray = new Array()
 
+    //Tooltipin ja muidenkin ominaisuuksien lisääminen GeoJsonLayerin kaikkiin yksilöihin
+    function onEachFeature(feature, layer) {
+        if(feature.geometry.type === 'Polygon') {
+            layer.bindTooltip(feature.properties.name)
+        }
+    }
+
     //Oletettu että sisään tuleva taulukko on jo GeoJSON-muodossa
-    givenGeoJsonArray.forEach(geoJson => {
-        if(geoJson.type === 'Point') {
-            var geopoint = Leaflet.marker([geoJson.coordinates[1], geoJson.coordinates[0]])
+    givenGeoJsonArray.forEach(dataelement => {
+        var geojson = getGeoJSON(dataelement)
+        if(geojson.type === 'Point') {
+            var geopoint = Leaflet.marker([geojson.coordinates[1], geojson.coordinates[0]])
             //Voidaan lisätä esim. tooltip tässä vaiheessa
             newLayerGroup.addLayer(geopoint)
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
+        //Testausta varten luotu laajempaa GeoJSON-oliota
+        if(geojson.type === 'Polygon') {
+            var geoarea = {
+                'type': 'Feature',
+                'properties': {
+                    'name': 'testi'
+                },
+                'geometry': geojson
+            }
+            geoJsonDrawArray.push(geoarea)
+        }
         else {
-            geoJsonDrawArray.push(geoJson)
+            //Myöhemmin esim. LineStringit
         }
 
         //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
-        var geoJsonLayer = Leaflet.geoJson(geoJsonDrawArray)
-        givenMarkerLayerGroup.addLayer(geoJsonLayer)
+        var geoJsonLayer = Leaflet.geoJSON(geoJsonDrawArray, {
+            onEachFeature: onEachFeature
+        })
+        newLayerGroup.addLayer(geoJsonLayer)
     })
     return null
 }
@@ -141,4 +163,4 @@ const boundsToCoordsNRad = (bounds) => {
 }
 
 
-export { geoJsonOnStart, drawGeoJsonOnMap, boundsToCoordsNRad }
+export { drawGeoJsonOnMap, boundsToCoordsNRad }

@@ -26,7 +26,7 @@ const Mapcomponent = (props) => {
             center={jycenter}
             zoom={10}
             maxZoom={17}
-            minZoom={6}
+            minZoom={5}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
             whenCreated={(map) => {
@@ -48,15 +48,14 @@ function ExampleEventComponent(props) {
     const map = useMapEvents({
         click: (e) => {
             var coords = e.latlng
-            //console.log(coords)
             console.log('Klikattu piste: ' + JSON.stringify(coords))
         },
         //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
         zoom: () => {
-            var boundcoords = map.getBounds()
-            //console.log('Zoomattu alue: ' + JSON.stringify(boundcoords))
-            props.onMapBoundsChange(boundcoords)
-            //console.log(props.mapBounds)
+            props.onMapBoundsChange(map.getBounds())
+        },
+        moveend: () => {
+            props.onMapBoundsChange(map.getBounds())
         }
     })
     return null
