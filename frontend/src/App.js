@@ -37,9 +37,7 @@ const App = () => {
         liikuntaService
             .getTempStart()
             .then(res => {
-                //console.log(res.map(each => getGeoJSON(each)))
-                console.log(res)
-                return setData(res.map(each => getGeoJSON(each)))
+                return setData(res)//.map(each => getGeoJSON(each)))
             })
 
     }, [])
@@ -56,19 +54,36 @@ const App = () => {
         console.log(`Kartalla klikattiin liikuntapaikkaa, id: ${sportsPlaceId}`)
     }
 
+    const updateData = (newData) => {
+        const filtered = []
+        let isFound
+        for (let i = 0; i < newData.length; i++) {
+            isFound = false
+            for (let j = 0; j < data.length; j++) {
+                if (newData[i].sportsPlaceId === data[j].sportsPlaceId) {
+                    isFound = true
+                    break
+                }
+            }
+            if (!isFound) {
+                filtered.push(newData[i])
+            }
+        }
+        //console.log('Uudet: ', filtered)
+        setData(data.concat(filtered))
+        //return filtered
+    }
+
+
     const updateBounds = (bounds) => {
         setMapBounds(bounds)
         const coords = boundsToCoordsNRad(bounds)
-        //console.log(coords)
         liikuntaService
             .getPlacesWithin(coords.lat, coords.lon, coords.rad)
             .then(res => {
-                //console.log(res.map(each => getGeoJSON(each)))
-                console.log(res)
-
                 var testi = res.map(each => getGeoJSON(each))
                 drawGeoJsonOnMap(mainMap, testi, markerLayerGroup)
-                return setData(res.map(each => getGeoJSON(each)))
+                return updateData(res)//.map(each => getGeoJSON(each)))
             })
     }
 

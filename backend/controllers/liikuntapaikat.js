@@ -89,7 +89,7 @@ liikuntapaikkaRouter.get('/', (request, response) => {
                 const idArray = objArray.map(paikka => paikka.sportsPlaceId)
                 console.log('Has duplicates: ' + utils.hasDuplicates(idArray))
                 response.status(status)
-                objArray = fetchMore ? objArray : []
+                //objArray = fetchMore ? objArray : []
                 console.log('Length: ' + objArray.length)
                 response.send(objArray)
             }
