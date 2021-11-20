@@ -4,7 +4,7 @@ const getTempStart = () => {
     const request = axios.get('/liikuntapaikat/')
     return request.then(response => {
         console.log(response.status)
-        return response.data    //{ data: response.data, status: response.status }
+        return response.data.places    //{ data: response.data, status: response.status }
     })
 }
 
@@ -19,18 +19,18 @@ const getAll = () => {
 
 
 const getPage = (pageNumber) => {
-    const request = axios.get('/liikuntapaikat?pageNumber=' + pageNumber)
+    const request = axios.get('/liikuntapaikat?page=' + pageNumber)
     return request.then(response => {
         return response.data
     })
 }
 
 
-const getPlacesWithin = (lat, lon, rad) => {
-    const request = axios.get(`/liikuntapaikat?lat=${lat}&lon=${lon}&rad=${rad}`)
+const getPlacesWithin = (lat, lon, rad, page) => {
+    const request = axios.get(`/liikuntapaikat?lat=${lat}&lon=${lon}&rad=${rad}&page=${page}`)
     return request.then(response => {
         console.log(response.status)
-        return response.data
+        return { data: response.data.places, status: response.status, count: response.data.count }
     })
 }
 

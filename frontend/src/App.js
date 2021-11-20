@@ -13,11 +13,24 @@ import { boundsToCoordsNRad, drawGeoJsonOnMap } from './utils/mapGeoJsonFunction
 
 const App = () => {
 
+    const aloitusBounds = {
+        _southWest: {
+            lat: 62.19663677298255,
+            lng: 25.628828030200676
+        },
+        _northEast: {
+            lat: 62.29213944722225,
+            lng: 25.9542980009038
+        }
+    }
     const [data, setData] = useState([])
-    const [mapBounds, setMapBounds] = useState()
+    const [mapBounds, setMapBounds] = useState(aloitusBounds)
 
     const [mainMap, setMainMap] = useState()
     const [markerLayerGroup, setMarkerLayerGroup] = useState()
+
+    const [status, setStatus] = useState(206)
+    const [page, setPage] = useState(1)
 
     // Ikkunan leveys kuunteluun sidebaria varten.
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -32,15 +45,21 @@ const App = () => {
     }, [])
     console.log('sidebarin lp-data: ', liikuntapaikat)
 
-    // Turha demous hookki, saa poistaa kun tiellä
     useEffect(() => {
-        liikuntaService
-            .getTempStart()
-            .then(res => {
-                return setData(res)//.map(each => getGeoJSON(each)))
-            })
-
+        fetchWithBounds(mapBounds, 1)
     }, [])
+
+
+    /**
+     * Haku looppi. Laukeaa, kun page päivittyy ja toistaa hakua kunnes kaikki data ollaan saatu
+     * (; olettaen, ettei fetchWithBoundsin sisällä threshold ylity)
+     */
+    useEffect(() => {
+        if (status === 206) {
+            fetchWithBounds(mapBounds, page)
+            //console.log('newPage: ', page)
+        }
+    }, [page])
 
     console.log('data', data)
 
@@ -54,7 +73,12 @@ const App = () => {
         console.log(`Kartalla klikattiin liikuntapaikkaa, id: ${sportsPlaceId}`)
     }
 
-    const updateData = (newData) => {
+
+    /**
+     * Asettaa taulukon liikuntapaikat datan jatkoksi, jos ei jo datassa.
+     * @param newData Taulukko liikuntapaikkoja
+     */
+    const updateData = (newData, callback) => {
         const filtered = []
         let isFound
         for (let i = 0; i < newData.length; i++) {
@@ -70,20 +94,41 @@ const App = () => {
             }
         }
         //console.log('Uudet: ', filtered)
-        setData(data.concat(filtered))
+        setData(data.concat(filtered), callback)
         //return filtered
     }
 
-
+    /**
+     * Zoomin eventille tarkoitettu funktio. Päivittää uuden mapBounds ja tekee liikuntapaikka haun
+     * @param bounds Kartan bounds
+     */
     const updateBounds = (bounds) => {
-        setMapBounds(bounds)
+        setMapBounds(bounds)    // Kuinkahan vaikeaa olisi tehdä päivitys vain silloin, jos uusi bounds EI ole aikasemman sisällä
+        fetchWithBounds(bounds, 1)
+    }
+
+
+    /**
+     * Hakee backendilta bounds sisällä olevat liikuntapaikat sivulta page. Jos kartan alueella on vähemmän paikkoja kuin threshold
+     * sallii, vaihdetaan page state, joka laukaisee loopin useEffectin avulla, millä haetaan kaikki alueen paikat.
+     * @param bounds Kartan bounds
+     * @param page Haun sivunumero. APIsta saa max 100 liikuntapaikkaa kerralla, joten pilkkoontuu useisiin sivuihin.
+     */
+    const fetchWithBounds = (bounds, page) => {
+        const threshold = 800
         const coords = boundsToCoordsNRad(bounds)
         liikuntaService
-            .getPlacesWithin(coords.lat, coords.lon, coords.rad)
+            .getPlacesWithin(coords.lat, coords.lon, coords.rad, page)
             .then(res => {
-                var testi = res.map(each => getGeoJSON(each))
+                page++
+                setStatus(res.status)
+                updateData(res.data)//.map(each => getGeoJSON(each)))
+
+                var testi = data.map(each => getGeoJSON(each))
                 drawGeoJsonOnMap(mainMap, testi, markerLayerGroup)
-                return updateData(res)//.map(each => getGeoJSON(each)))
+
+                if (res.count < threshold)
+                    setPage(page)
             })
     }
 

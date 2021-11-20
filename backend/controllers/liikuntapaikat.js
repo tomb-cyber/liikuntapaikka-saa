@@ -30,7 +30,7 @@ liikuntapaikkaRouter.get('/mongo', async (request, response) => {
 // Kuinka monta ja millä perusteella valitaan näytettävät kun alue kattaa tuhansia paikkoja?
 liikuntapaikkaRouter.get('/', (request, response) => {
 
-    options.path = defaultPath + '?fields=name&fields=location.geometries&page=1&pageSize=100'
+    options.path = defaultPath + '?fields=name&fields=location.geometries&pageSize=100'
 
     let longitude = ''
     let latitude = ''
@@ -42,8 +42,8 @@ liikuntapaikkaRouter.get('/', (request, response) => {
         latitude = 'closeToLat=' + request.query.lat
         radius = 'closeToDistanceKm=' + request.query.rad
     }
-    if (request.query.pageNumber !== undefined) {
-        page = 'page=' + request.query.pageNumber
+    if (request.query.page !== undefined) {
+        page = 'page=' + request.query.page
     }
 
     let params = [ longitude, latitude, radius, page ]
@@ -63,40 +63,41 @@ liikuntapaikkaRouter.get('/', (request, response) => {
     options.path = options.path + paramsString
 
 
-    // getNHandleJSON(options, (input, status, count) => {
-    //     console.log(status, 'Number of places:', count) // Jos undefined kaikki palautettu
-    //     let filtered = input.filter(each => each.location !== undefined)
-    //     response.status(status)
-    //     console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
-    //     response.send(filtered)
-    // })
+    getNHandleJSON(options, (input, status, count) => {
+        //console.log(input)
+        console.log(status, 'Number of places:', count) // Jos undefined kaikki palautettu
+        let filtered = input.filter(each => each.location !== undefined)
+        response.status(status)
+        console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
+        response.send({ places: filtered, count: count })
+    })
 
-    let objArray = []
+    // let objArray = []
 
-    const perusGet = options => {
-        getNHandleJSON(options, (input, status, count) => {
-            console.log(status, 'Number of places:', count)
-            let filtered = input.filter(each => each.location !== undefined)
-            objArray = objArray.concat(filtered)
-            const fetchMore = count < 800 | count === undefined
-            if (fetchMore && status === 206)
-            {
-                //response.write(JSON.stringify(filtered))
-                options.path = utils.nextPage(options.path)
-                perusGet(options)
-            }
-            else {
-                const idArray = objArray.map(paikka => paikka.sportsPlaceId)
-                console.log('Has duplicates: ' + utils.hasDuplicates(idArray))
-                response.status(status)
-                //objArray = fetchMore ? objArray : []
-                console.log('Length: ' + objArray.length)
-                response.send(objArray)
-            }
-        })
-    }
+    // const perusGet = options => {
+    //     getNHandleJSON(options, (input, status, count) => {
+    //         console.log(status, 'Number of places:', count)
+    //         let filtered = input.filter(each => each.location !== undefined)
+    //         objArray = objArray.concat(filtered)
+    //         const fetchMore = count < 800 | count === undefined
+    //         if (fetchMore && status === 206)
+    //         {
+    //             //response.write(JSON.stringify(filtered))
+    //             options.path = utils.nextPage(options.path)
+    //             perusGet(options)
+    //         }
+    //         else {
+    //             const idArray = objArray.map(paikka => paikka.sportsPlaceId)
+    //             console.log('Has duplicates: ' + utils.hasDuplicates(idArray))
+    //             response.status(status)
+    //             //objArray = fetchMore ? objArray : []
+    //             console.log('Length: ' + objArray.length)
+    //             response.send(objArray)
+    //         }
+    //     })
+    // }
 
-    perusGet(options)
+    // perusGet(options)
 })
 
 

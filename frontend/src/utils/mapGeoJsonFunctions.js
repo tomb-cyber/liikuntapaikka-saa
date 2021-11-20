@@ -97,8 +97,11 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray, givenMarkerLayerGroup) {
         setLatLng: function () {}
     })
 
+    // Väänsin tähän tämmösen, että jos ei alussa oo mitään layergroup. Vaihda jos aiheuttaa ongelmia -T
+    let newLayerGroup = givenMarkerLayerGroup !== undefined ? givenMarkerLayerGroup : Leaflet.layerGroup(null)
+
     //Tyhjennetään aiempi LayerGroup, annettu funktiolle kutsuttaessa
-    givenMarkerLayerGroup.clearLayers()
+    newLayerGroup.clearLayers()
 
     //Esim. Polygonien piirtämistä varten
     var geoJsonDrawArray = new Array()
@@ -108,7 +111,7 @@ function drawGeoJsonOnMap(givenMap, givenGeoJsonArray, givenMarkerLayerGroup) {
         if(geoJson.type === 'Point') {
             var geopoint = Leaflet.marker([geoJson.coordinates[1], geoJson.coordinates[0]])
             //Voidaan lisätä esim. tooltip tässä vaiheessa
-            givenMarkerLayerGroup.addLayer(geopoint)
+            newLayerGroup.addLayer(geopoint)
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
         else {

@@ -5,7 +5,7 @@
  * @returns Liikuntapaikan geometry tiedot
  */
 const getGeoJSON = (liikuntapaikka) => {
-    console.log(liikuntapaikka)
+    //console.log(liikuntapaikka)
     if (liikuntapaikka.location.geometries.features[0].geometry.type !== 'LineString') {
         return liikuntapaikka.location.geometries.features[0].geometry
     }
