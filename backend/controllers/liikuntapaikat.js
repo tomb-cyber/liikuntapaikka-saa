@@ -36,6 +36,8 @@ liikuntapaikkaRouter.get('/', (request, response) => {
     let latitude = ''
     let radius = ''
     let page = ''
+    let search = ''
+    //let params = [ longitude, latitude, radius, page, search ]
 
     if (request.query.lon !== undefined && request.query.lat !== undefined && request.query.rad !== undefined) {
         longitude = 'closeToLon=' + request.query.lon
@@ -45,8 +47,11 @@ liikuntapaikkaRouter.get('/', (request, response) => {
     if (request.query.page !== undefined) {
         page = 'page=' + request.query.page
     }
+    if (request.query.searchString !== undefined) {
+        search = 'searchString=' + encodeURIComponent(request.query.searchString)
+    }
 
-    let params = [ longitude, latitude, radius, page ]
+    let params = [ longitude, latitude, radius, page, search ]
     params = params.filter(elem => elem !== '')
 
     let paramsString = ''
