@@ -27,6 +27,7 @@ const App = () => {
 
     const [mainMap, setMainMap] = useState()
     const [markerLayerGroup, setMarkerLayerGroup] = useState()
+    const [lineStringLG, setLineStringLG] = useState()
 
     const [status, setStatus] = useState(206)
     const [page, setPage] = useState(1)
@@ -94,7 +95,7 @@ const App = () => {
         }
         //console.log('Uudet: ', filtered)
         setData(data.concat(filtered), callback)
-        //return filtered
+        return filtered
     }
 
     /**
@@ -121,9 +122,11 @@ const App = () => {
             .then(res => {
                 page++
                 setStatus(res.status)
-                updateData(res.data)//.map(each => getGeoJSON(each)))
+                var updated = updateData(res.data)//.map(each => getGeoJSON(each)))
 
-                drawGeoJsonOnMap(data, markerLayerGroup)
+                if(updated != undefined) {
+                    drawGeoJsonOnMap(updated, markerLayerGroup, lineStringLG)
+                }
 
                 if (res.count < threshold)
                     setPage(page)
@@ -140,7 +143,11 @@ const App = () => {
                 className='w-100 h-100 bg-info'
                 // levealla ruudulla paddingia, ettei karttaa piirry sidebarin alle piiloon
                 style={ WIDE_SCREEN_THRESHOLD <= windowWidth ? ({ paddingLeft: SIDEBAR_WIDTH }) : ({  })} >
-                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds} mapInUse={mainMap} setMapInUse={setMainMap} markerLG={markerLayerGroup} setMarkerLG={setMarkerLayerGroup} />
+                <Mapcomponent mapBounds={mapBounds} onMapBoundsChange={updateBounds}
+                    mapInUse={mainMap} setMapInUse={setMainMap}
+                    markerLG={markerLayerGroup} setMarkerLG={setMarkerLayerGroup}
+                    lineStringLG={lineStringLG} setLineStringLG={setLineStringLG}
+                />
             </div>
         </div>
     )

@@ -77,7 +77,7 @@ function geoJsonOnStart(map) {
  * @param {*} givenMarkerLayerGroup markerLayerGroup, jolle GeoJSON-oliot piirretään
  * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
-function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
+function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenLineStringLayerGroup) {
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
         iconUrl: markerIcon,
@@ -102,12 +102,12 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
     let newLayerGroup = givenMarkerLayerGroup !== undefined ? givenMarkerLayerGroup : Leaflet.layerGroup(null)
 
     //Tyhjennetään aiempi LayerGroup, annettu funktiolle kutsuttaessa
-    newLayerGroup.clearLayers()
+    //newLayerGroup.clearLayers()
 
     //Esim. Polygonien piirtämistä varten
     var geoJsonDrawArray = new Array()
 
-    //Tooltipin ja muidenkin ominaisuuksien lisääminen GeoJsonLayerin kaikkiin yksilöihin
+    //Tooltipin ja muidenkin ominaisuuksien lisääminen geoJsonLayerin kaikkiin yksilöihin
     function onEachFeature(feature, layer) {
         if(feature.geometry.type === 'Polygon') {
             layer.bindTooltip(feature.properties.name)
@@ -136,6 +136,8 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
         }
         else {
             //Myöhemmin esim. LineStringit
+            /*var geoline = Leaflet.geoJSON(geojson)
+            givenLineStringLayerGroup.addLayer(geoline)*/
         }
 
         //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin

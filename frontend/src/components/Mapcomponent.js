@@ -15,6 +15,8 @@ var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}
 //Klusteroitavia objekteja varten, annetaan hookin kautta App.js:lle asti
 var markerLG = Leaflet.markerClusterGroup()
 
+var lineStringLG = Leaflet.layerGroup()
+
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
@@ -33,7 +35,9 @@ const Mapcomponent = (props) => {
                 //geoJsonOnStart(map)
                 map.addLayer(basetile)
                 map.addLayer(markerLG)
+                //map.addLayer(lineStringLG)
                 props.setMarkerLG(markerLG)
+                props.setLineStringLG(lineStringLG)
                 props.setMapInUse(map)
             }}
         >
@@ -53,6 +57,13 @@ function ExampleEventComponent(props) {
         //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
         zoom: () => {
             props.onMapBoundsChange(map.getBounds())
+            //LineString-testauksiin
+            /*if(map.getZoom() >= 14 && !map.hasLayer(lineStringLG)) {
+                map.addLayer(lineStringLG)
+            }
+            if(map.getZoom() <= 13 && map.hasLayer(lineStringLG)){
+                map.removeLayer(lineStringLG)
+            }*/
         },
         moveend: () => {
             props.onMapBoundsChange(map.getBounds())
