@@ -75,9 +75,10 @@ function geoJsonOnStart(map) {
  *
  * @param {*} givenGeoJsonArray Taulukko GeoJSON-muodossa olevia objekteja
  * @param {*} givenMarkerLayerGroup markerLayerGroup, jolle GeoJSON-oliot piirretään
+ * //givenLineStringLayerGroup -testauksessa, ei tällä hetkellä mukana
  * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
-function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenLineStringLayerGroup) {
+function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
         iconUrl: markerIcon,

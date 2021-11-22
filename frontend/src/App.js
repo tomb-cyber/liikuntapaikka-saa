@@ -124,8 +124,8 @@ const App = () => {
                 setStatus(res.status)
                 var updated = updateData(res.data)//.map(each => getGeoJSON(each)))
 
-                if(updated != undefined) {
-                    drawGeoJsonOnMap(updated, markerLayerGroup, lineStringLG)
+                if(updated !== undefined) {
+                    drawGeoJsonOnMap(updated, markerLayerGroup) //lineStringLG
                 }
 
                 if (res.count < threshold)
