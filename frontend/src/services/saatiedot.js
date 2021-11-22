@@ -25,6 +25,29 @@ function haeSaa(latlon) {
     })
 }
 
+/*
+----------------------------------------------------------------------------
+Datan käsittelyä varten
+----------------------------------------------------------------------------
+data.locations[0].data.Temperature.timeValuePairs[i] // Aika - arvo taulukko
+data.locations[0].data.Temperature.timeValuePairs[i].time // Aika
+data.locations[0].data.Temperature.timeValuePairs[i].value // Lämpötila tiettyyn aikaan
+
+data.locations[0].data.WeatherSymbol3.timeValuePairs[i] // Aika - arvo taulukko
+data.locations[0].data.WeatherSymbol3.timeValuePairs[i].time // Aika
+data.locations[0].data.WeatherSymbol3.timeValuePairs[i].value // Säätyyppi (symboli) tiettyyn aikaan
+
+data.locations[0].data.WindSpeedMS.timeValuePairs[i] // Aika - arvo taulukko
+data.locations[0].data.WindSpeedMS.timeValuePairs[i].time // Aika
+data.locations[0].data.WindSpeedMS.timeValuePairs[i].value // Tuulen nopeus tiettyyn aikaan
+
+data.locations[0].data.WindDirection.timeValuePairs[i] // Aika - arvo taulukko
+data.locations[0].data.WindDirection.timeValuePairs[i].time // Aika
+data.locations[0].data.WindDirection.timeValuePairs[i].value // Tuulen suunta tiettyyn aikaan
+
+Ajan saa muutettua oikeaan muotoon luomalla "new Date()" ja syöttämällä sille aika-arvo
+*/
+
 const exported =  { haeSaa }
 
 export default exported

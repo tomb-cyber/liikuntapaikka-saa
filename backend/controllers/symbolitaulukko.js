@@ -56,3 +56,6 @@ saaSymboliTaulukko[26] = new Image()
 saaSymboliTaulukko[26].src = '../symbols/91.svg'
 saaSymboliTaulukko[27] = new Image()
 saaSymboliTaulukko[27].src = '../symbols/92.svg'
+
+
+module.exports = saaSymboliTaulukko
