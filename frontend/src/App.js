@@ -55,6 +55,10 @@ const App = () => {
 
     console.log('data', data)
 
+    const handleSearchSubmit = (hakusana) => {
+        console.log(`tehtiin haku ${hakusana}`)
+    }
+
     // funktio, jota kutsutaan kun liikuntapaikka aktivoidaan sidebarista kasin
     const handleVenueCardClick = (sportsPlaceId) => {
         console.log(`Sidebarissa klikattiin liikuntapaikkaa, id:${sportsPlaceId}`)
@@ -136,7 +140,11 @@ const App = () => {
     return (
         <div>
             <div>
-                <Sidebar windowWidth={windowWidth} liikuntapaikat={data.slice(0, 10)} handleVCC={handleVenueCardClick} />
+                <Sidebar 
+                    windowWidth={windowWidth} 
+                    liikuntapaikat={data.slice(0, 10)}
+                    handleVCC={handleVenueCardClick}
+                    handleSearchSubmit={handleSearchSubmit} />
             </div>
             <div
                 className='w-100 h-100 bg-info'

@@ -1,5 +1,5 @@
 import { React, useState } from 'react'
-import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } from 'react-bootstrap'
+import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup, Form } from 'react-bootstrap'
 import {
     WIDE_SCREEN_THRESHOLD,
     OFFCANVAS_TOGGLE_THRESHOLD,
@@ -38,11 +38,12 @@ const mockData = {
  * @param {int} windowWidth - nykyinen ikkunan leveys
  * @returns SidebarOffcanvas, jos ikkunan leveys alle thresholdin. Muutoin SidebarRegular
  */
-const Sidebar = ({ windowWidth, liikuntapaikat, handleVCC }) => {
-    return windowWidth < WIDE_SCREEN_THRESHOLD ? (
-        <SidebarOffcanvas liikuntapaikat={liikuntapaikat} handleVCC={handleVCC} />
+const Sidebar = (props) => {
+    const [searchValue, setSearchValue] = useState('')
+    return props.windowWidth < WIDE_SCREEN_THRESHOLD ? (
+        <SidebarOffcanvas {...props} searchValue={searchValue} setSearchValue={setSearchValue} />
     ) : (
-        <SidebarRegular liikuntapaikat={liikuntapaikat} handleVCC={handleVCC}/>
+        <SidebarRegular {...props} searchValue={searchValue} setSearchValue={setSearchValue} />
     )
 }
 
@@ -116,10 +117,21 @@ const SidebarOffcanvas = (props) => {
 /**
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
-const SidebarContent = ({ handleVCC, liikuntapaikat }) => {
+const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue }) => {
     return (
         <div>
-            <h4>Search & Filter Placeholder</h4>
+            <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue)}}>
+                <Container fluid>
+                    <Row>
+                        <Col className='p-0' xs={10}>
+                            <input className='w-100' type='text' value={searchValue} onChange={(event) => setSearchValue(event.target.value)}></input>
+                        </Col>
+                        <Col className='p-0' xs={2}>
+                            <button className='w-100' type='submit'>&#128270;</button>
+                        </Col>
+                    </Row>
+                </Container>
+            </form>
             {liikuntapaikat.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} />)}
         </div>
     )
