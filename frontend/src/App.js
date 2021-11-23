@@ -37,15 +37,6 @@ const App = () => {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => window.addEventListener('resize', () => setWindowWidth(window.innerWidth)), [])
 
-    // sidebarin vakertamista varten valiaikainen liikuntapaikkavarasto
-    const [liikuntapaikat, setLiikuntapaikat] = useState([])
-    useEffect(() => {
-        liikuntaService
-            .getTempStart()
-            .then(res => setLiikuntapaikat(res))
-    }, [])
-    console.log('sidebarin lp-data: ', liikuntapaikat)
-
     useEffect(() => {
         fetchWithBounds(mapBounds, 1)
     }, [])
@@ -145,7 +136,7 @@ const App = () => {
     return (
         <div>
             <div>
-                <Sidebar windowWidth={windowWidth} liikuntapaikat={liikuntapaikat} handleVCC={handleVenueCardClick} />
+                <Sidebar windowWidth={windowWidth} liikuntapaikat={data.slice(0, 10)} handleVCC={handleVenueCardClick} />
             </div>
             <div
                 className='w-100 h-100 bg-info'
