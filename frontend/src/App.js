@@ -26,6 +26,7 @@ const App = () => {
     const [mapBounds, setMapBounds] = useState(aloitusBounds)
 
     const [mainMap, setMainMap] = useState()
+    const [isMapCreated, setMapCreated] = useState(false)
     const [markerLayerGroup, setMarkerLayerGroup] = useState()
     const [lineStringLG, setLineStringLG] = useState()
 
@@ -124,8 +125,15 @@ const App = () => {
                 setStatus(res.status)
                 var updated = updateData(res.data)//.map(each => getGeoJSON(each)))
 
+                //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
                 if(updated !== undefined) {
-                    drawGeoJsonOnMap(updated, markerLayerGroup) //lineStringLG
+                    if(mainMap !== undefined && isMapCreated === true) {
+                        drawGeoJsonOnMap(updated, markerLayerGroup, mainMap) //lineStringLG
+                    }
+                    if(mainMap !== undefined && isMapCreated === false) {
+                        drawGeoJsonOnMap(data, markerLayerGroup, mainMap)
+                        setMapCreated(true)
+                    }
                 }
 
                 if (res.count < threshold)

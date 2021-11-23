@@ -78,7 +78,7 @@ function geoJsonOnStart(map) {
  * //givenLineStringLayerGroup -testauksessa, ei tällä hetkellä mukana
  * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
-function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
+function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
         iconUrl: markerIcon,
@@ -100,7 +100,13 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
     })
 
     // Väänsin tähän tämmösen, että jos ei alussa oo mitään layergroup. Vaihda jos aiheuttaa ongelmia -T
-    let newLayerGroup = givenMarkerLayerGroup !== undefined ? givenMarkerLayerGroup : Leaflet.layerGroup(null)
+    let newLayerGroup = givenMarkerLayerGroup !== undefined ? givenMarkerLayerGroup : Leaflet.markerClusterGroup(null)
+
+    //Jos givenMarkerLayerGroupia ei ole vielä olemassa pitää newLayerGroup lisätä karttaan mukaan
+    var isGivenMLG = true
+    if(givenMarkerLayerGroup === undefined) {
+        isGivenMLG = false
+    }
 
     //Tyhjennetään aiempi LayerGroup, annettu funktiolle kutsuttaessa
     //newLayerGroup.clearLayers()
@@ -109,11 +115,11 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
     var geoJsonDrawArray = new Array()
 
     //Tooltipin ja muidenkin ominaisuuksien lisääminen geoJsonLayerin kaikkiin yksilöihin
-    function onEachFeature(feature, layer) {
+    /*function onEachFeature(feature, layer) {
         if(feature.geometry.type === 'Polygon') {
             layer.bindTooltip(feature.properties.name)
         }
-    }
+    }*/
 
     //Oletettu että sisään tuleva taulukko on jo GeoJSON-muodossa
     givenGeoJsonArray.forEach(dataelement => {
@@ -126,27 +132,33 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup) {
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
         //Testausta varten luotu laajempaa GeoJSON-oliota
         if(geojson.type === 'Polygon') {
-            var geoarea = {
+            //console.log(dataelement)
+            //console.log(geojson)
+            /*var geoarea = {
                 'type': 'Feature',
                 'properties': {
                     'name': 'testi'
                 },
                 'geometry': geojson
-            }
-            geoJsonDrawArray.push(geoarea)
+            }*/
+            //console.log(geoarea)
+            geoJsonDrawArray.push(geojson)
         }
         else {
             //Myöhemmin esim. LineStringit
             /*var geoline = Leaflet.geoJSON(geojson)
             givenLineStringLayerGroup.addLayer(geoline)*/
         }
-
-        //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
-        var geoJsonLayer = Leaflet.geoJSON(geoJsonDrawArray, {
-            onEachFeature: onEachFeature
-        })
-        newLayerGroup.addLayer(geoJsonLayer)
     })
+
+    //Jos käytetään alussa newLayerGrouppia, niin lisätään se karttaan mukaan
+    if(!isGivenMLG) givenMap.addLayer(newLayerGroup)
+    //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
+    console.log(geoJsonDrawArray)
+    var geoJsonLayer = Leaflet.geoJSON(geoJsonDrawArray, {
+        //onEachFeature: onEachFeature
+    })
+    newLayerGroup.addLayer(geoJsonLayer)
     return null
 }
 
