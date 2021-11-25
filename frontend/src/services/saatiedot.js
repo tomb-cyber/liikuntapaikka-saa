@@ -4,7 +4,8 @@ const parser = new Metolib.WfsRequestParser()
 const url = 'http://opendata.fmi.fi/wfs'
 const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
 
-function haeSaa(latlon) {
+function haeSaa(latlon//, handleCallback
+) {
     parser.getData({
         url: url,
         storedQueryId: query,
@@ -15,6 +16,7 @@ function haeSaa(latlon) {
         latlon: latlon,
         callback : function(data, errors) {
             if (data) {
+                //handleCallback(data)      Mahdollinen toteutus datan prosessointiin App:issa -T
                 console.log(data)
                 return data
             }

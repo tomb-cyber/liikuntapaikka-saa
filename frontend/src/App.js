@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 import { boundsToCoordsNRad, drawGeoJsonOnMap } from './utils/mapGeoJsonFunctions'
+//import saaService from './services/saatiedot'
 
 const App = () => {
 
@@ -22,6 +23,8 @@ const App = () => {
             lng: 25.9542980009038
         }
     }
+
+    //saaService.haeSaa('62.19663677298255,25.628828030200676', (input => console.log(input.locations[0].info.name)))
 
     const [data, setData] = useState([])
     const [mapBounds, setMapBounds] = useState(aloitusBounds)
