@@ -22,6 +22,7 @@ const App = () => {
             lng: 25.9542980009038
         }
     }
+
     const [data, setData] = useState([])
     const [mapBounds, setMapBounds] = useState(aloitusBounds)
 
@@ -140,11 +141,12 @@ const App = () => {
     return (
         <div>
             <div>
-                <Sidebar 
-                    windowWidth={windowWidth} 
+                <Sidebar
+                    windowWidth={windowWidth}
                     liikuntapaikat={data.slice(0, 10)}
                     handleVCC={handleVenueCardClick}
-                    handleSearchSubmit={handleSearchSubmit} />
+                    handleSearchSubmit={handleSearchSubmit}
+                    extensionFunc={(id) => liikuntaService.getById(id)} />
             </div>
             <div
                 className='w-100 h-100 bg-info'

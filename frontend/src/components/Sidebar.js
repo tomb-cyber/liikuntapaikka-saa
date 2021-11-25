@@ -117,7 +117,7 @@ const SidebarOffcanvas = (props) => {
 /**
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
-const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue }) => {
+const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc }) => {
     return (
         <div>
             <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue)}}>
@@ -132,7 +132,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     </Row>
                 </Container>
             </form>
-            {liikuntapaikat.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} />)}
+            {liikuntapaikat.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/>)}
         </div>
     )
 }
@@ -140,9 +140,18 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
 /**
  * Liikuntapaikka-kortti, joita näytetään sidebarissa.
  */
-const VenueCard = ( { venue, handleVCC, weather } ) => {
+const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
     const [open, setOpen] = useState(false)
+    const [details, setDetails] = useState(null)
     const collapseId = `collapse-${venue.id}`
+
+    const handleButtonClick = () => {
+        if (!open && details === null) {
+            onExtend(venue.sportsPlaceId).then(res => setDetails(res))
+        }
+        setOpen(!open)
+        console.log(details)
+    }
 
     return (
         <>
@@ -166,7 +175,11 @@ const VenueCard = ( { venue, handleVCC, weather } ) => {
                                         <div key={i}>{i*20} min {x.type} {x.temp} °C</div>
                                     ))}
                                 </ListGroup.Item>
-                                <ListGroup.Item>Muuta lisätietoa?</ListGroup.Item>
+                                <ListGroup.Item>Osoite: { /* Miten saada null/undefined tarkastukset järkevästi? Nyt kaatuu jo, jos esim. antaa tarkastusfunktiolle jotain x.undefined.y*/
+                                    details === null ? '-' : `${details.location.address}, ${details.location.postalCode} ${details.location.city.name}`} </ListGroup.Item>
+                                <ListGroup.Item>Rakennusvuosi: {details === null ? '-' : details.constructionYear} </ListGroup.Item>
+                                <ListGroup.Item>Liikuntapaikkatyyppi: {details === null ? '-' : details.type.name} </ListGroup.Item>
+                                <ListGroup.Item>Lisätieto: {details === null || details.properties === undefined || details.properties.infoFi === undefined ? '-' : details.properties.infoFi} </ListGroup.Item>
                                 <ListGroup.Item>Lisää muuta tietoa?</ListGroup.Item>
                             </ListGroup>
                         </div>
@@ -175,7 +188,7 @@ const VenueCard = ( { venue, handleVCC, weather } ) => {
                 <Button
                     variant={'secondary'}
                     size='sm'
-                    onClick={() => setOpen(!open)}
+                    onClick={handleButtonClick}// setOpen(!open)}
                     aria-controls={collapseId}
                     aria-expanded={open}
                 >
@@ -185,6 +198,7 @@ const VenueCard = ( { venue, handleVCC, weather } ) => {
         </>
     )
 }
+
 
 /**
  * apufunktio offcanvas-sidebarin toggle-buttonin sipaisujen kasittelyyn

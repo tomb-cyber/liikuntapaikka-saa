@@ -70,6 +70,19 @@ const searchPlaces = (searchString) => {
 }
 
 
-const exported =  { getTempStart, getAll, getPage, getPlacesWithin, searchPlaces }
+/**
+ * Palauttaa liikuntapaikkoja, jotka täsmäävät hakuun (logiikka täysin Lipaksen puolella)
+ * @param {*} searchString Hakusanat
+ * @returns Hakuun täsmäävät liikuntapaikat
+ */
+const getById = (id) => {
+    const request = axios.get(`/liikuntapaikat/${id}`)
+    return request.then(response => {
+        return response.data //{ data: response.data.places, status: response.status, count: response.data.count }
+    })
+}
+
+
+const exported =  { getTempStart, getAll, getPage, getPlacesWithin, searchPlaces, getById }
 
 export default exported
