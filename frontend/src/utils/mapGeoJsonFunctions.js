@@ -145,8 +145,6 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
             geoJsonDrawArray.push(geoarea)
         }
         else {
-            console.log(dataelement)
-            console.log(geojson)
             //Myöhemmin esim. LineStringit
             /*var geoline = Leaflet.geoJSON(geojson)
             givenLineStringLayerGroup.addLayer(geoline)*/
