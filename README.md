@@ -38,6 +38,8 @@ Jos avaat omat VS Code ikkunat kummallekin kansiolle ei edellistä pitäisi tarv
 ### Leaflet
 Dokumentaatio: <https://leafletjs.com/reference-1.7.1.html>
 
+Leaflet.markercluster: https://github.com/Leaflet/Leaflet.markercluster
+
 ### React-Leaflet
 Dokumentaatio: <https://react-leaflet.js.org/docs/start-introduction/>
 
