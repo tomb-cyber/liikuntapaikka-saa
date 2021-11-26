@@ -7,7 +7,7 @@ import { getGeoJSON } from './extractLiikunta'
 import { getDistance } from 'geolib'
 
 /*
-//Geojsonin piirtämisen testaukseen heti kartan alustuessa.
+//Geojsonin piirtämisen testaukseen heti kartan alustuessa. Poistetaan melko varmasti.
 function geoJsonOnStart(map) {
     //Testaukseen pisteiden piirtämiseksi, ei tällä hetkellä käytössä
     var geojsonMarkerOptions = {
@@ -132,8 +132,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
         //Testausta varten luotu laajempaa GeoJSON-oliota
-        if(geojson.type === 'Polygon') {
-            console.log(dataelement)
+        else if(geojson.type === 'Polygon') {
             //console.log(geojson)
             var geoarea = {
                 'type': 'Feature',
@@ -143,20 +142,26 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
                 },
                 'geometry': geojson
             }
-            console.log(geoarea)
             geoJsonDrawArray.push(geoarea)
         }
         else {
+            console.log(dataelement)
+            console.log(geojson)
             //Myöhemmin esim. LineStringit
             /*var geoline = Leaflet.geoJSON(geojson)
             givenLineStringLayerGroup.addLayer(geoline)*/
+
+            if(geojson[0].type === 'LineString') {
+                var geolinepoint = Leaflet.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]])
+                geolinepoint.bindTooltip(dataelement.name + ' (Reitti)')
+                newLayerGroup.addLayer(geolinepoint)
+            }
         }
     })
 
     //Jos käytetään alussa newLayerGrouppia, niin lisätään se karttaan mukaan
     if(!isGivenMLG) givenMap.addLayer(newLayerGroup)
     //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
-    console.log(geoJsonDrawArray)
     var geoJsonLayer = Leaflet.geoJSON(geoJsonDrawArray, {
         onEachFeature: onEachFeature
     })
