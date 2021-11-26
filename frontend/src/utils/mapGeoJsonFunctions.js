@@ -115,11 +115,11 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
     var geoJsonDrawArray = new Array()
 
     //Tooltipin ja muidenkin ominaisuuksien lisääminen geoJsonLayerin kaikkiin yksilöihin
-    /*function onEachFeature(feature, layer) {
+    function onEachFeature(feature, layer) {
         if(feature.geometry.type === 'Polygon') {
             layer.bindTooltip(feature.properties.name)
         }
-    }*/
+    }
 
     //Oletettu että sisään tuleva taulukko on jo GeoJSON-muodossa
     givenGeoJsonArray.forEach(dataelement => {
@@ -127,22 +127,24 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
         if(geojson.type === 'Point') {
             var geopoint = Leaflet.marker([geojson.coordinates[1], geojson.coordinates[0]])
             //Voidaan lisätä esim. tooltip tässä vaiheessa
+            geopoint.bindTooltip(dataelement.name)
             newLayerGroup.addLayer(geopoint)
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
         //Testausta varten luotu laajempaa GeoJSON-oliota
         if(geojson.type === 'Polygon') {
-            //console.log(dataelement)
+            console.log(dataelement)
             //console.log(geojson)
-            /*var geoarea = {
+            var geoarea = {
                 'type': 'Feature',
                 'properties': {
-                    'name': 'testi'
+                    'name': dataelement.name,
+                    'sportsPlaceId': dataelement.sportsPlaceId
                 },
                 'geometry': geojson
-            }*/
-            //console.log(geoarea)
-            geoJsonDrawArray.push(geojson)
+            }
+            console.log(geoarea)
+            geoJsonDrawArray.push(geoarea)
         }
         else {
             //Myöhemmin esim. LineStringit
@@ -156,7 +158,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
     //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
     console.log(geoJsonDrawArray)
     var geoJsonLayer = Leaflet.geoJSON(geoJsonDrawArray, {
-        //onEachFeature: onEachFeature
+        onEachFeature: onEachFeature
     })
     newLayerGroup.addLayer(geoJsonLayer)
     return null
