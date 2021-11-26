@@ -123,7 +123,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     const [nextVenueIndex, setNextVenueIndex] = useState(0)
     const [listedVenues, setListedVenues] = useState([])
     // TODO: Karttaa scrollautumisen / datan paivittymisen yhteydessa ei toivottua toiminnallisuutta
-    useEffect(() => initListedVenues(), [liikuntapaikat])
+    useEffect(() => initListedVenues(), [])
     const resetListedVenues = () => {
         setNextVenueIndex(0)
         setListedVenues([])
