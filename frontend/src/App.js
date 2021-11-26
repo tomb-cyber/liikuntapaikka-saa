@@ -146,7 +146,7 @@ const App = () => {
             <div>
                 <Sidebar
                     windowWidth={windowWidth}
-                    liikuntapaikat={data.slice(0, 10)}
+                    liikuntapaikat={data}
                     handleVCC={handleVenueCardClick}
                     handleSearchSubmit={handleSearchSubmit}
                     extensionFunc={(id) => liikuntaService.getById(id)} />

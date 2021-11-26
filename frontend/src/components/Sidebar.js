@@ -1,5 +1,6 @@
-import { React, useState } from 'react'
-import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup, Form } from 'react-bootstrap'
+import { React, useEffect, useState } from 'react'
+import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } from 'react-bootstrap'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import {
     WIDE_SCREEN_THRESHOLD,
     OFFCANVAS_TOGGLE_THRESHOLD,
@@ -53,8 +54,8 @@ const Sidebar = (props) => {
 const SidebarRegular = (props) => {
     return (
         <div
-            id='sidebar'
-            className='position-fixed top-0 left-0 visible h-100 bg-light p-1 shadow'
+            id='infinite-scroll'
+            className='position-fixed top-0 left-0 visible h-100 bg-light p-1 shadow overflow-auto'
             style={{ width: SIDEBAR_WIDTH }}
         >
             <SidebarContent {...props} />
@@ -96,7 +97,7 @@ const SidebarOffcanvas = (props) => {
                         onTouchMove={(event) => tlClose.move(event)}
                     >↓</Button>
                 </Offcanvas.Header>
-                <Offcanvas.Body className='p-2'>
+                <Offcanvas.Body id='infinite-scroll' className='p-2 overflow-auto'>
                     <SidebarContent {...props} />
                 </Offcanvas.Body>
             </Offcanvas>
@@ -118,6 +119,27 @@ const SidebarOffcanvas = (props) => {
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
 const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc }) => {
+    const step = 20
+    const [nextVenueIndex, setNextVenueIndex] = useState(0)
+    const [listedVenues, setListedVenues] = useState([])
+    // TODO: Karttaa scrollautumisen / datan paivittymisen yhteydessa ei toivottua toiminnallisuutta
+    useEffect(() => initListedVenues(), [liikuntapaikat])
+    const resetListedVenues = () => {
+        setNextVenueIndex(0)
+        setListedVenues([])
+    }
+    const loadMoreVenues = () => {
+        // setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextVenueIndex + step)))
+        const nextNextIndex = nextVenueIndex + step
+        setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
+        setNextVenueIndex(nextNextIndex)
+        console.log('listed venues length:' , listedVenues.length)
+    }
+    const initListedVenues = () => {
+        console.log('init')
+        resetListedVenues()
+        loadMoreVenues()
+    }
     return (
         <div>
             <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue)}}>
@@ -132,7 +154,16 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     </Row>
                 </Container>
             </form>
-            {liikuntapaikat.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/>)}
+            <div className='overflow-auto'>
+                <InfiniteScroll
+                    dataLength={listedVenues.length}
+                    next={loadMoreVenues}
+                    hasMore={listedVenues.length < liikuntapaikat.length}
+                    loader={<h3>Ladataan...</h3>}
+                    scrollableTarget='infinite-scroll'>
+                    {listedVenues.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/>)}
+                </InfiniteScroll>
+            </div>
         </div>
     )
 }

@@ -7,9 +7,9 @@ html, body {
 }
 
 #sidebar {
-  overflow-y: scroll;
   z-index: 1001;
 }
+
 
 #offcanvas-open-button {
   z-index: 1000;
