@@ -123,7 +123,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     const [nextVenueIndex, setNextVenueIndex] = useState(0)
     const [listedVenues, setListedVenues] = useState([])
     // TODO: replace bandaid
-    useEffect(() => initListedVenues, [liikuntapaikat.length])
+    useEffect(() => initListedVenues(), [liikuntapaikat.length])
     const loadMoreVenues = () => {
         const nextNextIndex = nextVenueIndex + step
         setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
@@ -131,8 +131,8 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
         setNextVenueIndex(nextNextIndex)
     }
     const initListedVenues = () => {
-        //TODO: replace bandaid
-        if (nextVenueIndex !== 0) return
+        //TODO: replace mysteerivakio bandaid
+        if (liikuntapaikat.length < 20 || nextVenueIndex !== 0) return
         console.log('init')
         loadMoreVenues()
     }
