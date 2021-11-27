@@ -173,6 +173,36 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
     const [details, setDetails] = useState(null)
     const collapseId = `collapse-${venue.id}`
 
+    const halututInfot = [
+        { title: 'Rakennusvuosi', property: 'constructionYear' },
+        { title: 'Liikuntapaikkatyyppi', property: 'type.name' },
+        { title: 'Puhelinnumero', property: 'phoneNumber' },
+        { title: 'Sähköposti', property: 'email' },
+        { title: 'Verkkosivu', property: 'www' },
+        { title: 'Lisätieto', property: 'properties.infoFi' },
+    ]
+
+    /**
+     * Listaa kaikki halututInfot-taulukossa olevat liikuntapaikasta löytyvät tiedot
+     * @returns Taulukko jossa ListGroup.Item-elementtejä joissa seloste ja tätä vastaava tieto
+     */
+    const returnAvailableDetails = () => {
+        let id = 1
+        return halututInfot.map(each => {
+            if (detailsHasProperty(each.property)){
+                let info = eval('details.' + each.property)
+                let linkOrText = info
+                if (each.property === 'www') {
+                    info = info.startsWith('http') ? info : 'https://' + info
+                    linkOrText =  <a href={info}>{info}</a>
+                }
+
+                return <ListGroup.Item key={id++}>{each.title + ': '} {linkOrText}
+                </ListGroup.Item>
+            }
+        })
+    }
+
     const handleButtonClick = () => {
         if (!open && details === null) {
             onExtend(venue.sportsPlaceId).then(res => setDetails(res))
@@ -182,6 +212,10 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
         console.log(details)
     }
 
+    /**
+     * Animoi annetun id:n omaavan nuolen
+     * @param id ArrowIconin id
+     */
     const animateArrow = (id) => {
         const item = document.getElementById(id)
         item.animate([
@@ -195,6 +229,9 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
             fill: 'forwards'
         })
     }
+
+    // Katso hasProperty:n dokumentaatio
+    const detailsHasProperty = nestedProperties => hasProperty(details, nestedProperties)
 
     return (
         <>
@@ -218,12 +255,9 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
                                         <div key={i}>{i*20} min {x.type} {x.temp} °C</div>
                                     ))}
                                 </ListGroup.Item>
-                                <ListGroup.Item>Osoite: { /* Miten saada null/undefined tarkastukset järkevästi? Nyt kaatuu jo, jos esim. antaa tarkastusfunktiolle jotain x.undefined.y*/
+                                <ListGroup.Item>Osoite: {
                                     details === null ? '-' : `${details.location.address}, ${details.location.postalCode} ${details.location.city.name}`} </ListGroup.Item>
-                                <ListGroup.Item>Rakennusvuosi: {details === null ? '-' : details.constructionYear} </ListGroup.Item>
-                                <ListGroup.Item>Liikuntapaikkatyyppi: {details === null ? '-' : details.type.name} </ListGroup.Item>
-                                <ListGroup.Item>Lisätieto: {details === null || details.properties === undefined || details.properties.infoFi === undefined ? '-' : details.properties.infoFi} </ListGroup.Item>
-                                <ListGroup.Item>Lisää muuta tietoa?</ListGroup.Item>
+                                { returnAvailableDetails() }
                             </ListGroup>
                         </div>
                     </Collapse>
@@ -243,6 +277,22 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
             </Card>
         </>
     )
+}
+
+/**
+ * Tutkii onko annetulla oliolla annettu property. Jos olio on x ja etsitään tämän ominaisuutta y.z eli x.y.z,
+ * on kutsu muotoa hasProperty(x, 'y.z')
+ * @param obj Tutkittava olio
+ * @param nestedProperties Etsittävä property stringinä
+ * @returns True jos oliolla on etsitty property, ja päinvastoin
+ */
+const hasProperty = (obj, nestedProperties) => {
+    return nestedProperties.split('.').every(part => {
+        if(typeof obj !== 'object' || obj === null || !(part in obj))
+            return false
+        obj = obj[part]
+        return true
+    })
 }
 
 
