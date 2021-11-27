@@ -1,6 +1,7 @@
 import { React, useEffect, useState } from 'react'
 import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } from 'react-bootstrap'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import ArrowIcon from './ArrowIcon'
 import {
     WIDE_SCREEN_THRESHOLD,
     OFFCANVAS_TOGGLE_THRESHOLD,
@@ -176,8 +177,23 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
         if (!open && details === null) {
             onExtend(venue.sportsPlaceId).then(res => setDetails(res))
         }
+        animateArrow('arrow-' + venue.sportsPlaceId)
         setOpen(!open)
         console.log(details)
+    }
+
+    const animateArrow = (id) => {
+        const item = document.getElementById(id)
+        item.animate([
+            { transform: 'rotate(0deg)', offset: 0 },
+            { transform: 'rotate(180deg)', offset: 1 },
+        ], {
+            duration: 500, //milliseconds
+            easing: 'ease-in-out',
+            iterations: 1,
+            direction: (open ? 'reverse' : 'normal'),
+            fill: 'forwards'
+        })
     }
 
     return (
@@ -218,8 +234,11 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
                     onClick={handleButtonClick}// setOpen(!open)}
                     aria-controls={collapseId}
                     aria-expanded={open}
+                    className='pb-2 btn-light'
                 >
-                    { open ? '↑' : '↓'}
+                    { //open ? '↑' : '↓'
+                    }
+                    <ArrowIcon id={'arrow-' + venue.sportsPlaceId} />
                 </Button>
             </Card>
         </>

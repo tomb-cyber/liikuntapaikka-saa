@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 import { boundsToCoordsNRad, drawGeoJsonOnMap } from './utils/mapGeoJsonFunctions'
+
 //import saaService from './services/saatiedot'
 
 const App = () => {
