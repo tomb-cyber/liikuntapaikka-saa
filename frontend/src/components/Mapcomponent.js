@@ -12,8 +12,12 @@ const jycenter = [62.241636, 25.746703]
 var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
 
+//MarkerClusterGroup-optionit
+var mcgoptions = {}
+mcgoptions.nameId = 'markercg'
+
 //Klusteroitavia objekteja varten, annetaan hookin kautta App.js:lle asti
-var markerLG = Leaflet.markerClusterGroup()
+var markerLG = Leaflet.markerClusterGroup(mcgoptions)
 
 var lineStringLG = Leaflet.layerGroup()
 

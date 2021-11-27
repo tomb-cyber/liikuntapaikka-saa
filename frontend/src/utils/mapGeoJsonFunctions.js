@@ -125,7 +125,9 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
     givenGeoJsonArray.forEach(dataelement => {
         var geojson = getGeoJSON(dataelement)
         if(geojson.type === 'Point') {
-            var geopoint = Leaflet.marker([geojson.coordinates[1], geojson.coordinates[0]])
+            var geopoint = Leaflet.marker([geojson.coordinates[1], geojson.coordinates[0]], {
+                sportsPlaceId: dataelement.sportsPlaceId
+            })
             //Voidaan lisätä esim. tooltip tässä vaiheessa
             geopoint.bindTooltip(dataelement.name)
             newLayerGroup.addLayer(geopoint)
@@ -144,16 +146,16 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
             }
             geoJsonDrawArray.push(geoarea)
         }
-        else {
+        else if (geojson[0].type === 'LineString') {
             //Myöhemmin esim. LineStringit
             /*var geoline = Leaflet.geoJSON(geojson)
             givenLineStringLayerGroup.addLayer(geoline)*/
 
-            if(geojson[0].type === 'LineString') {
-                var geolinepoint = Leaflet.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]])
-                geolinepoint.bindTooltip(dataelement.name + ' (Reitti)')
-                newLayerGroup.addLayer(geolinepoint)
-            }
+            var geolinepoint = Leaflet.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]]/*, {
+                sportsPlaceId: dataelement.sportsPlaceId
+            }*/)
+            geolinepoint.bindTooltip(dataelement.name + ' (Reitti)')
+            newLayerGroup.addLayer(geolinepoint)
         }
     })
 
@@ -164,6 +166,47 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
         onEachFeature: onEachFeature
     })
     newLayerGroup.addLayer(geoJsonLayer)
+    return null
+}
+
+//Alustava liikkuminen sidebarin liikuntapaikkaa klikatessa
+function moveWhenSidebarClicked(givenSportsPlaceId, givenSportsPlaceData, givenMap) {
+    givenSportsPlaceData.forEach(dataelement => {
+        var geojson = getGeoJSON(dataelement)
+        if(givenSportsPlaceId === dataelement.sportsPlaceId && geojson.type === 'Point') {
+            console.log(geojson)
+            var mapdestcoords = geojson.coordinates
+            givenMap.panTo([mapdestcoords[1], mapdestcoords[0]])
+            givenMap.setZoom(16)
+        }
+        else if(givenSportsPlaceId === dataelement.sportsPlaceId && geojson.type === 'Polygon') {
+            console.log(geojson)
+            var mapdestpolycoords = geojson.coordinates[0][0]
+            givenMap.panTo([mapdestpolycoords[1], mapdestpolycoords[0]])
+            givenMap.setZoom(14)
+        }
+        else if(givenSportsPlaceId === dataelement.sportsPlaceId && geojson[0].type === 'LineString') {
+            console.log(geojson)
+            var mapdestlinecoords = geojson[0].coordinates[0]
+            givenMap.panTo([mapdestlinecoords[1], mapdestlinecoords[0]])
+            givenMap.setZoom(14)
+        }
+    })
+
+    //Testaus sekoiluja alla
+    /*mainMap.eachLayer((layer) => {
+        console.log(layer)
+        if(layer.options.sportsPlaceId !== undefined && layer.options.sportsPlaceId === sportsPlaceId) {
+            mainMap.panTo([layer._latlng.lat, layer._latlng.lng])
+        }
+        if(layer.options.nameId === 'markercg') {
+            var childMarkerLayers = []
+            childMarkerLayers = layer._featureGroup._layers
+            childMarkerLayers.forEach(childMarkerLayer => {
+                var childMarkers
+            }
+        }
+    })*/
     return null
 }
 
@@ -183,4 +226,4 @@ const boundsToCoordsNRad = (bounds) => {
 }
 
 
-export { drawGeoJsonOnMap, boundsToCoordsNRad }
+export { drawGeoJsonOnMap, boundsToCoordsNRad, moveWhenSidebarClicked }

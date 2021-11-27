@@ -8,7 +8,7 @@ import liikuntaService from './services/liikuntapaikat'
 import Sidebar from './components/Sidebar'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
-import { boundsToCoordsNRad, drawGeoJsonOnMap } from './utils/mapGeoJsonFunctions'
+import { boundsToCoordsNRad, drawGeoJsonOnMap, moveWhenSidebarClicked } from './utils/mapGeoJsonFunctions'
 //import saaService from './services/saatiedot'
 
 const App = () => {
@@ -66,6 +66,8 @@ const App = () => {
     // funktio, jota kutsutaan kun liikuntapaikka aktivoidaan sidebarista kasin
     const handleVenueCardClick = (sportsPlaceId) => {
         console.log(`Sidebarissa klikattiin liikuntapaikkaa, id:${sportsPlaceId}`)
+        //Liikkuu kartalla liikuntapaikalle
+        moveWhenSidebarClicked(sportsPlaceId, data, mainMap)
     }
 
     // TODO: tähän funktioon jos sais liikuntapaikan sportsPlaceId:n kartalla klikatessa
