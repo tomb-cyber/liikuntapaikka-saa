@@ -122,22 +122,18 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     const step = 20
     const [nextVenueIndex, setNextVenueIndex] = useState(0)
     const [listedVenues, setListedVenues] = useState([])
-    // TODO: Karttaa scrollautumisen / datan paivittymisen yhteydessa ei toivottua toiminnallisuutta
-    useEffect(() => initListedVenues(), [])
-    const resetListedVenues = () => {
-        setNextVenueIndex(0)
-        setListedVenues([])
-    }
+    // TODO: replace bandaid
+    useEffect(() => initListedVenues, [liikuntapaikat.length])
     const loadMoreVenues = () => {
-        // setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextVenueIndex + step)))
         const nextNextIndex = nextVenueIndex + step
         setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
+        console.log('added venues to Sidebar, index range:' , nextVenueIndex, nextNextIndex)
         setNextVenueIndex(nextNextIndex)
-        console.log('listed venues length:' , listedVenues.length)
     }
     const initListedVenues = () => {
+        //TODO: replace bandaid
+        if (nextVenueIndex !== 0) return
         console.log('init')
-        resetListedVenues()
         loadMoreVenues()
     }
     return (
