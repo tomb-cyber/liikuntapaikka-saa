@@ -71,7 +71,7 @@ muokataan seuraavanlaiseksi
     "not op_mini all"
   ],
   ```
-  
+
 Kohta 2: Seuraavaksi poistetaan node_modules/.cache -kansio.
 
 Kohta 3: Viimeiseksi ajetaan npm install, jonka jälkeen npm start ja suorituksen ei pitäisi pysähtyä nullish coalescing -ongelmaan.
@@ -86,6 +86,9 @@ Dokumentaatio: <https://getbootstrap.com/docs/4.1/getting-started/introduction/>
 ### React-Bootstrap
 Dokumentaatio: <https://react-bootstrap.github.io/getting-started/introduction/>
 
+### React-Infinite-Scroll-Component
+Dokumentaatio: <https://github.com/ankeetmaini/react-infinite-scroll-component#readme>
+
 ## APIt tms
 
 ### Lipas
@@ -98,5 +101,3 @@ Dokumentaatio: <https://react-bootstrap.github.io/getting-started/introduction/>
 Dokumentaatio: <https://wiki.openstreetmap.org/wiki/API_v0.6>
 
 Tuolta wikistä löytyy muutakin dokumentaatiota esim. featureista, mutta tuossa on API
-
-
