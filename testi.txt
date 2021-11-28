@@ -1,5 +1,0 @@
-saatteko pullattua
-joo meikä sai t:Joni
-
-merge conflictia?
-testi toimiiko oikea github käyttäjä
