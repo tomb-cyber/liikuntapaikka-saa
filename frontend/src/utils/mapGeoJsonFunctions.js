@@ -78,7 +78,7 @@ function geoJsonOnStart(map) {
  * //givenLineStringLayerGroup -testauksessa, ei tällä hetkellä mukana
  * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
-function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
+function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, handleMarkerClick) {
     //Default-markeria varten
     var defaultIcon = Leaflet.icon( {
         iconUrl: markerIcon,
@@ -130,6 +130,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap) {
             })
             //Voidaan lisätä esim. tooltip tässä vaiheessa
             geopoint.bindTooltip(dataelement.name)
+            geopoint.on('click', () => handleMarkerClick(dataelement.sportsPlaceId))
             newLayerGroup.addLayer(geopoint)
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä

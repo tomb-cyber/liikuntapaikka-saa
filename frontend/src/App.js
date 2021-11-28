@@ -71,7 +71,7 @@ const App = () => {
     }
 
     // TODO: tähän funktioon jos sais liikuntapaikan sportsPlaceId:n kartalla klikatessa
-    const activateVenueCard = (sportsPlaceId) => {
+    const handleMapMarkerClick = (sportsPlaceId) => {
         console.log(`Kartalla klikattiin liikuntapaikkaa, id: ${sportsPlaceId}`)
     }
 
@@ -129,10 +129,10 @@ const App = () => {
                 //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
                 if(updated !== undefined) {
                     if(mainMap !== undefined && isMapCreated === true) {
-                        drawGeoJsonOnMap(updated, markerLayerGroup, mainMap) //lineStringLG
+                        drawGeoJsonOnMap(updated, markerLayerGroup, mainMap, handleMapMarkerClick) //lineStringLG
                     }
                     if(mainMap !== undefined && isMapCreated === false) {
-                        drawGeoJsonOnMap(data, markerLayerGroup, mainMap)
+                        drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick)
                         setMapCreated(true)
                     }
                 }
