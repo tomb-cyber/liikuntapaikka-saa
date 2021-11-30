@@ -120,15 +120,20 @@ const SidebarOffcanvas = (props) => {
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
 const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc }) => {
+    // montako liikuntapaikkaa maksimissaan per scrollaus
+    // TODO: vakioihin
     const step = 20
+    // seuraavan sidebarissa listaamattoman liikuntapaikan indeksi liikuntapaikat-taulukossa
     const [nextVenueIndex, setNextVenueIndex] = useState(0)
+    // sidebarissa listatut liikuntapaikat
     const [listedVenues, setListedVenues] = useState([])
     // TODO: replace bandaid
     useEffect(() => initListedVenues(), [liikuntapaikat.length])
     const loadMoreVenues = () => {
-        const nextNextIndex = nextVenueIndex + step
+        const nextNextIndex = Math.min(nextVenueIndex + step, liikuntapaikat.length)
         setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
-        console.log('added venues to Sidebar, index range:' , nextVenueIndex, nextNextIndex)
+        // console.log('added venues to Sidebar, index range:' , nextVenueIndex, nextNextIndex)
+        // console.log('next index: ', nextNextIndex)
         setNextVenueIndex(nextNextIndex)
     }
     const initListedVenues = () => {
