@@ -1,4 +1,4 @@
-﻿import Leaflet from 'leaflet'
+﻿import L from 'leaflet'
 import markerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png'
 import markerIconShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
@@ -80,19 +80,19 @@ function geoJsonOnStart(map) {
  */
 function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, handleMarkerClick) {
     //Default-markeria varten
-    var defaultIcon = Leaflet.icon( {
+    var defaultIcon = L.icon( {
         iconUrl: markerIcon,
         shadowUrl: markerIconShadow
     } )
 
-    Leaflet.Marker.prototype.options.icon = defaultIcon
+    L.Marker.prototype.options.icon = defaultIcon
 
     //Polylinien klusteroinniksi asetetaan keskuskohta
-    Leaflet.Polyline.addInitHook(function () {
+    L.Polyline.addInitHook(function () {
         this._latlng = this.getBounds().getCenter()
     })
 
-    Leaflet.Polyline.include({
+    L.Polyline.include({
         getLatLng: function () {
             return this._latlng
         },
@@ -100,7 +100,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
     })
 
     // Väänsin tähän tämmösen, että jos ei alussa oo mitään layergroup. Vaihda jos aiheuttaa ongelmia -T
-    let newLayerGroup = givenMarkerLayerGroup !== undefined ? givenMarkerLayerGroup : Leaflet.markerClusterGroup(null)
+    let newLayerGroup = givenMarkerLayerGroup !== undefined ? givenMarkerLayerGroup : L.markerClusterGroup(null)
 
     //Jos givenMarkerLayerGroupia ei ole vielä olemassa pitää newLayerGroup lisätä karttaan mukaan
     var isGivenMLG = true
@@ -118,6 +118,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
     function onEachFeature(feature, layer) {
         if(feature.geometry.type === 'Polygon') {
             layer.bindTooltip(feature.properties.name)
+            layer.on('click', () => handleMarkerClick(feature.properties.sportsPlaceId))
         }
     }
 
@@ -125,7 +126,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
     givenGeoJsonArray.forEach(dataelement => {
         var geojson = getGeoJSON(dataelement)
         if(geojson.type === 'Point') {
-            var geopoint = Leaflet.marker([geojson.coordinates[1], geojson.coordinates[0]], {
+            var geopoint = L.marker([geojson.coordinates[1], geojson.coordinates[0]], {
                 sportsPlaceId: dataelement.sportsPlaceId
             })
             //Voidaan lisätä esim. tooltip tässä vaiheessa
@@ -152,10 +153,11 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
             /*var geoline = Leaflet.geoJSON(geojson)
             givenLineStringLayerGroup.addLayer(geoline)*/
 
-            var geolinepoint = Leaflet.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]]/*, {
+            var geolinepoint = L.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]]/*, {
                 sportsPlaceId: dataelement.sportsPlaceId
             }*/)
             geolinepoint.bindTooltip(dataelement.name + ' (Reitti)')
+            geolinepoint.on('click', () => handleMarkerClick(dataelement.sportsPlaceId))
             newLayerGroup.addLayer(geolinepoint)
         }
     })
@@ -163,7 +165,7 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
     //Jos käytetään alussa newLayerGrouppia, niin lisätään se karttaan mukaan
     if(!isGivenMLG) givenMap.addLayer(newLayerGroup)
     //Luodaan poly-olioista Leafletin geoJson-taulukko ja lisätään haluttuun LayerGrouppiin
-    var geoJsonLayer = Leaflet.geoJSON(geoJsonDrawArray, {
+    var geoJsonLayer = L.geoJSON(geoJsonDrawArray, {
         onEachFeature: onEachFeature
     })
     newLayerGroup.addLayer(geoJsonLayer)
