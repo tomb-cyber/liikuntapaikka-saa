@@ -37,6 +37,9 @@ const App = () => {
     const [status, setStatus] = useState(206)
     const [page, setPage] = useState(1)
 
+    // tieto viimeksi kartalla klikatusta liikuntapaikasta
+    const [activeVenueCardId, setActiveVenueCardId] = useState(0)
+
     // Ikkunan leveys kuunteluun sidebaria varten.
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => window.addEventListener('resize', () => setWindowWidth(window.innerWidth)), [])
@@ -73,6 +76,7 @@ const App = () => {
     // TODO: tähän funktioon jos sais liikuntapaikan sportsPlaceId:n kartalla klikatessa
     const handleMapMarkerClick = (sportsPlaceId) => {
         console.log(`Kartalla klikattiin liikuntapaikkaa, id: ${sportsPlaceId}`)
+        setActiveVenueCardId(sportsPlaceId)
     }
 
 
@@ -151,7 +155,8 @@ const App = () => {
                     liikuntapaikat={data}
                     handleVCC={handleVenueCardClick}
                     handleSearchSubmit={handleSearchSubmit}
-                    extensionFunc={(id) => liikuntaService.getById(id)} />
+                    extensionFunc={(id) => liikuntaService.getById(id)}
+                    activeVenueCardId={activeVenueCardId} />
             </div>
             <div
                 className='w-100 h-100 bg-info'

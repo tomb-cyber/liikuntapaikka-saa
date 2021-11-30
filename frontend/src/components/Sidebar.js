@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState, useRef } from 'react'
 import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } from 'react-bootstrap'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ArrowIcon from './ArrowIcon'
@@ -9,6 +9,7 @@ import {
     OFFCANVAS_DEFAULT_VISIBILITY,
     SIDEBAR_WIDTH,
     TOGGLE_BUTTON_HEIGHT } from '../constants'
+import './Sidebar.css'
 
 
 // TODO: poista kun tarpeeton
@@ -119,7 +120,9 @@ const SidebarOffcanvas = (props) => {
 /**
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
-const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc }) => {
+const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc, activeVenueCardId }) => {
+    const activeVenueCard = liikuntapaikat.find(lp => lp.sportsPlaceId === activeVenueCardId)
+    const activeRef = useRef()
     // montako liikuntapaikkaa maksimissaan per scrollaus
     // TODO: vakioihin
     const step = 20
@@ -129,6 +132,14 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     const [listedVenues, setListedVenues] = useState([])
     // TODO: replace bandaid
     useEffect(() => initListedVenues(), [liikuntapaikat.length])
+    // aktivoituu kun kartalla klikataan uutta liikuntapaikkaa
+    // TODO: ei rullaa alkuun jos klikkaa samaa markeria kartalla kahdesti perakkain. Tama ok?
+    useEffect(() => {
+        // TODO: tahan jotaki elegantimpaa
+        if (activeRef.current !== undefined) {
+            activeRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [activeVenueCardId])
     const loadMoreVenues = () => {
         const nextNextIndex = Math.min(nextVenueIndex + step, liikuntapaikat.length)
         setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
@@ -163,6 +174,9 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     hasMore={listedVenues.length < liikuntapaikat.length}
                     loader={<h3>Ladataan...</h3>}
                     scrollableTarget='infinite-scroll'>
+                    {/* Kartalla aktivoidun liikuntapaikan kortti */}
+                    { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc} /> : '' }
+                    {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
                     {listedVenues.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/>)}
                 </InfiniteScroll>
             </div>
@@ -282,6 +296,17 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
             </Card>
         </>
     )
+}
+
+// wrapperi kartalta klikatun liikuntapaikan kortille
+// jotta animaatiot ym ei sotke liikaa sidebarContent -komponenttia
+const ActivatedVenueCardWrapper = (props) => {
+    const [className, setClassName] = useState({})
+    useEffect(() => {
+        setClassName('blinker')
+        setTimeout(() => setClassName(''), 1000)
+    }, [])
+    return <div className={className} ref={props.innerRef}><VenueCard {...props} /></div>
 }
 
 /**
