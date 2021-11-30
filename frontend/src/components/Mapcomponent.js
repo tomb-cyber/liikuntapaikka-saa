@@ -3,6 +3,10 @@ import { MapContainer, useMapEvents } from 'react-leaflet'
 import React from 'react'
 import Leaflet from 'leaflet'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
+
+import '@geoman-io/leaflet-geoman-free'
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+
 //import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
@@ -37,12 +41,35 @@ const Mapcomponent = (props) => {
             scrollWheelZoom={true}
             whenCreated={(map) => {
                 //geoJsonOnStart(map)
+
                 map.addLayer(basetile)
                 map.addLayer(markerLG)
+
                 //map.addLayer(lineStringLG)
                 props.setMarkerLG(markerLG)
                 props.setLineStringLG(lineStringLG)
                 props.setMapInUse(map)
+
+                map.pm.addControls({
+                    position: 'topright',
+                    drawCircle: false,
+                    drawCircleMarker: false,
+                })
+
+                console.log('shit cunt ', markerLG.pm.enabled())
+                markerLG.pm.enable({ pinning: true, snappable: false })
+                console.log('shit cunt ', markerLG.pm.enabled())
+                console.log(markerLG.pm.getOptions())
+
+                var littleton = Leaflet.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.'),
+                    denver    = Leaflet.marker([39.74, -104.99]).bindPopup('This is Denver, CO.'),
+                    aurora    = Leaflet.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.'),
+                    golden    = Leaflet.marker([39.77, -105.23]).bindPopup('This is Golden, CO.')
+
+                var cities = Leaflet.layerGroup([littleton, denver, aurora, golden])
+                map.addLayer(cities)
+                map.pm.setGlobalOptions({ pinning: true, snappable: true })
+                console.log('shit cunt ', cities.pm.enabled())
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
