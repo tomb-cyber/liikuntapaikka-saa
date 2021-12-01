@@ -45,6 +45,7 @@ const Mapcomponent = (props) => {
             minZoom={5}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
+            maxBounds={mapmaxbounds}
             whenCreated={(map) => {
                 //geoJsonOnStart(map)
 
@@ -56,6 +57,8 @@ const Mapcomponent = (props) => {
                 props.setLineStringLG(lineStringLG)
                 props.setMapInUse(map)
 
+
+                // Piirtojuttuja. Ymmärtääkseni kyseinen ongelma pisteiden piirrossa: https://github.com/Leaflet/Leaflet/issues/4968
                 map.pm.addControls({
                     position: 'topright',
                     drawCircle: false,
@@ -68,21 +71,6 @@ const Mapcomponent = (props) => {
                 map.on('pm:drawend', (e) => {
                     console.log(e)
                 })
-
-                console.log('shit cunt ', markerLG.pm.enabled())
-                markerLG.pm.enable({ pinning: true, snappable: false })
-                console.log('shit cunt ', markerLG.pm.enabled())
-                console.log(markerLG.pm.getOptions())
-
-                var littleton = L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.'),
-                    denver    = L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.'),
-                    aurora    = L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.'),
-                    golden    = L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.')
-
-                var cities = L.layerGroup([littleton, denver, aurora, golden])
-                map.addLayer(cities)
-                map.pm.setGlobalOptions({ pinning: true, snappable: true })
-                console.log('shit cunt ', cities.pm.enabled())
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>

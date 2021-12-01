@@ -89,10 +89,9 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
 
     //Polylinien klusteroinniksi asetetaan keskuskohta
     L.Polyline.addInitHook(function () {
-        console.log('tulosta this: ', this)
-        if (this._bounds._southWest !== null && this._bounds._southWest !== undefined)
+        //console.log('tulosta this: ', this)
+        if (this._bounds._southWest !== undefined)
             this._latlng = this.getBounds().getCenter()
-        //{ lat: 62.2580501305293, lng: 25.666321254681 }
     })
 
     L.Polyline.include({
