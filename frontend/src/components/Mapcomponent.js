@@ -1,24 +1,20 @@
 ﻿//import { Component } from 'react'
 import { MapContainer, useMapEvents } from 'react-leaflet'
 import React from 'react'
-import L from 'leaflet'
+import Leaflet from 'leaflet'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+
 
 //import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
 
-//Rajat kartalle
-var swcorner = L.latLng(59.59692577787735, 19.440307617187504)
-var necorner = L.latLng(70.20743570670635, 31.267089843750004)
-const mapmaxbounds = L.latLngBounds(swcorner, necorner)
-
 //TileLayer
-var basetile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
 
 //MarkerClusterGroup-optionit
@@ -26,9 +22,9 @@ var mcgoptions = {}
 mcgoptions.nameId = 'markercg'
 
 //Klusteroitavia objekteja varten, annetaan hookin kautta App.js:lle asti
-var markerLG = L.markerClusterGroup(mcgoptions)
+var markerLG = Leaflet.markerClusterGroup(mcgoptions)
 
-var lineStringLG = L.layerGroup()
+var lineStringLG = Leaflet.layerGroup()
 
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
@@ -41,8 +37,7 @@ const Mapcomponent = (props) => {
             center={jycenter}
             zoom={10}
             maxZoom={17}
-            minZoom={6}
-            maxBounds={mapmaxbounds}
+            minZoom={5}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
             whenCreated={(map) => {
@@ -60,6 +55,13 @@ const Mapcomponent = (props) => {
                     position: 'topright',
                     drawCircle: false,
                     drawCircleMarker: false,
+                })
+
+                map.on('pm:drawstart', (e) => {
+                    console.log(e)
+                })
+                map.on('pm:drawend', (e) => {
+                    console.log(e)
                 })
 
                 console.log('shit cunt ', markerLG.pm.enabled())
