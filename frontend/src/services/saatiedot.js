@@ -3,10 +3,9 @@ import Metolib from '@fmidev/metolib'
 const parser = new Metolib.WfsRequestParser()
 const url = 'http://opendata.fmi.fi/wfs'
 const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
-// var lista = [] -S
 
-function haeSaa(latlon//, handleCallback -T
-) {
+function haeSaa(latlon) {
+    var lista = []
     parser.getData({
         url: url,
         storedQueryId: query,
@@ -17,39 +16,35 @@ function haeSaa(latlon//, handleCallback -T
         latlon: latlon,
         callback : function(data) {
             if (data) {
-                //handleCallback(data)      Mahdollinen toteutus datan prosessointiin App:issa -T
-                // lista.push(data) -S
+                lista.push(data)
+                var tiedot = lista[0]
+                yhdistaTiedot(tiedot) // Tässä pitäis tehä varmaan sama listaan pushaus kikka
+                // returni ei toimi täs sisäl -> funktio auki kirjoitettuna tähän eikä erillisenä?
             }
         }
     })
-    // return lista -S
+    return lista[0]
 }
 
-/*
-----------------------------------------------------------------------------
-Datan käsittelyä varten
-----------------------------------------------------------------------------
-data.locations[0].data.Temperature.timeValuePairs[i] // Aika - arvo taulukko
-data.locations[0].data.Temperature.timeValuePairs[i].time // Aika
-data.locations[0].data.Temperature.timeValuePairs[i].value // Lämpötila tiettyyn aikaan
-
-data.locations[0].data.WeatherSymbol3.timeValuePairs[i] // Aika - arvo taulukko
-data.locations[0].data.WeatherSymbol3.timeValuePairs[i].time // Aika
-data.locations[0].data.WeatherSymbol3.timeValuePairs[i].value // Säätyyppi (symboli) tiettyyn aikaan
-^ Kutsutaan haeSymboli(value) jossa value on data.locations[0].data.WeatherSymbol3.timeValuePairs[i].value
-
-data.locations[0].data.WindSpeedMS.timeValuePairs[i] // Aika - arvo taulukko
-data.locations[0].data.WindSpeedMS.timeValuePairs[i].time // Aika
-data.locations[0].data.WindSpeedMS.timeValuePairs[i].value // Tuulen nopeus tiettyyn aikaan
-
-data.locations[0].data.WindDirection.timeValuePairs[i] // Aika - arvo taulukko
-data.locations[0].data.WindDirection.timeValuePairs[i].time // Aika
-data.locations[0].data.WindDirection.timeValuePairs[i].value // Tuulen suunta tiettyyn aikaan
-^ Tähän myös oma toteutus että saadaan arvoa vastaava nuolen kuvitus?
-^ Vastaavasti voidaan määrittää ilmansuuntien mukaan lounas luode kaakko yms ja niille rajat
-
-Ajan saa muutettua oikeaan muotoon luomalla "new Date()" ja syöttämällä sille aika-arvo
-*/
+function yhdistaTiedot(data) {
+    let tempList = data.locations[0].data.Temperature.timeValuePairs
+    let symbolList = data.locations[0].data.WeatherSymbol3.timeValuePairs
+    let windSpeedList = data.locations[0].data.WindSpeedMS.timeValuePairs
+    let windDirectionList = data.locations[0].data.WindDirection.timeValuePairs
+    var saaLista = []
+    var saaTiedot = {}
+    saaLista.push(saaTiedot)
+    for (let i = 0; i < tempList.length; i++) {
+        saaTiedot[i] = {
+            aika: tempList[i].time,
+            lampotila: tempList[i].value,
+            symbooli: symbolList[i].value,
+            tuuli_ms: windSpeedList[i].value,
+            tuulen_suunta: windDirectionList[i].value
+        }
+    }
+    return saaLista // palauttaa listan objekteja aika-arvottain
+}
 
 const exported =  { haeSaa }
 

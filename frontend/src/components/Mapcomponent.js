@@ -1,7 +1,7 @@
 ﻿//import { Component } from 'react'
 import { MapContainer, useMapEvents } from 'react-leaflet'
 import React from 'react'
-import Leaflet from 'leaflet'
+import L from 'leaflet'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 
 import '@geoman-io/leaflet-geoman-free'
@@ -13,8 +13,13 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
 
+//Rajat kartalle
+var swcorner = L.latLng(59.00662762374203, 18.149414062500004)
+var necorner = L.latLng(70.4367988185464, 33.20068359375001)
+const mapmaxbounds = L.latLngBounds(swcorner, necorner)
+
 //TileLayer
-var basetile = Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+var basetile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
 
 //MarkerClusterGroup-optionit
@@ -22,9 +27,9 @@ var mcgoptions = {}
 mcgoptions.nameId = 'markercg'
 
 //Klusteroitavia objekteja varten, annetaan hookin kautta App.js:lle asti
-var markerLG = Leaflet.markerClusterGroup(mcgoptions)
+var markerLG = L.markerClusterGroup(mcgoptions)
 
-var lineStringLG = Leaflet.layerGroup()
+var lineStringLG = L.layerGroup()
 
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
@@ -69,12 +74,12 @@ const Mapcomponent = (props) => {
                 console.log('shit cunt ', markerLG.pm.enabled())
                 console.log(markerLG.pm.getOptions())
 
-                var littleton = Leaflet.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.'),
-                    denver    = Leaflet.marker([39.74, -104.99]).bindPopup('This is Denver, CO.'),
-                    aurora    = Leaflet.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.'),
-                    golden    = Leaflet.marker([39.77, -105.23]).bindPopup('This is Golden, CO.')
+                var littleton = L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.'),
+                    denver    = L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.'),
+                    aurora    = L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.'),
+                    golden    = L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.')
 
-                var cities = Leaflet.layerGroup([littleton, denver, aurora, golden])
+                var cities = L.layerGroup([littleton, denver, aurora, golden])
                 map.addLayer(cities)
                 map.pm.setGlobalOptions({ pinning: true, snappable: true })
                 console.log('shit cunt ', cities.pm.enabled())
