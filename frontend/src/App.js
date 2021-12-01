@@ -64,7 +64,15 @@ const App = () => {
     console.log('data', data)
 
     const handleSearchSubmit = (hakusana) => {
-        console.log(`tehtiin haku ${hakusana}`)
+        // Tässä muodossa hakee 100 ensimmäistä hakua vastaavaa paikkaa. Tarvitaanko haku, joka palauttaa kaikki matchit? -T
+        liikuntaService.searchPlaces(hakusana)
+            .then(matches => {
+                //Lisätään uudet dataan
+                updateData(matches)
+
+                // Matchien käsittely
+                console.log(`tehtiin haku ${hakusana}, löytyi: `, matches)
+            })
     }
 
     // funktio, jota kutsutaan kun liikuntapaikka aktivoidaan sidebarista kasin
@@ -84,8 +92,9 @@ const App = () => {
     /**
      * Asettaa taulukon liikuntapaikat datan jatkoksi, jos ei jo datassa.
      * @param newData Taulukko liikuntapaikkoja
+     * @returns Uudet, ei datasta löytyvät paikat
      */
-    const updateData = (newData, callback) => {
+    const updateData = (newData) => {
         const filtered = []
         let isFound
         for (let i = 0; i < newData.length; i++) {
@@ -101,7 +110,7 @@ const App = () => {
             }
         }
         //console.log('Uudet: ', filtered)
-        setData(data.concat(filtered), callback)
+        setData(data.concat(filtered))
         return filtered
     }
 
