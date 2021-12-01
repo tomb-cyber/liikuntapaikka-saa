@@ -9,8 +9,8 @@ import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 const jycenter = [62.241636, 25.746703]
 
 //Rajat kartalle
-var swcorner = L.latLng(59.59692577787735, 19.440307617187504)
-var necorner = L.latLng(70.20743570670635, 31.267089843750004)
+var swcorner = L.latLng(59.00662762374203, 18.149414062500004)
+var necorner = L.latLng(70.4367988185464, 33.20068359375001)
 const mapmaxbounds = L.latLngBounds(swcorner, necorner)
 
 //TileLayer
