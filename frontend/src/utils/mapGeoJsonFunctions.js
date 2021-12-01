@@ -179,24 +179,45 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
 function moveWhenSidebarClicked(givenSportsPlaceId, givenSportsPlaceData, givenMap) {
     givenSportsPlaceData.forEach(dataelement => {
         var geojson = getGeoJSON(dataelement)
-        if(givenSportsPlaceId === dataelement.sportsPlaceId && geojson.type === 'Point') {
+        if(givenSportsPlaceId === dataelement.sportsPlaceId) {
+            if(geojson.type === 'Point') {
+                console.log(geojson)
+                var mapdestcoords = geojson.coordinates
+                givenMap.flyTo([mapdestcoords[1], mapdestcoords[0]], 16)
+            }
+            else if(geojson.type === 'Polygon') {
+                console.log(geojson)
+                var mapdestpolycoords = geojson.coordinates[0][0]
+                givenMap.flyTo([mapdestpolycoords[1], mapdestpolycoords[0]], 15)
+            }
+            else if (geojson[0].type === 'LineString') {
+                console.log(geojson)
+                var mapdestlinecoords = geojson[0].coordinates[0]
+                givenMap.flyTo([mapdestlinecoords[1], mapdestlinecoords[0]], 15)
+            }
+        }
+
+        /*if(geojson.type === 'Point') {
             console.log(geojson)
             var mapdestcoords = geojson.coordinates
-            givenMap.panTo([mapdestcoords[1], mapdestcoords[0]])
             givenMap.setZoom(16)
+            givenMap.panTo([mapdestcoords[1], mapdestcoords[0]])
+            //givenMap.flyTo([mapdestcoords[1], mapdestcoords[0]], 16)
         }
-        else if(givenSportsPlaceId === dataelement.sportsPlaceId && geojson.type === 'Polygon') {
+        else if(geojson.type === 'Polygon') {
             console.log(geojson)
             var mapdestpolycoords = geojson.coordinates[0][0]
-            givenMap.panTo([mapdestpolycoords[1], mapdestpolycoords[0]])
             givenMap.setZoom(14)
+            givenMap.panTo([mapdestpolycoords[1], mapdestpolycoords[0]])
+            //givenMap.flyTo([mapdestpolycoords[1], mapdestpolycoords[0]], 14)
         }
-        else if(givenSportsPlaceId === dataelement.sportsPlaceId && geojson[0].type === 'LineString') {
+        else (geojson[0].type === 'LineString') {
             console.log(geojson)
             var mapdestlinecoords = geojson[0].coordinates[0]
-            givenMap.panTo([mapdestlinecoords[1], mapdestlinecoords[0]])
             givenMap.setZoom(14)
-        }
+            givenMap.panTo([mapdestlinecoords[1], mapdestlinecoords[0]])
+            //givenMap.flyTo([mapdestlinecoords[1], mapdestlinecoords[0]], 14)
+        }*/
     })
 
     //Testaus sekoiluja alla
