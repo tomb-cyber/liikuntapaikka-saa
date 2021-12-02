@@ -25,3 +25,7 @@ html, body {
     height: calc(100vh - 38px);
   }
 }
+
+.drawnMarker {
+  filter: hue-rotate(90deg);
+}

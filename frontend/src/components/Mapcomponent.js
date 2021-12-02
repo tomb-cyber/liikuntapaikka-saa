@@ -6,6 +6,9 @@ import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+import markerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png'
+import markerIconShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png'
+import '../App.css'
 
 
 //import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
@@ -58,13 +61,32 @@ const Mapcomponent = (props) => {
                 props.setMapInUse(map)
 
 
-                // Piirtojuttuja. Ymmärtääkseni kyseinen ongelma pisteiden piirrossa: https://github.com/Leaflet/Leaflet/issues/4968
+
+                // Piirtojuttuja. Marker kuvan default haku hajoaa, joten pakotetaan options uudestaan
+                const customIcon = L.icon({
+                    iconUrl: markerIcon,
+                    shadowUrl: markerIconShadow,
+                    className: 'drawnMarker' // Löytyy App.css
+                })
+
+                const options = {
+                    markerStyle: {
+                        //draggable: true,
+                        icon: customIcon
+                    }
+                }
+
+                map.pm.setGlobalOptions(options)
+
+                // Pystyy liikuttamaan tai poistamaan Lipas paikkoja. TODO: pystyy muokkaamaan vain itse lisättyjä
                 map.pm.addControls({
                     position: 'topright',
                     drawCircle: false,
                     drawCircleMarker: false,
+                    //dragMode: false
                 })
 
+                // "Eventhandlereitä" jos tarvitaan
                 map.on('pm:drawstart', (e) => {
                     console.log(e)
                 })
