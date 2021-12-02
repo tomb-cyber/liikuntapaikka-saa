@@ -66,7 +66,9 @@ const Mapcomponent = (props) => {
                 const customIcon = L.icon({
                     iconUrl: markerIcon,
                     shadowUrl: markerIconShadow,
-                    className: 'drawnMarker' // Löytyy App.css
+                    className: 'drawnMarker', // Löytyy App.css
+                    iconAnchor:   [12, 41],
+                    popupAnchor:  [0, -41]
                 })
 
                 const options = {
@@ -86,13 +88,22 @@ const Mapcomponent = (props) => {
                     //dragMode: false
                 })
 
-                // "Eventhandlereitä" jos tarvitaan
-                map.on('pm:drawstart', (e) => {
-                    console.log(e)
+                // Eventhandlereitä
+                // map.on('pm:drawstart', (e) => {
+                //     console.log(e)
+                //     console.log(e.workingLayer._leaflet_id)
+                // })
+                map.on('pm:create', (event) => {
+                    const id = event.marker._leaflet_id
+                    const latlon = event.marker._latlng
+                    console.log(event)
+                    console.log(id, latlon)
+                    // Popupin sisälle pitäis laittaa formi, että voi tallentaa dataan
+                    event.marker.bindPopup('leafletId: ' + id + ', latlon: ' + JSON.stringify(latlon))  // kaikki liikuttaminen jne. rikkoo
                 })
-                map.on('pm:drawend', (e) => {
-                    console.log(e)
-                })
+                // map.on('pm:drawend', (e) => {
+                //     console.log(e)
+                // })
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
