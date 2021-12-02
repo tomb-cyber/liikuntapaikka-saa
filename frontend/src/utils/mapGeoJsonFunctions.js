@@ -134,6 +134,9 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
             //Voidaan lisätä esim. tooltip tässä vaiheessa
             geopoint.bindTooltip(dataelement.name)
             geopoint.on('click', () => handleMarkerClick(dataelement.sportsPlaceId))
+            if(geopoint.sportsPlaceId === 99531) {
+                console.log('Tässä kohtaa!!!')
+            }
             newLayerGroup.addLayer(geopoint)
         }
         //Muut kuin pisteet piirretään suoraan karttaan, vain polygonit toimivat tällä hetkellä
@@ -150,17 +153,19 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
             }
             geoJsonDrawArray.push(geoarea)
         }
-        else if (geojson[0].type === 'LineString') {
+        else {
+            if (geojson[0].type === 'LineString') {
             //Myöhemmin esim. LineStringit
             /*var geoline = Leaflet.geoJSON(geojson)
             givenLineStringLayerGroup.addLayer(geoline)*/
 
-            var geolinepoint = L.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]]/*, {
-                sportsPlaceId: dataelement.sportsPlaceId
-            }*/)
-            geolinepoint.bindTooltip(dataelement.name + ' (Reitti)')
-            geolinepoint.on('click', () => handleMarkerClick(dataelement.sportsPlaceId))
-            newLayerGroup.addLayer(geolinepoint)
+                var geolinepoint = L.marker([geojson[0].coordinates[0][1], geojson[0].coordinates[0][0]]/*, {
+                    sportsPlaceId: dataelement.sportsPlaceId
+                }*/)
+                geolinepoint.bindTooltip(dataelement.name + ' (Reitti)')
+                geolinepoint.on('click', () => handleMarkerClick(dataelement.sportsPlaceId))
+                newLayerGroup.addLayer(geolinepoint)
+            }
         }
     })
 

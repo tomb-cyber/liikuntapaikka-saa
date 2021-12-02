@@ -145,7 +145,7 @@ const App = () => {
                     if(mainMap !== undefined && isMapCreated === true) {
                         drawGeoJsonOnMap(updated, markerLayerGroup, mainMap, handleMapMarkerClick) //lineStringLG
                     }
-                    if(mainMap !== undefined && isMapCreated === false) {
+                    else if(mainMap !== undefined && isMapCreated === false) {
                         drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick)
                         setMapCreated(true)
                     }

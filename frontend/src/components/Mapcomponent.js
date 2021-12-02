@@ -42,7 +42,7 @@ const Mapcomponent = (props) => {
             center={jycenter}
             zoom={10}
             maxZoom={17}
-            minZoom={5}
+            minZoom={6}
             //Voiko hiirellä zoomata kartalla
             scrollWheelZoom={true}
             maxBounds={mapmaxbounds}
@@ -87,7 +87,7 @@ function ExampleEventComponent(props) {
             console.log('Klikattu piste: ' + JSON.stringify(coords))
         },
         //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
-        zoom: () => {
+        zoomend: () => {
             props.onMapBoundsChange(map.getBounds())
             //LineString-testauksiin
             /*if(map.getZoom() >= 14 && !map.hasLayer(lineStringLG)) {
