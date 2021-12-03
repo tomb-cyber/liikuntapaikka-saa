@@ -54,8 +54,8 @@ const Mapcomponent = (props) => {
 
                 map.addLayer(basetile)
                 map.addLayer(markerLG)
+                map.addLayer(lineStringLG)
 
-                //map.addLayer(lineStringLG)
                 props.setMarkerLG(markerLG)
                 props.setLineStringLG(lineStringLG)
                 props.setMapInUse(map)
@@ -123,12 +123,12 @@ function ExampleEventComponent(props) {
         zoomend: () => {
             props.onMapBoundsChange(map.getBounds())
             //LineString-testauksiin
-            /*if(map.getZoom() >= 14 && !map.hasLayer(lineStringLG)) {
+            if(map.getZoom() >= 14 && !map.hasLayer(lineStringLG)) {
                 map.addLayer(lineStringLG)
             }
             if(map.getZoom() <= 13 && map.hasLayer(lineStringLG)){
                 map.removeLayer(lineStringLG)
-            }*/
+            }
         },
         moveend: () => {
             props.onMapBoundsChange(map.getBounds())

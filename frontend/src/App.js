@@ -143,10 +143,10 @@ const App = () => {
                 //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
                 if(updated !== undefined) {
                     if(mainMap !== undefined && isMapCreated === true) {
-                        drawGeoJsonOnMap(updated, markerLayerGroup, mainMap, handleMapMarkerClick) //lineStringLG
+                        drawGeoJsonOnMap(updated, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
                     }
                     else if(mainMap !== undefined && isMapCreated === false) {
-                        drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick)
+                        drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
                         setMapCreated(true)
                     }
                 }
