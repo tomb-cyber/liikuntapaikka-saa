@@ -93,13 +93,32 @@ const Mapcomponent = (props) => {
                 //     console.log(e)
                 //     console.log(e.workingLayer._leaflet_id)
                 // })
+
+                const validateForm = (e) => {
+                    e.preventDefault()
+                    console.log('hello')
+                }
+
+                const form = '<form id="testform">' +
+                                '<label  for="name">Liikuntapaikan nimi: </label>' +
+                                '<input type="text" id="name"/><br/>' +
+                                '<label  for="osoite">Osoite: </label>' +
+                                '<input type="text" id="osoite"/><br/>' +
+                                '<input type="submit" value="Tallenna"></input>' +
+                            '</form>'
+
+
                 map.on('pm:create', (event) => {
                     const id = event.marker._leaflet_id
                     const latlon = event.marker._latlng
                     console.log(event)
                     console.log(id, latlon)
                     // Popupin sisälle pitäis laittaa formi, että voi tallentaa dataan
-                    event.marker.bindPopup('leafletId: ' + id + ', latlon: ' + JSON.stringify(latlon))  // kaikki liikuttaminen jne. rikkoo
+                    event.marker.bindPopup(form)
+
+                    event.layer.on('popupopen', e => console.log(e.popup._wrapper))
+
+                    //'leafletId: ' + id + ', latlon: ' + JSON.stringify(latlon))  // kaikki liikuttaminen jne. rikkoo
                 })
                 // map.on('pm:drawend', (e) => {
                 //     console.log(e)

@@ -156,6 +156,11 @@ const App = () => {
             })
     }
 
+    const validateForm = () => {
+        //e.preventDefault()
+        console.log('hello')
+    }
+
     return (
         <div>
             <div>
