@@ -94,17 +94,18 @@ const Mapcomponent = (props) => {
                 //     console.log(e.workingLayer._leaflet_id)
                 // })
 
-                const validateForm = (e) => {
-                    e.preventDefault()
-                    console.log('hello')
-                }
-
-                const form = '<form id="testform">' +
+                const form = '<form id="testform" class="grid-container">' +
+                                '<div class="grid-item">' +
                                 '<label  for="name">Liikuntapaikan nimi: </label>' +
-                                '<input type="text" id="name"/><br/>' +
-                                '<label  for="osoite">Osoite: </label>' +
-                                '<input type="text" id="osoite"/><br/>' +
-                                '<input type="submit" value="Tallenna"></input>' +
+                                '<input type="text" id="name" />' +
+                                '</div>' +
+                                '<div class="grid-item">' +
+                                '<label  for="osoite" >Osoite: </label>' +
+                                '<input type="text" id="osoite"/>' +
+                                '</div>' +
+                                '<div class="grid-item">' +
+                                '<input type="submit" value="Tallenna" ></input>' +
+                                '</div>' +
                             '</form>'
 
 
@@ -116,7 +117,14 @@ const Mapcomponent = (props) => {
                     // Popupin sisälle pitäis laittaa formi, että voi tallentaa dataan
                     event.marker.bindPopup(form)
 
-                    event.layer.on('popupopen', e => console.log(e.popup._wrapper))
+                    event.layer.on('popupopen', e => {
+                        const formElem = e.popup._wrapper.firstChild.firstChild
+                        console.log(formElem)
+                        formElem.onsubmit = (e) => {
+                            e.preventDefault()
+                            console.log('ei refreshaa')
+                        }
+                    })
 
                     //'leafletId: ' + id + ', latlon: ' + JSON.stringify(latlon))  // kaikki liikuttaminen jne. rikkoo
                 })

@@ -29,3 +29,9 @@ html, body {
 .drawnMarker {
   filter: hue-rotate(90deg);
 }
+
+.grid-container {
+  display: grid;
+  grid-row-gap: 1em;
+  font-size: medium;
+}
