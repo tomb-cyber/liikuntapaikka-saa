@@ -6,7 +6,6 @@ const url = 'http://opendata.fmi.fi/wfs'
 const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
 
 function haeSaa(latlon) {
-    var lista = []
     var saaLista = []
     var paivat = ['Sunnuntai','Maanantai','Tiistai','Keskiviikko','Torstai','Perjantai','Lauantai']
     parser.getData({
@@ -18,7 +17,6 @@ function haeSaa(latlon) {
         timestep: 20 * 60 * 1000,
         latlon: latlon,
         callback : function(data) {
-            lista.push(data)
             let tempList = data.locations[0].data.Temperature.timeValuePairs
             let symbolList = data.locations[0].data.WeatherSymbol3.timeValuePairs
             let windSpeedList = data.locations[0].data.WindSpeedMS.timeValuePairs
