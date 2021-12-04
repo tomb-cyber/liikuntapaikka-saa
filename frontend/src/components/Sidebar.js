@@ -143,7 +143,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
             <Pagination className='d-flex justify-content-center'>
                 <Pagination.First onClick={() => activatePage(0)} />
                 <Pagination.Prev onClick={() => activatePage(currentPage - 1)} />
-                <Pagination.Item>Sivu {currentPage + 1} / {lastPageNumber()} </Pagination.Item>
+                <Pagination.Item>Sivu {currentPage + 1} / {lastPageNumber() + 1} </Pagination.Item>
                 <Pagination.Next onClick={() => activatePage(currentPage + 1)} />
                 <Pagination.Last onClick={() => activatePage(lastPageNumber())} />
             </Pagination>
