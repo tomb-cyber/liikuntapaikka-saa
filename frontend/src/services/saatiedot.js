@@ -1,5 +1,5 @@
 import Metolib from '@fmidev/metolib'
-import saaSymboliTaulukko from '../../../backend/controllers/symbolitaulukko'
+import saaSymboliTaulukko from './symbolitaulukko'
 
 const parser = new Metolib.WfsRequestParser()
 const url = 'http://opendata.fmi.fi/wfs'
@@ -22,15 +22,17 @@ function haeSaa(latlon) {
             let windSpeedList = data.locations[0].data.WindSpeedMS.timeValuePairs
             let windDirectionList = data.locations[0].data.WindDirection.timeValuePairs
             var saaTiedot = {}
-            saaLista.push(saaTiedot)
+            // saaLista.push(saaTiedot)
             for (let i = 0; i < tempList.length; i++) {
                 saaTiedot[i] = {
                     aika: paivat[new Date().getDay()] + ' ' + new Date(tempList[i].time).toLocaleString('fi-FI'),
                     lampotila: tempList[i].value,
-                    saasymboli: haeSymboli(symbolList[i].value), // varmista toimivuus
+                    saasymboli: symbolList[i].value, // varmista toimivuus
+                    // saasymboli: haeSymboli(symbolList[i].value), // varmista toimivuus
                     tuuli_ms: windSpeedList[i].value,
                     tuulen_suunta: windDirectionList[i].value
                 }
+                saaLista.push(saaTiedot[i])
             }
         }
     })
@@ -49,6 +51,7 @@ function haeSymboli(value) {
     return symboli
 }
 
-const exported =  { haeSaa }
+// const exported =  { haeSaa }
 
-export default exported
+// export default exported
+export default haeSaa

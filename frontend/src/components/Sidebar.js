@@ -9,6 +9,7 @@ import {
     OFFCANVAS_DEFAULT_VISIBILITY,
     SIDEBAR_WIDTH,
     TOGGLE_BUTTON_HEIGHT } from '../constants'
+import haeSaa from '../services/saatiedot'
 import './Sidebar.css'
 
 
@@ -141,10 +142,9 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
         }
     }, [activeVenueCardId])
     const loadMoreVenues = () => {
+        // setListedVenues([liikuntapaikat[4]])
         const nextNextIndex = Math.min(nextVenueIndex + step, liikuntapaikat.length)
         setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
-        // console.log('added venues to Sidebar, index range:' , nextVenueIndex, nextNextIndex)
-        // console.log('next index: ', nextNextIndex)
         setNextVenueIndex(nextNextIndex)
     }
     const initListedVenues = () => {
@@ -175,9 +175,9 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     loader={<h3>Ladataan...</h3>}
                     scrollableTarget='infinite-scroll'>
                     {/* Kartalla aktivoidun liikuntapaikan kortti */}
-                    { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc} /> : '' }
+                    { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
                     {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
-                    {listedVenues.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/>)}
+                    {listedVenues.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc}/>)}
                 </InfiniteScroll>
             </div>
         </div>
@@ -187,10 +187,13 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
 /**
  * Liikuntapaikka-kortti, joita näytetään sidebarissa.
  */
-const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
+const VenueCard = ( { venue, handleVCC, onExtend } ) => {
     const [open, setOpen] = useState(false)
     const [details, setDetails] = useState(null)
+    const [weather, setWeather] = useState(null)
     const collapseId = `collapse-${venue.id}`
+
+    console.log(venue)
 
     const halututInfot = [
         { title: 'Rakennusvuosi', property: 'constructionYear' },
@@ -223,8 +226,16 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
     }
 
     const handleButtonClick = () => {
-        if (!open && details === null) {
-            onExtend(venue.sportsPlaceId).then(res => setDetails(res))
+        if (!open) {
+            if (details === null) {
+                onExtend(venue.sportsPlaceId).then(res => setDetails(res))
+            }
+            if (weather === null) {
+                const lat = venue.location.geometries.features[0].geometry.coordinates[1]
+                const lon = venue.location.geometries.features[0].geometry.coordinates[0]
+                // setWeather(haeSaa(`${lat},${lon}`))
+                setWeather(haeSaa(`${lat},${lon}`))
+            }
         }
         animateArrow('arrow-' + venue.sportsPlaceId)
         setOpen(!open)
@@ -262,17 +273,15 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
                             <Col xs={10} className='p-0 ps-1 pe-4'>{venue.description}</Col>
                             <Col xs={2} className='p-0'>{venue.indoors ? 'sisä' : 'ulko'}</Col>
                         </Row>
-                        <Row>
-                            <Col xs={12} className='p-0 pt-1 ps-1'>{weather[0].type} {weather[0].temp} °C</Col>
-                        </Row>
+                        {/* <Row>
+                            <Col xs={12} className='p-0 pt-1 ps-1'>placeholder</Col>
+                        </Row> */}
                     </Container>
                     <Collapse in={open}>
                         <div id={collapseId}>
                             <ListGroup>
                                 <ListGroup.Item>
-                                    { weather.map((x, i) => (
-                                        <div key={i}>{i*20} min {x.type} {x.temp} °C</div>
-                                    ))}
+                                    { weather !== null ? weather.map(w => <WeatherRow key={w.aika} info={w} /> ) : '' }
                                 </ListGroup.Item>
                                 <ListGroup.Item>Osoite: {
                                     details === null ? '-' : `${details.location.address}, ${details.location.postalCode} ${details.location.city.name}`} </ListGroup.Item>
@@ -295,6 +304,31 @@ const VenueCard = ( { venue, handleVCC, weather, onExtend } ) => {
                 </Button>
             </Card>
         </>
+    )
+}
+
+// Yksittainen saatietorivi sidebarissa
+const WeatherRow = ({ info }) => {
+    console.log(info)
+    return (
+        <Container>
+            <Row>
+                <Col>{info.aika}</Col>
+            </Row>
+            <Row>
+                <Col xs={3}>{info.lampotila}</Col>
+                <Col xs={3}>{info.saasymboli}</Col>
+                <Col xs={3}>{info.tuuli_ms}</Col>
+                <Col xs={3}>{info.tuulen_suunta}</Col>
+            </Row>
+        </Container>
+        // <>
+        //     <p>{info.aika}</p>
+        //     <p>{info.lampotila}</p>
+        //     <p>{info.saasymboli}</p>
+        //     <p>{info.tuuli_ms}</p>
+        //     <p>{info.tuulen_suunta}</p>
+        // </>
     )
 }
 
