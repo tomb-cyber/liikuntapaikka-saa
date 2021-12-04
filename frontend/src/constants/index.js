@@ -4,3 +4,4 @@ export const OFFCANVAS_TRANSITION_TIME = 0.12       // offcanvasin liukumisen an
 export const OFFCANVAS_DEFAULT_VISIBILITY = false   // onko offcanvas oletuksena ylos vedettyna
 export const SIDEBAR_WIDTH = 300                    // sidebarin leveys pikseleina
 export const TOGGLE_BUTTON_HEIGHT = 38              // offcanvas sidebarin toggle buttoneiden korkeus pikseleina
+export const VENUES_PER_PAGE = 20                   // yhdella sivulla naytettavien liikuntapaikkojen lukumaara

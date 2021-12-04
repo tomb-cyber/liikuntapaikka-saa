@@ -1,6 +1,5 @@
 import { React, useEffect, useState, useRef } from 'react'
-import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup } from 'react-bootstrap'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import { Offcanvas, Button, Card, Collapse, Container, Row, Col, ListGroup, Pagination } from 'react-bootstrap'
 import ArrowIcon from './ArrowIcon'
 import {
     WIDE_SCREEN_THRESHOLD,
@@ -8,34 +7,10 @@ import {
     OFFCANVAS_TRANSITION_TIME,
     OFFCANVAS_DEFAULT_VISIBILITY,
     SIDEBAR_WIDTH,
-    TOGGLE_BUTTON_HEIGHT } from '../constants'
+    TOGGLE_BUTTON_HEIGHT,
+    VENUES_PER_PAGE } from '../constants'
 import haeSaa from '../services/saatiedot'
 import './Sidebar.css'
-
-
-// TODO: poista kun tarpeeton
-const mockData = {
-    paikat: [
-        { id: 1, name: 'Liikuntapaikka X', indoors: true, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 2, name: 'Liikuntapaikka Y', indoors: false, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 3, name: 'Liikuntapaikka Z', indoors: true, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 4, name: 'Liikuntapaikka Å', indoors: true, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 5, name: 'Liikuntapaikka Ä', indoors: false, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 6, name: 'Liikuntapaikka Ö', indoors: false, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 7, name: 'Liikuntapaikka 0', indoors: true, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 8, name: 'Liikuntapaikka 1', indoors: true, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 9, name: 'Liikuntapaikka 2', indoors: false, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 10, name: 'Liikuntapaikka 3', indoors: true, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-        { id: 11, name: 'Liikuntapaikka 4', indoors: false, description: 'Liikuntapaikkatyyppi, Lisatietoja, Yms' },
-    ],
-    saatilat: [
-        { temp: 12, windDir: 15, windSpeed: 3, type: 'Aurinkoista ☀️' },
-        { temp: -12, windDir: 120, windSpeed: 8, type: 'Pyryttää 🌨️' },
-        { temp: 32, windDir: 0, windSpeed: 0, type: 'Aurinkoista ☀️' },
-        { temp: 5, windDir: 360, windSpeed: 6, type: 'Pilvistä ☁️' },
-        { temp: -35, windDir: 190, windSpeed: 1, type: 'Aurinkoista ☀️' },
-    ]
-}
 
 /**
  * Sidebarin pääkompinentti
@@ -122,37 +97,31 @@ const SidebarOffcanvas = (props) => {
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
 const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc, activeVenueCardId }) => {
+    //kartalla aktivoituun liikuntapaikkaan liittyvia hommia
     const activeVenueCard = liikuntapaikat.find(lp => lp.sportsPlaceId === activeVenueCardId)
     const activeRef = useRef()
-    // montako liikuntapaikkaa maksimissaan per scrollaus
-    // TODO: vakioihin
-    const step = 20
-    // seuraavan sidebarissa listaamattoman liikuntapaikan indeksi liikuntapaikat-taulukossa
-    const [nextVenueIndex, setNextVenueIndex] = useState(0)
-    // sidebarissa listatut liikuntapaikat
-    const [listedVenues, setListedVenues] = useState([])
-    // TODO: replace bandaid
-    useEffect(() => initListedVenues(), [liikuntapaikat.length])
-    // aktivoituu kun kartalla klikataan uutta liikuntapaikkaa
-    // TODO: ei rullaa alkuun jos klikkaa samaa markeria kartalla kahdesti perakkain. Tama ok?
     useEffect(() => {
         // TODO: tahan jotaki elegantimpaa
         if (activeRef.current !== undefined) {
             activeRef.current.scrollIntoView({ behavior: 'smooth' })
         }
     }, [activeVenueCardId])
-    const loadMoreVenues = () => {
-        // setListedVenues([liikuntapaikat[4]])
-        const nextNextIndex = Math.min(nextVenueIndex + step, liikuntapaikat.length)
-        setListedVenues(listedVenues.concat(liikuntapaikat.slice(nextVenueIndex, nextNextIndex)))
-        setNextVenueIndex(nextNextIndex)
+    //sivutukseen liittyvia hommia
+    const [currentPage, setCurrentPage] = useState(0)
+    const [venuesOnPage, setVenuesOnPage] = useState([])
+    const lastPageNumber = () => Math.floor(liikuntapaikat.length / VENUES_PER_PAGE)
+    const activatePage = (newPage) => {
+        const clampedNewPage = Math.min(Math.max(0, newPage), lastPageNumber())
+        setCurrentPage(clampedNewPage)
+        setVenuesOnPage(liikuntapaikat.slice(clampedNewPage * VENUES_PER_PAGE, clampedNewPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
     }
-    const initListedVenues = () => {
-        //TODO: replace mysteerivakio bandaid
-        if (liikuntapaikat.length < 20 || nextVenueIndex !== 0) return
-        console.log('init')
-        loadMoreVenues()
-    }
+    useEffect(() => {
+        // jos uusia liikuntapaikkoja ladatessa nykyisella sivulla alle maksimi lkm liikuntapaikkakortteja
+        // laitetaan uusien paikkojen kortteja jonon jatkeeksi
+        if (venuesOnPage.length < VENUES_PER_PAGE) {
+            setVenuesOnPage(liikuntapaikat.slice(currentPage * VENUES_PER_PAGE, currentPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
+        }
+    }, [liikuntapaikat.length])
     return (
         <div>
             <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue)}}>
@@ -167,19 +136,17 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     </Row>
                 </Container>
             </form>
-            <div className='overflow-auto'>
-                <InfiniteScroll
-                    dataLength={listedVenues.length}
-                    next={loadMoreVenues}
-                    hasMore={listedVenues.length < liikuntapaikat.length}
-                    loader={<h3>Ladataan...</h3>}
-                    scrollableTarget='infinite-scroll'>
-                    {/* Kartalla aktivoidun liikuntapaikan kortti */}
-                    { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
-                    {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
-                    {listedVenues.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc}/>)}
-                </InfiniteScroll>
-            </div>
+            {/* Kartalla aktivoidun liikuntapaikan kortti */}
+            { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
+            {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
+            {venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc}/>)}
+            <Pagination className='d-flex justify-content-center'>
+                <Pagination.First onClick={() => activatePage(0)} />
+                <Pagination.Prev onClick={() => activatePage(currentPage - 1)} />
+                <Pagination.Item>Sivu {currentPage + 1} / {lastPageNumber()} </Pagination.Item>
+                <Pagination.Next onClick={() => activatePage(currentPage + 1)} />
+                <Pagination.Last onClick={() => activatePage(lastPageNumber())} />
+            </Pagination>
         </div>
     )
 }
