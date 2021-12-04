@@ -97,6 +97,10 @@ const SidebarOffcanvas = (props) => {
  * Sidebarin kontentti, joka näytetään sekä regular että offcanvas-sidebarissa
  */
 const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchValue, setSearchValue, extensionFunc, activeVenueCardId }) => {
+    // listatut liikuntapaikat
+    // jos on tehty haku, naytetaan hakua vastaavat liikuntapaikat
+    // muutoin kaikki
+    const [listedVenues, setListedVenues] = useState([])
     //kartalla aktivoituun liikuntapaikkaan liittyvia hommia
     const activeVenueCard = liikuntapaikat.find(lp => lp.sportsPlaceId === activeVenueCardId)
     const activeRef = useRef()
@@ -109,37 +113,59 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     //sivutukseen liittyvia hommia
     const [currentPage, setCurrentPage] = useState(0)
     const [venuesOnPage, setVenuesOnPage] = useState([])
-    const lastPageNumber = () => Math.floor(liikuntapaikat.length / VENUES_PER_PAGE)
+    const lastPageNumber = () => Math.floor(listedVenues.length / VENUES_PER_PAGE)
     const activatePage = (newPage) => {
         const clampedNewPage = Math.min(Math.max(0, newPage), lastPageNumber())
         setCurrentPage(clampedNewPage)
-        setVenuesOnPage(liikuntapaikat.slice(clampedNewPage * VENUES_PER_PAGE, clampedNewPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
+        setVenuesOnPage(listedVenues.slice(clampedNewPage * VENUES_PER_PAGE, clampedNewPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
     }
+    useEffect(() => {
+        if (filter === '') setListedVenues(liikuntapaikat)
+    }, [liikuntapaikat.length])
     useEffect(() => {
         // jos uusia liikuntapaikkoja ladatessa nykyisella sivulla alle maksimi lkm liikuntapaikkakortteja
         // laitetaan uusien paikkojen kortteja jonon jatkeeksi
         if (venuesOnPage.length < VENUES_PER_PAGE) {
-            setVenuesOnPage(liikuntapaikat.slice(currentPage * VENUES_PER_PAGE, currentPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
+            setVenuesOnPage(listedVenues.slice(currentPage * VENUES_PER_PAGE, currentPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
         }
-    }, [liikuntapaikat.length])
+    }, [listedVenues.length])
+    // hakutulosten filtteroimiseen liittyvia juttuja
+    const [filter, setFilter] = useState('')
+    const filterSearchResults = () => {
+        setFilter(searchValue)
+    }
+    useEffect(() => {
+        setCurrentPage(0)
+        setVenuesOnPage([])
+        setListedVenues(filter === '' ? liikuntapaikat : liikuntapaikat.filter(lp => lp.name !== null && lp.name.toUpperCase().includes(searchValue.toUpperCase())))
+    }, [filter])
     return (
         <div>
-            <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue)}}>
-                <Container fluid>
+            <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue, filterSearchResults)}}>
+                <Container fluid className='pb-2'>
                     <Row>
-                        <Col className='p-0' xs={10}>
+                        <Col className='p-0' xs={8}>
                             <input className='w-100' type='text' value={searchValue} onChange={(event) => setSearchValue(event.target.value)}></input>
                         </Col>
                         <Col className='p-0' xs={2}>
                             <button className='w-100' type='submit'>&#128270;</button>
                         </Col>
+                        <Col className='p-0' xs={2}>
+                            <button className='w-100' onClick={() => {setSearchValue(''); setFilter('')}}>X</button>
+                        </Col>
                     </Row>
+                    { filter !== '' ?
+                        <Row>
+                            <Col>Löytyi {listedVenues.length} liikuntapaikkaa hakusanalla {`"${filter}"`}</Col>
+                        </Row>
+                        : ''
+                    }
                 </Container>
             </form>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
             { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
             {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
-            {venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc}/>)}
+            { venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc} />) }
             <Pagination className='d-flex justify-content-center'>
                 <Pagination.First onClick={() => activatePage(0)} />
                 <Pagination.Prev onClick={() => activatePage(currentPage - 1)} />

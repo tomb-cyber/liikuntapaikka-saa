@@ -63,7 +63,7 @@ const App = () => {
 
     console.log('data', data)
 
-    const handleSearchSubmit = (hakusana) => {
+    const handleSearchSubmit = (hakusana, callback) => {
         // Tässä muodossa hakee 100 ensimmäistä hakua vastaavaa paikkaa. Tarvitaanko haku, joka palauttaa kaikki matchit? -T
         liikuntaService.searchPlaces(hakusana)
             .then(matches => {
@@ -72,6 +72,9 @@ const App = () => {
 
                 // Matchien käsittely
                 console.log(`tehtiin haku ${hakusana}, löytyi: `, matches)
+
+                // kerrotaan sivupalkille, etta haun lisaamat paikat on lisatty dataan
+                callback()
             })
     }
 
