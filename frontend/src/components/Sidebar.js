@@ -193,8 +193,6 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
     const [weather, setWeather] = useState(null)
     const collapseId = `collapse-${venue.id}`
 
-    console.log(venue)
-
     const halututInfot = [
         { title: 'Rakennusvuosi', property: 'constructionYear' },
         { title: 'Liikuntapaikkatyyppi', property: 'type.name' },
