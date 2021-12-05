@@ -104,6 +104,10 @@ const Mapcomponent = (props) => {
                                 '<input type="text" id="osoite"/>' +
                                 '</div>' +
                                 '<div class="grid-item">' +
+                                '<label  for="tyyppi" >Liikuntapaikkatyyppi: </label>' +
+                                '<input type="text" id="tyyppi"/>' +
+                                '</div>' +
+                                '<div class="grid-item">' +
                                 '<input type="submit" value="Tallenna" ></input>' +
                                 '</div>' +
                             '</form>'
@@ -122,7 +126,32 @@ const Mapcomponent = (props) => {
                         console.log(formElem)
                         formElem.onsubmit = (e) => {
                             e.preventDefault()
-                            console.log('ei refreshaa')
+                            console.log(formElem.name.value)
+
+                            const newPlace = {
+                                type: {
+                                    name: formElem.tyyppi.value
+                                },
+                                location: {
+                                    address: formElem.osoite.value,
+                                    geometries: {
+                                        type: 'FeatureCollection',
+                                        features: {
+                                            geometry: {
+                                                type: 'Point',
+                                                coordinates: [
+                                                    latlon.lat,
+                                                    latlon.lng
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
+                                name: formElem.name.value,
+                                sportsPlaceId: -(id)
+                            }
+
+                            console.log(newPlace)
                         }
                     })
 
