@@ -11,7 +11,6 @@ import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 import { boundsToCoordsNRad, drawGeoJsonOnMap, moveWhenSidebarClicked } from './utils/mapGeoJsonFunctions'
 //import saaService from './services/saatiedot'
 
-
 const App = () => {
 
     const aloitusBounds = {
