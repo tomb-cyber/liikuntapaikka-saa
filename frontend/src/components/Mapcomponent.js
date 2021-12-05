@@ -17,8 +17,8 @@ import '../App.css'
 const jycenter = [62.241636, 25.746703]
 
 //Rajat kartalle
-var swcorner = L.latLng(59.00662762374203, 18.149414062500004)
-var necorner = L.latLng(70.4367988185464, 33.20068359375001)
+var swcorner = L.latLng(59.0, 16.0)
+var necorner = L.latLng(71., 37.0)
 const mapmaxbounds = L.latLngBounds(swcorner, necorner)
 
 //TileLayer

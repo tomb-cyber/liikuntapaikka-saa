@@ -9,8 +9,10 @@ import { getDistance } from 'geolib'
  *
  * @param {*} givenGeoJsonArray Taulukko GeoJSON-muodossa olevia objekteja
  * @param {*} givenMarkerLayerGroup markerLayerGroup, jolle GeoJSON-oliot piirretään
- * //givenLineStringLayerGroup -testauksessa, ei tällä hetkellä mukana
- * @returns nullin, muutokset karttaan tapahtuvat funktion suorituksen aikana
+ * @param {*} givenMap kartta, jota käsitellään
+ * @param {*} handleMarkerClick sportsPlaceId:n antamista varten
+ * @param {*} givenLineStringLayerGroup LayerGroup linestring-objekteja varten, nämä näytetään kartalla vasta kun tarvittava zoomlevel on saavutettu
+ * @returns null, muutokset karttaan tapahtuvat funktion suorituksen aikana
  */
 function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, handleMarkerClick, givenLineStringLayerGroup) {
     //Default-markeria varten
@@ -99,6 +101,8 @@ function drawGeoJsonOnMap(givenGeoJsonArray, givenMarkerLayerGroup, givenMap, ha
                 }
 
                 var geoline = L.geoJSON(geojson)
+                geoline.bindTooltip(dataelement.name + ' (Reitti)')
+                geoline.on('click', () => handleMarkerClick(dataelement.sportsPlaceId))
                 givenLineStringLayerGroup.addLayer(geoline)
 
                 if(givenMap.hasLayer(givenLineStringLayerGroup) && givenMap.getZoom() <= 13) {
