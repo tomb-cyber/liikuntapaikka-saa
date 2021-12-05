@@ -32,7 +32,6 @@ const Sidebar = (props) => {
 const SidebarRegular = (props) => {
     return (
         <div
-            id='infinite-scroll'
             className='position-fixed top-0 left-0 visible h-100 bg-light p-1 shadow overflow-auto'
             style={{ width: SIDEBAR_WIDTH }}
         >
@@ -75,7 +74,7 @@ const SidebarOffcanvas = (props) => {
                         onTouchMove={(event) => tlClose.move(event)}
                     >↓</Button>
                 </Offcanvas.Header>
-                <Offcanvas.Body id='infinite-scroll' className='p-2 overflow-auto'>
+                <Offcanvas.Body className='p-2 overflow-auto'>
                     <SidebarContent {...props} />
                 </Offcanvas.Body>
             </Offcanvas>
@@ -111,13 +110,22 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
         }
     }, [activeVenueCardId])
     //sivutukseen liittyvia hommia
+    // nykyinen sivu
     const [currentPage, setCurrentPage] = useState(0)
+    // nykyisella sivulla naytettavat liikuntapaikat
     const [venuesOnPage, setVenuesOnPage] = useState([])
+    // spagetin minimointi
     const lastPageNumber = () => Math.floor(listedVenues.length / VENUES_PER_PAGE)
+    // elementti johon skrollataan esim. sivua vaihdettaessa
+    const topOfPage = useRef(null)
+    // sivun vaihtamiseen kaytettava funktio
     const activatePage = (newPage) => {
         const clampedNewPage = Math.min(Math.max(0, newPage), lastPageNumber())
         setCurrentPage(clampedNewPage)
         setVenuesOnPage(listedVenues.slice(clampedNewPage * VENUES_PER_PAGE, clampedNewPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
+        // TODO: miksei scrollaa kaikilla sivuilla kun smooth?
+        // topOfPage.current.scrollIntoView({ behavior: 'smooth' })
+        topOfPage.current.scrollIntoView()
     }
     useEffect(() => {
         if (filter === '') setListedVenues(liikuntapaikat)
@@ -162,6 +170,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     }
                 </Container>
             </form>
+            <div ref={topOfPage}></div>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
             { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
             {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
