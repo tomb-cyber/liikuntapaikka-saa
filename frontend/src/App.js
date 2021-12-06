@@ -125,7 +125,6 @@ const App = () => {
         fetchWithBounds(bounds, 1)
     }
 
-
     /**
      * Hakee backendilta bounds sisällä olevat liikuntapaikat sivulta page. Jos kartan alueella on vähemmän paikkoja kuin threshold
      * sallii, vaihdetaan page state, joka laukaisee loopin useEffectin avulla, millä haetaan kaikki alueen paikat.
@@ -177,6 +176,7 @@ const App = () => {
                     mapInUse={mainMap} setMapInUse={setMainMap}
                     markerLG={markerLayerGroup} setMarkerLG={setMarkerLayerGroup}
                     lineStringLG={lineStringLG} setLineStringLG={setLineStringLG}
+                    updateData={updateData}
                 />
             </div>
         </div>

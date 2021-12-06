@@ -118,22 +118,20 @@ const Mapcomponent = (props) => {
                 map.on('pm:create', (event) => {
                     const id = event.marker._leaflet_id
                     const latlon = event.marker._latlng
+                    const marker = event.marker
                     console.log(event)
                     console.log(id, latlon)
-                    // Popupin sisälle pitäis laittaa formi, että voi tallentaa dataan
-                    event.marker.bindPopup(form)
+                    marker.bindPopup(form)
 
                     event.layer.on('popupopen', e => {
                         const formElem = e.popup._wrapper.firstChild.firstChild
-                        console.log(formElem)
+                        //console.log(formElem)
                         formElem.onsubmit = (e) => {
                             e.preventDefault()
                             console.log(formElem.name.value)
 
                             const newPlace = {
-                                type: {
-                                    name: formElem.tyyppi.value
-                                },
+                                name: formElem.name.value,
                                 location: {
                                     address: formElem.osoite.value,
                                     geometries: {
@@ -149,16 +147,17 @@ const Mapcomponent = (props) => {
                                         }
                                     }
                                 },
-                                name: formElem.name.value,
-                                sportsPlaceId: -(id)
+                                sportsPlaceId: -(id), // Oletan, että leafletId:ssä on jokin logiikka mikä estää session sisällä
+                                type: {               // duplikaatteja. Miinusmerkki idssä indikoi, että on itse lisätty. Hajottaako miinus jossain?
+                                    name: formElem.tyyppi.value
+                                }
                             }
-
-                            console.log(newPlace)
+                            props.updateData([newPlace])
+                            marker.bindPopup(newPlace.name)
                         }
                     })
-
-                    //'leafletId: ' + id + ', latlon: ' + JSON.stringify(latlon))  // kaikki liikuttaminen jne. rikkoo
                 })
+
                 // map.on('pm:drawend', (e) => {
                 //     console.log(e)
                 // })

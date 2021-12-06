@@ -35,3 +35,9 @@ html, body {
   grid-row-gap: 1em;
   font-size: medium;
 }
+
+.grid-item {
+  display: grid;
+  grid-row-gap: 0.01em;
+  font-size: medium;
+}
