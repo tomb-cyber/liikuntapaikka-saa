@@ -34,6 +34,8 @@ var markerLG = L.markerClusterGroup(mcgoptions)
 
 var lineStringLG = L.layerGroup()
 
+var isZoomUpdating = false
+var isMoveUpdating = false
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
@@ -175,8 +177,7 @@ function ExampleEventComponent(props) {
             var coords = e.latlng
             console.log('Klikattu piste: ' + JSON.stringify(coords))
         },
-        //Zoomatessa kertoo kartan nykyiset rajat, voidaan käyttää esim. liikuntapaikkoja piirrettäessä.
-        zoomend: () => {
+        moveend: () => {
             props.onMapBoundsChange(map.getBounds())
             //LineString-testauksiin
             if(map.getZoom() >= 14 && !map.hasLayer(lineStringLG)) {
@@ -185,9 +186,6 @@ function ExampleEventComponent(props) {
             if(map.getZoom() <= 13 && map.hasLayer(lineStringLG)){
                 map.removeLayer(lineStringLG)
             }
-        },
-        moveend: () => {
-            props.onMapBoundsChange(map.getBounds())
         }
     })
     return null
