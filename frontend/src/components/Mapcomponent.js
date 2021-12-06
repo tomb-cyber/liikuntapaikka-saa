@@ -82,11 +82,16 @@ const Mapcomponent = (props) => {
 
                 map.pm.setGlobalOptions(options)
 
-                // Pystyy liikuttamaan tai poistamaan Lipas paikkoja. TODO: pystyy muokkaamaan vain itse lisättyjä
+                /** Pystyy liikuttamaan tai poistamaan Lipas paikkoja.
+                 * TODO: pystyy muokkaamaan vain itse lisättyjä;
+                 * muokkaaminen muuttaa tietoja, ei riko;
+                 * tietojen integrointi sidebariin, myös haku;
+                 */
                 map.pm.addControls({
                     position: 'topright',
                     drawCircle: false,
                     drawCircleMarker: false,
+                    rotateMode: false
                     //dragMode: false
                 })
 
@@ -130,21 +135,16 @@ const Mapcomponent = (props) => {
                             e.preventDefault()
                             console.log(formElem.name.value)
 
+
                             const newPlace = {
                                 name: formElem.name.value,
                                 location: {
                                     address: formElem.osoite.value,
                                     geometries: {
                                         type: 'FeatureCollection',
-                                        features: {
-                                            geometry: {
-                                                type: 'Point',
-                                                coordinates: [
-                                                    latlon.lat,
-                                                    latlon.lng
-                                                ]
-                                            }
-                                        }
+                                        features: [
+                                            event.layer.toGeoJSON()
+                                        ]
                                     }
                                 },
                                 sportsPlaceId: -(id), // Oletan, että leafletId:ssä on jokin logiikka mikä estää session sisällä
