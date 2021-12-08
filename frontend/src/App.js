@@ -27,6 +27,7 @@ const App = () => {
     //saaService.haeSaa('62.19663677298255,25.628828030200676', (input => console.log(input.locations[0].info.name)))
 
     const [data, setData] = useState([])
+    const [ownPlaces, setOwnPlaces] = useState([])
     const [mapBounds, setMapBounds] = useState(aloitusBounds)
 
     const [mainMap, setMainMap] = useState()
@@ -117,6 +118,19 @@ const App = () => {
     }
 
     /**
+     * Lisää uuden liikuntapaikan omiin liikuntapaikkoihin
+     * @param newPlace Lisättävä liikuntapaikka
+     */
+    const updateOwnPlaces = (newPlace) => {
+        // console.log(ownPlaces)
+        // console.log(newPlace)
+        setOwnPlaces([newPlace].concat(ownPlaces))
+    }
+
+    useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
+    //console.log(ownPlaces)
+
+    /**
      * Zoomin eventille tarkoitettu funktio. Päivittää uuden mapBounds ja tekee liikuntapaikka haun
      * @param bounds Kartan bounds
      */
@@ -139,7 +153,7 @@ const App = () => {
             .then(res => {
                 page++
                 setStatus(res.status)
-                var updated = updateData(res.data)//.map(each => getGeoJSON(each)))
+                var updated = updateData(res.data)
 
                 //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
                 if(updated !== undefined) {
@@ -157,15 +171,27 @@ const App = () => {
             })
     }
 
+
+    const getFromLocalOrAPI = (id) => {
+        const found = ownPlaces.find(each => each.sportsPlaceId === id)
+        console.log(id)
+        console.log(found)
+
+        return found ? new Promise((resolve) => {
+            resolve(found)
+        }) : liikuntaService.getById(id)
+    }
+
     return (
         <div>
             <div>
                 <Sidebar
                     windowWidth={windowWidth}
-                    liikuntapaikat={data}
+                    liikuntapaikat={data.concat(ownPlaces)}
                     handleVCC={handleVenueCardClick}
                     handleSearchSubmit={handleSearchSubmit}
-                    extensionFunc={(id) => liikuntaService.getById(id)}
+                    extensionFunc={getFromLocalOrAPI}
+                    //(id) => liikuntaService.getById(id)}
                     activeVenueCardId={activeVenueCardId} />
             </div>
             <div
@@ -176,7 +202,7 @@ const App = () => {
                     mapInUse={mainMap} setMapInUse={setMainMap}
                     markerLG={markerLayerGroup} setMarkerLG={setMarkerLayerGroup}
                     lineStringLG={lineStringLG} setLineStringLG={setLineStringLG}
-                    updateData={updateData}
+                    //updateOwnPlaces={updateOwnPlaces}
                 />
             </div>
         </div>

@@ -1,6 +1,7 @@
 ﻿//import { Component } from 'react'
 import { MapContainer, useMapEvents } from 'react-leaflet'
-import React from 'react'
+//import React from 'react'
+import React, { useEffect, useState } from 'react'
 import L from 'leaflet'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 
@@ -37,8 +38,13 @@ var lineStringLG = L.layerGroup()
 var isZoomUpdating = false
 var isMoveUpdating = false
 
+
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
+    const [ownPlaces, setOwnPlaces] = useState([])
+    useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
+
+
     return (
         <MapContainer
             className='rlmap'
@@ -62,110 +68,129 @@ const Mapcomponent = (props) => {
                 props.setLineStringLG(lineStringLG)
                 props.setMapInUse(map)
 
-
-
-                // Piirtojuttuja. Marker kuvan default haku hajoaa, joten pakotetaan options uudestaan
-                const customIcon = L.icon({
-                    iconUrl: markerIcon,
-                    shadowUrl: markerIconShadow,
-                    className: 'drawnMarker', // Löytyy App.css
-                    iconAnchor:   [12, 41],
-                    popupAnchor:  [0, -41]
-                })
-
-                const options = {
-                    markerStyle: {
-                        //draggable: true,
-                        icon: customIcon
-                    }
-                }
-
-                map.pm.setGlobalOptions(options)
-
-                /** Pystyy liikuttamaan tai poistamaan Lipas paikkoja.
-                 * TODO: pystyy muokkaamaan vain itse lisättyjä;
-                 * muokkaaminen muuttaa tietoja, ei riko;
-                 * tietojen integrointi sidebariin, myös haku;
-                 */
-                map.pm.addControls({
-                    position: 'topright',
-                    drawCircle: false,
-                    drawCircleMarker: false,
-                    rotateMode: false
-                    //dragMode: false
-                })
-
-                // Eventhandlereitä
-                // map.on('pm:drawstart', (e) => {
-                //     console.log(e)
-                //     console.log(e.workingLayer._leaflet_id)
-                // })
-
-                const form = '<form id="testform" class="grid-container">' +
-                                '<div class="grid-item">' +
-                                '<label  for="name">Liikuntapaikan nimi: </label>' +
-                                '<input type="text" id="name" />' +
-                                '</div>' +
-                                '<div class="grid-item">' +
-                                '<label  for="osoite" >Osoite: </label>' +
-                                '<input type="text" id="osoite"/>' +
-                                '</div>' +
-                                '<div class="grid-item">' +
-                                '<label  for="tyyppi" >Liikuntapaikkatyyppi: </label>' +
-                                '<input type="text" id="tyyppi"/>' +
-                                '</div>' +
-                                '<div class="grid-item">' +
-                                '<input type="submit" value="Tallenna" ></input>' +
-                                '</div>' +
-                            '</form>'
-
-
-                map.on('pm:create', (event) => {
-                    const id = event.marker._leaflet_id
-                    const latlon = event.marker._latlng
-                    const marker = event.marker
-                    console.log(event)
-                    console.log(id, latlon)
-                    marker.bindPopup(form)
-
-                    event.layer.on('popupopen', e => {
-                        const formElem = e.popup._wrapper.firstChild.firstChild
-                        //console.log(formElem)
-                        formElem.onsubmit = (e) => {
-                            e.preventDefault()
-                            console.log(formElem.name.value)
-
-
-                            const newPlace = {
-                                name: formElem.name.value,
-                                location: {
-                                    address: formElem.osoite.value,
-                                    geometries: {
-                                        type: 'FeatureCollection',
-                                        features: [
-                                            event.layer.toGeoJSON()
-                                        ]
-                                    }
-                                },
-                                sportsPlaceId: -(id), // Oletan, että leafletId:ssä on jokin logiikka mikä estää session sisällä
-                                type: {               // duplikaatteja. Miinusmerkki idssä indikoi, että on itse lisätty. Hajottaako miinus jossain?
-                                    name: formElem.tyyppi.value
-                                }
-                            }
-                            props.updateData([newPlace])
-                            marker.bindPopup(newPlace.name)
-                        }
-                    })
-                })
-
-                // map.on('pm:drawend', (e) => {
-                //     console.log(e)
-                // })
+                alustaPiirto(map, setOwnPlaces, ownPlaces)
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
         </MapContainer>
     )
+}
+
+
+const alustaPiirto = (map, setOwnPlaces, ownPlaces) => {
+    // Piirtojuttuja. Marker kuvan default haku hajoaa, joten pakotetaan options uudestaan
+    const customIcon = L.icon({
+        iconUrl: markerIcon,
+        shadowUrl: markerIconShadow,
+        className: 'drawnMarker', // Löytyy App.css
+        iconAnchor:   [12, 41],
+        popupAnchor:  [0, -41]
+    })
+
+    const options = {
+        markerStyle: {
+            //draggable: true,
+            icon: customIcon
+        }
+    }
+
+    map.pm.setGlobalOptions(options)
+
+    /** Pystyy liikuttamaan tai poistamaan Lipas paikkoja.
+     * TODO: pystyy muokkaamaan vain itse lisättyjä;
+     * muokkaaminen muuttaa tietoja, ei riko;
+     * tietojen integrointi sidebariin, myös haku;
+     */
+    map.pm.addControls({
+        position: 'topright',
+        drawCircle: false,
+        drawCircleMarker: false,
+        rotateMode: false
+        //dragMode: false
+    })
+
+    // Eventhandlereitä
+    // map.on('pm:drawstart', (e) => {
+    //     console.log(e)
+    //     console.log(e.workingLayer._leaflet_id)
+    // })
+
+    const form = '<form id="testform" class="grid-container">' +
+                    '<div class="grid-item">' +
+                    '<label  for="name">Liikuntapaikan nimi: </label>' +
+                    '<input type="text" id="name" />' +
+                    '</div>' +
+                    '<div class="grid-item">' +
+                    '<label  for="osoite" >Osoite: </label>' +
+                    '<input type="text" id="osoite"/>' +
+                    '</div>' +
+                    '<div class="grid-item">' +
+                    '<label  for="postiNumero" >Postinumero: </label>' +
+                    '<input type="text" id="postiNumero"/>' +
+                    '</div>' +
+                    '<div class="grid-item">' +
+                    '<label  for="kaupunki" >Kaupunki: </label>' +
+                    '<input type="text" id="kaupunki"/>' +
+                    '</div>' +
+                    '<div class="grid-item">' +
+                    '<label  for="tyyppi" >Liikuntapaikkatyyppi: </label>' +
+                    '<input type="text" id="tyyppi"/>' +
+                    '</div>' +
+                    '<div class="grid-item">' +
+                    '<input type="submit" value="Tallenna" ></input>' +
+                    '</div>' +
+                '</form>'
+
+
+    map.on('pm:create', (event) => {
+        const id = event.marker._leaflet_id
+        const latlon = event.marker._latlng
+        const marker = event.marker
+        console.log(event)
+        console.log(id, latlon)
+        marker.bindPopup(form)
+
+        event.layer.on('popupopen', e => {
+            const formElem = e.popup._wrapper.firstChild.firstChild
+            //console.log(formElem)
+            formElem.onsubmit = (e) => {
+                e.preventDefault()
+                console.log(formElem.name.value)
+
+
+                const newPlace = {
+                    name: formElem.name.value,
+                    location: {
+                        address: formElem.osoite.value,
+                        geometries: {
+                            type: 'FeatureCollection',
+                            features: [
+                                event.layer.toGeoJSON()
+                            ]
+                        },
+                        postalCode: formElem.postiNumero.value,
+                        city: {
+                            name: formElem.kaupunki.value
+                        }
+                    },
+                    sportsPlaceId: -(id), // Oletan, että leafletId:ssä on jokin logiikka mikä estää session sisällä
+                    type: {               // duplikaatteja. Miinusmerkki idssä indikoi, että on itse lisätty. Hajottaako miinus jossain?
+                        name: formElem.tyyppi.value
+                    }
+                }
+                //props.
+                console.log(newPlace)
+                console.log(ownPlaces)
+                setOwnPlaces([newPlace].concat(ownPlaces))
+                marker.bindPopup(newPlace.name)
+            }
+        })
+    })
+
+    // map.on('pm:drawstart', (e) => {
+    //     console.log(e)
+    //     console.log(e.workingLayer._leaflet_id)
+    // })
 }
 
 

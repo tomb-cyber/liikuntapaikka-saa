@@ -57,7 +57,7 @@ const getPlacesWithin = (lat, lon, rad, page) => {
 
 
 /**
- * Palauttaa liikuntapaikkoja, jotka täsmäävät hakuun (logiikka täysin Lipaksen puolella)
+ * Palauttaa liikuntapaikkoja, jotka täsmäävät hakuun (logiikka täysin Lippaan puolella)
  * @param {*} searchString Hakusanat
  * @returns Hakuun täsmäävät liikuntapaikat
  */
@@ -71,7 +71,7 @@ const searchPlaces = (searchString) => {
 
 
 /**
- * Palauttaa liikuntapaikkoja, jotka täsmäävät hakuun (logiikka täysin Lipaksen puolella)
+ * Palauttaa liikuntapaikkoja, jotka täsmäävät hakuun (logiikka täysin Lippaan puolella)
  * @param {*} searchString Hakusanat
  * @returns Hakuun täsmäävät liikuntapaikat
  */
