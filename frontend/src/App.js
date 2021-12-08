@@ -84,8 +84,8 @@ const App = () => {
         liikuntaService.searchPlaces(hakusana)
             .then(matches => {
                 //Lisätään uudet dataan
-                updateData(matches)
-
+                var searchupdates = updateData(matches)
+                checkUpdatesForDrawing(searchupdates)
                 // Matchien käsittely
                 console.log(`tehtiin haku ${hakusana}, löytyi: `, matches)
 
@@ -172,20 +172,24 @@ const App = () => {
                 setStatus(res.status)
                 var updated = updateData(res.data)
 
-                //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
-                if(updated !== undefined) {
-                    if(mainMap !== undefined && isMapCreated === true) {
-                        drawGeoJsonOnMap(updated, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
-                    }
-                    else if(mainMap !== undefined && isMapCreated === false) {
-                        drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
-                        setMapCreated(true)
-                    }
-                }
+                checkUpdatesForDrawing(updated)
 
                 if (res.count < threshold)
                     setPage(page)
             })
+    }
+
+    const checkUpdatesForDrawing = (updates) => {
+        //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
+        if(updates !== undefined) {
+            if(mainMap !== undefined && isMapCreated === true) {
+                drawGeoJsonOnMap(updates, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
+            }
+            else if(mainMap !== undefined && isMapCreated === false) {
+                drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
+                setMapCreated(true)
+            }
+        }
     }
 
 
