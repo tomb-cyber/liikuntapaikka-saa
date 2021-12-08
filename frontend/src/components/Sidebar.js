@@ -265,28 +265,6 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
     // Katso hasProperty:n dokumentaatio
     const detailsHasProperty = nestedProperties => hasProperty(details, nestedProperties)
 
-    /**
-     * Palauttaa tuulen suuntaa ja nopeutta kuvaavan kuvan ja tekstin
-     * @param degree Tuulen suunnan aste
-     * @param speed Tuulen nopeus m/s
-     * @returns Div jossa nuoli annetussa kulmassa ja annettu nopeus
-     */
-    const renderWindArrow = (degree, speed) => {
-        if (degree === 0) {
-            return(
-                <div>
-                    0 m/s
-                </div>
-            )
-        }
-
-        return(
-            <div>
-                <img className='arrow' src={windArrow} style={{  transform: `rotate(${degree}deg)` }} />
-                {speed} m/s
-            </div>
-        )
-    }
 
     return (
         <>
@@ -295,8 +273,6 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 <Card.Body className='p-0'>
                     <Container className='w-100'>
                         <Row>
-                            {//renderWindArrow(180, 3)
-                            }
                             <Col xs={10} className='p-0 ps-1 pe-4'>{venue.description}</Col>
                             <Col xs={2} className='p-0'>{venue.indoors ? 'sisä' : 'ulko'}</Col>
                         </Row>
@@ -334,6 +310,29 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
     )
 }
 
+/**
+* Palauttaa tuulen suuntaa ja nopeutta kuvaavan kuvan ja tekstin
+* @param degree Tuulen suunnan aste
+* @param speed Tuulen nopeus m/s
+* @returns Div jossa nuoli annetussa kulmassa ja annettu nopeus
+*/
+const renderWindArrow = (degree, speed) => {
+    if (degree === 0) {
+        return(
+            <div>
+                0 m/s
+            </div>
+        )
+    }
+
+    return(
+        <div>
+            <img className='arrow' src={windArrow} style={{  transform: `rotate(${degree}deg)` }} />
+            {speed} m/s
+        </div>
+    )
+}
+
 // Yksittainen saatietorivi sidebarissa
 const WeatherRow = ({ info }) => {
     console.log(info)
@@ -344,18 +343,10 @@ const WeatherRow = ({ info }) => {
             </Row>
             <Row>
                 <Col xs={3}>{info.lampotila}</Col>
-                <Col xs={3}>{info.saasymboli}</Col>
-                <Col xs={3}>{info.tuuli_ms}</Col>
-                <Col xs={3}>{info.tuulen_suunta}</Col>
+                <Col xs={3}><img src={`../symbols/${info.saasymboli}.svg`} /></Col>
+                <Col xs={3}>{renderWindArrow(info.tuulen_suunta,info.tuuli_ms)}</Col>
             </Row>
         </Container>
-        // <>
-        //     <p>{info.aika}</p>
-        //     <p>{info.lampotila}</p>
-        //     <p>{info.saasymboli}</p>
-        //     <p>{info.tuuli_ms}</p>
-        //     <p>{info.tuulen_suunta}</p>
-        // </>
     )
 }
 
