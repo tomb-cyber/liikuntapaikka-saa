@@ -74,7 +74,7 @@ const App = () => {
                 console.log(`tehtiin haku ${hakusana}, löytyi: `, matches)
 
                 // kerrotaan sivupalkille, etta haun lisaamat paikat on lisatty dataan
-                callback()
+                callback(matches)
             })
     }
 

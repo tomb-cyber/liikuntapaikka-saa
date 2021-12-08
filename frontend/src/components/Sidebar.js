@@ -134,23 +134,42 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     useEffect(() => {
         // jos uusia liikuntapaikkoja ladatessa nykyisella sivulla alle maksimi lkm liikuntapaikkakortteja
         // laitetaan uusien paikkojen kortteja jonon jatkeeksi
-        if (venuesOnPage.length < VENUES_PER_PAGE) {
-            setVenuesOnPage(listedVenues.slice(currentPage * VENUES_PER_PAGE, currentPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
-        }
+        // if (venuesOnPage.length < VENUES_PER_PAGE) {
+        setVenuesOnPage(listedVenues.slice(currentPage * VENUES_PER_PAGE, currentPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
+        console.log(listedVenues)
+        // }
     }, [listedVenues.length])
     // hakutulosten filtteroimiseen liittyvia juttuja
     const [filter, setFilter] = useState('')
-    const filterSearchResults = () => {
+    const filterSearchResults = (results) => {
         setFilter(searchValue)
-    }
-    useEffect(() => {
         setCurrentPage(0)
         setVenuesOnPage([])
-        setListedVenues(filter === '' ? liikuntapaikat : liikuntapaikat.filter(lp => lp.name !== null && lp.name.toUpperCase().includes(searchValue.toUpperCase())))
-    }, [filter])
+        setListedVenues(results)
+    }
+    // useEffect(() => {
+    //     setCurrentPage(0)
+    //     setVenuesOnPage([])
+    //     setListedVenues(filter === '' ? liikuntapaikat : liikuntapaikat.filter(lp => lp.name !== null && lp.name.toUpperCase().includes(searchValue.toUpperCase())))
+    // }, [filter])
+    const initiateSearch = (event) => {
+        event.preventDefault()
+        if (filter !== searchValue) {
+            handleSearchSubmit(searchValue, filterSearchResults)
+        }
+    }
+    const clearSearch = () => {
+        if (filter !== '') {
+            setFilter('')
+            setSearchValue('')
+            setCurrentPage(0)
+            setVenuesOnPage([])
+            setListedVenues(liikuntapaikat)
+        }
+    }
     return (
         <div>
-            <form onSubmit={(event) => {event.preventDefault(); handleSearchSubmit(searchValue, filterSearchResults)}}>
+            <form onSubmit={initiateSearch}>
                 <Container fluid className='pb-2'>
                     <Row>
                         <Col className='p-0' xs={8}>
@@ -160,7 +179,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                             <button className='w-100' type='submit'>&#128270;</button>
                         </Col>
                         <Col className='p-0' xs={2}>
-                            <button className='w-100' onClick={() => {setSearchValue(''); setFilter('')}}>X</button>
+                            <button className='w-100' onClick={clearSearch}>X</button>
                         </Col>
                     </Row>
                     { filter !== '' ?
