@@ -1,6 +1,4 @@
-﻿//import { Component } from 'react'
-import { MapContainer, useMapEvents } from 'react-leaflet'
-//import React from 'react'
+﻿import { MapContainer, useMapEvents } from 'react-leaflet'
 import React, { useEffect, useState } from 'react'
 import L from 'leaflet'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
@@ -11,8 +9,6 @@ import markerIcon from '../../node_modules/leaflet/dist/images/marker-icon.png'
 import markerIconShadow from '../../node_modules/leaflet/dist/images/marker-shadow.png'
 import '../App.css'
 
-
-//import { geoJsonOnStart } from '../utils/mapGeoJsonFunctions'
 
 //Alustava kovakoodattu lat/lng kordinaatti Jyväskylän keskustaan
 const jycenter = [62.241636, 25.746703]
@@ -35,9 +31,6 @@ var markerLG = L.markerClusterGroup(mcgoptions)
 
 var lineStringLG = L.layerGroup()
 
-var isZoomUpdating = false
-var isMoveUpdating = false
-
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
@@ -58,8 +51,6 @@ const Mapcomponent = (props) => {
             scrollWheelZoom={true}
             maxBounds={mapmaxbounds}
             whenCreated={(map) => {
-                //geoJsonOnStart(map)
-
                 map.addLayer(basetile)
                 map.addLayer(markerLG)
                 map.addLayer(lineStringLG)
@@ -203,7 +194,7 @@ function ExampleEventComponent(props) {
         },
         moveend: () => {
             props.onMapBoundsChange(map.getBounds())
-            //LineString-testauksiin
+            //LineString-reittien näyttämiseksi vain tietyillä zoom-leveleillä
             if(map.getZoom() >= 14 && !map.hasLayer(lineStringLG)) {
                 map.addLayer(lineStringLG)
             }
