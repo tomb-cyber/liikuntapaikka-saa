@@ -1,10 +1,15 @@
 import Metolib from '@fmidev/metolib'
-import saaSymboliTaulukko from './symbolitaulukko'
 
 const parser = new Metolib.WfsRequestParser()
 const url = 'http://opendata.fmi.fi/wfs'
 const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
 
+/**
+ * Tekee haun Ilmatieteenlaitoksen avoimeen dataan valitun liikuntapaikan
+ * sijainnin perusteella
+ * @param latlon 'Latitude, longitude' -sijainti jolle haku tehdään
+ * @returns saaLista, joka sisältää hakutulosobjekteja aika-arvottain
+ */
 function haeSaa(latlon) {
     var saaLista = []
     var paivat = ['Su','Ma','Ti','Ke','To','Pe','La']
@@ -28,7 +33,6 @@ function haeSaa(latlon) {
                         day: 'numeric', month: 'numeric', hour: 'numeric', minute: 'numeric' }),
                     lampotila: tempList[i].value,
                     saasymboli: symbolList[i].value,
-                    // saasymboli: haeSymboli(symbolList[i].value)
                     tuuli_ms: windSpeedList[i].value,
                     tuulen_suunta: windDirectionList[i].value
                 }
@@ -37,18 +41,6 @@ function haeSaa(latlon) {
         }
     })
     return saaLista
-}
-
-function haeSymboli(value) {
-    let symboli
-    for (let i = 0; i < saaSymboliTaulukko.length; i++) {
-        if (saaSymboliTaulukko[i].src.includes(value) === true) {
-            symboli = saaSymboliTaulukko[i]
-        } else {
-            console.log('Symbolin haku ei toiminut')
-        }
-    }
-    return symboli
 }
 
 export default haeSaa
