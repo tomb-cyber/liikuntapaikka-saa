@@ -333,6 +333,8 @@ const renderWindArrow = (degree, speed) => {
     )
 }
 
+
+
 // Yksittainen saatietorivi sidebarissa
 const WeatherRow = ({ info }) => {
     console.log(info)
@@ -342,9 +344,9 @@ const WeatherRow = ({ info }) => {
                 <Col>{info.aika}</Col>
             </Row>
             <Row>
-                <Col xs={3}>{info.lampotila}</Col>
-                <Col xs={3}><img src={`../symbols/${info.saasymboli}.svg`} /></Col>
-                <Col xs={3}>{renderWindArrow(info.tuulen_suunta,info.tuuli_ms)}</Col>
+                <Col xs={4}>{info.lampotila}</Col>
+                <Col xs={4}><img src={`/images/${info.saasymboli}.svg`} /></Col>
+                <Col xs={4}>{renderWindArrow(info.tuulen_suunta,info.tuuli_ms)}</Col>
             </Row>
         </Container>
     )
