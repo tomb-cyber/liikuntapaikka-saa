@@ -1,7 +1,8 @@
 const liikuntapaikkaRouter = require('express').Router()
 const http = require('http')
 const utils = require('../utils/utilityFuncs')
-const Liikuntapaikka = require('../models/liikuntapaikka')
+
+
 
 const defaultPath = '/api/sports-places'
 
@@ -15,13 +16,6 @@ const options = {
     }
 }
 
-liikuntapaikkaRouter.get('/mongo', async (request, response) => {
-
-    const paikat = await Liikuntapaikka
-        .find({})//.limit(10)
-
-    response.json(paikat.map(paikka => paikka.toJSON()))
-})
 
 
 
