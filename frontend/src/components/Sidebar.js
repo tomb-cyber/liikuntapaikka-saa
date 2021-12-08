@@ -291,8 +291,7 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 <Card.Body className='p-0'>
                     <Container className='w-100'>
                         <Row>
-                            <Col xs={10} className='p-0 ps-1 pe-4'>{venue.description}</Col>
-                            <Col xs={2} className='p-0'>{venue.type.name}</Col>
+                            <Col xs={12} className='p-0'>{venue.type.name}</Col>
                         </Row>
                         {/* <Row>
                             <Col xs={12} className='p-0 pt-1 ps-1'>placeholder</Col>
