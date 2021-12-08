@@ -61,7 +61,23 @@ const App = () => {
         }
     }, [page])
 
-    console.log('data', data)
+
+    const hasDuplicates = (array) => {
+        var lapiKayty = []
+        for (var i = 0; i < array.length; ++i) {
+            // Vertaa IDtä, samalla nimellä näyttää olevan erityyppisiä paikkoja samassa paikkaa. Testatessa helppo vaihtaa property
+            var current = array[i].sportsPlaceId
+            if (lapiKayty.indexOf(current) !== -1) {
+                //return true
+                return current
+            }
+            lapiKayty.push(current)
+        }
+        return false
+    }
+
+    console.log('onko duplikaatteja: ', hasDuplicates(data))
+    //console.log('data', data)
 
     const handleSearchSubmit = (hakusana, callback) => {
         // Tässä muodossa hakee 100 ensimmäistä hakua vastaavaa paikkaa. Tarvitaanko haku, joka palauttaa kaikki matchit? -T
@@ -116,6 +132,7 @@ const App = () => {
         setData(data.concat(filtered))
         return filtered
     }
+
 
     /**
      * Lisää uuden liikuntapaikan omiin liikuntapaikkoihin
@@ -202,7 +219,7 @@ const App = () => {
                     mapInUse={mainMap} setMapInUse={setMainMap}
                     markerLG={markerLayerGroup} setMarkerLG={setMarkerLayerGroup}
                     lineStringLG={lineStringLG} setLineStringLG={setLineStringLG}
-                    //updateOwnPlaces={updateOwnPlaces}
+                    updateOwnPlaces={updateOwnPlaces}
                 />
             </div>
         </div>

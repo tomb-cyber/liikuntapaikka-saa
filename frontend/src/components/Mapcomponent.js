@@ -34,8 +34,8 @@ var lineStringLG = L.layerGroup()
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
-    const [ownPlaces, setOwnPlaces] = useState([])
-    useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
+    // const [ownPlaces, setOwnPlaces] = useState([])
+    // useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
 
 
     return (
@@ -59,7 +59,7 @@ const Mapcomponent = (props) => {
                 props.setLineStringLG(lineStringLG)
                 props.setMapInUse(map)
 
-                alustaPiirto(map, setOwnPlaces, ownPlaces)
+                alustaPiirto(map, props.updateOwnPlaces)
             }}
         >
             <ExampleEventComponent mapBounds={props.mapBounds} onMapBoundsChange={props.onMapBoundsChange}/>
@@ -68,7 +68,7 @@ const Mapcomponent = (props) => {
 }
 
 
-const alustaPiirto = (map, setOwnPlaces, ownPlaces) => {
+const alustaPiirto = (map, updateOwnPlaces) => {
     // Piirtojuttuja. Marker kuvan default haku hajoaa, joten pakotetaan options uudestaan
     const customIcon = L.icon({
         iconUrl: markerIcon,
@@ -171,8 +171,9 @@ const alustaPiirto = (map, setOwnPlaces, ownPlaces) => {
                 }
                 //props.
                 console.log(newPlace)
-                console.log(ownPlaces)
-                setOwnPlaces([newPlace].concat(ownPlaces))
+                //console.log(ownPlaces)
+                updateOwnPlaces(newPlace)
+                //setOwnPlaces([newPlace].concat(ownPlaces))
                 marker.bindPopup(newPlace.name)
             }
         })
