@@ -24,7 +24,7 @@ const options = {
 // Kuinka monta ja millä perusteella valitaan näytettävät kun alue kattaa tuhansia paikkoja?
 liikuntapaikkaRouter.get('/', (request, response) => {
 
-    options.path = defaultPath + '?fields=name&fields=location.geometries&pageSize=100'
+    options.path = defaultPath + '?fields=name&fields=type.name&fields=location.geometries&pageSize=100'
 
     let longitude = ''
     let latitude = ''

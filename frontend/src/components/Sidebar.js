@@ -11,7 +11,6 @@ import {
     VENUES_PER_PAGE } from '../constants'
 import haeSaa from '../services/saatiedot'
 import './Sidebar.css'
-import windArrow from '../symbols/arrow.svg'
 
 
 /**
@@ -198,7 +197,7 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
     const collapseId = `collapse-${venue.id}`
 
     const halututInfot = [
-        { title: 'Rakennusvuosi', property: 'constructionYear' },
+        //{ title: 'Rakennusvuosi', property: 'constructionYear' },
         { title: 'Liikuntapaikkatyyppi', property: 'type.name' },
         { title: 'Puhelinnumero', property: 'phoneNumber' },
         { title: 'Sähköposti', property: 'email' },
@@ -274,7 +273,7 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                     <Container className='w-100'>
                         <Row>
                             <Col xs={10} className='p-0 ps-1 pe-4'>{venue.description}</Col>
-                            <Col xs={2} className='p-0'>{venue.indoors ? 'sisä' : 'ulko'}</Col>
+                            <Col xs={2} className='p-0'>{venue.type.name}</Col>
                         </Row>
                         {/* <Row>
                             <Col xs={12} className='p-0 pt-1 ps-1'>placeholder</Col>
@@ -327,7 +326,7 @@ const renderWindArrow = (degree, speed) => {
 
     return(
         <div>
-            <img className='arrow' src={windArrow} style={{  transform: `rotate(${degree}deg)` }} />
+            <img className='arrow' src='/images/arrow.svg' style={{  transform: `rotate(${degree}deg)` }} />
             {speed} m/s
         </div>
     )
