@@ -251,10 +251,23 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 onExtend(venue.sportsPlaceId).then(res => setDetails(res))
             }
             if (weather === null) {
-                const lat = venue.location.geometries.features[0].geometry.coordinates[1]
-                const lon = venue.location.geometries.features[0].geometry.coordinates[0]
-                // setWeather(haeSaa(`${lat},${lon}`))
-                setWeather(haeSaa(`${lat},${lon}`))
+                //Lisätty lat ja lon jokaisen venuen tyypin koordinaattirakenteen mukaisesti -J
+                if(venue.location.geometries.features[0].geometry.type === 'Point') {
+                    const lat = venue.location.geometries.features[0].geometry.coordinates[1]
+                    const lon = venue.location.geometries.features[0].geometry.coordinates[0]
+                    // setWeather(haeSaa(`${lat},${lon}`))
+                    setWeather(haeSaa(`${lat},${lon}`))
+                } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
+                    const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
+                    const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
+                    // setWeather(haeSaa(`${lat},${lon}`))
+                    setWeather(haeSaa(`${lat},${lon}`))
+                } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
+                    const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
+                    const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
+                    // setWeather(haeSaa(`${lat},${lon}`))
+                    setWeather(haeSaa(`${lat},${lon}`))
+                }
             }
         }
         animateArrow('arrow-' + venue.sportsPlaceId)
