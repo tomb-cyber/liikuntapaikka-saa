@@ -1,7 +1,7 @@
 import Metolib from '@fmidev/metolib'
 
 const parser = new Metolib.WfsRequestParser()
-const url = 'http://opendata.fmi.fi/wfs'
+const url = 'https://opendata.fmi.fi/wfs'
 const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
 
 /**
