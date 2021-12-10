@@ -15,7 +15,7 @@ const jycenter = [62.241636, 25.746703]
 
 //Rajat kartalle
 var swcorner = L.latLng(59.0, 16.0)
-var necorner = L.latLng(71., 37.0)
+var necorner = L.latLng(71.0, 37.0)
 const mapmaxbounds = L.latLngBounds(swcorner, necorner)
 
 //TileLayer
@@ -23,11 +23,27 @@ var basetile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', className: 'osmTileLayer' })
 
 //MarkerClusterGroup-optionit
-var mcgoptions = {}
-mcgoptions.nameId = 'markercg'
+/*var mcgoptions = {}
+mcgoptions.nameId = 'markercg'*/
 
 //Klusteroitavia objekteja varten, annetaan hookin kautta App.js:lle asti
-var markerLG = L.markerClusterGroup(mcgoptions)
+//iconCreateFunction on otettu suoraan leafletmarkerclusterin default-mallista, mutta jätetty lapsien määrä näyttämättä.
+var markerLG = L.markerClusterGroup({
+    nameId: 'markercg',
+    iconCreateFunction: (cluster) => {
+        var childCount = cluster.getChildCount()
+
+        var c = ' marker-cluster-'
+        if (childCount < 10) {
+            c += 'small'
+        } else if (childCount < 100) {
+            c += 'medium'
+        } else {
+            c += 'large'
+        }
+        return L.divIcon({ html: '<div></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) })
+    }
+})
 
 var lineStringLG = L.layerGroup()
 
