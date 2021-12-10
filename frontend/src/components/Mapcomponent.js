@@ -1,5 +1,5 @@
 ﻿import { MapContainer, useMapEvents } from 'react-leaflet'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import L from 'leaflet'
 import '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster'
 
@@ -34,9 +34,6 @@ var lineStringLG = L.layerGroup()
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
-    // const [ownPlaces, setOwnPlaces] = useState([])
-    // useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
-
 
     return (
         <MapContainer

@@ -76,7 +76,14 @@ const App = () => {
         return false
     }
 
+    // testailua
+    const findByName = (array, string) => {
+        return array.find(elem => elem.name === string)
+    }
+
     console.log('onko duplikaatteja: ', hasDuplicates(data))
+    const nimi = 'Hippoksen pesäpallostadion'
+    console.log(`löytyikö ${nimi}: `, findByName(data, nimi))
     //console.log('data', data)
 
     const handleSearchSubmit = (hakusana, callback) => {
@@ -139,9 +146,10 @@ const App = () => {
      * @param newPlace Lisättävä liikuntapaikka
      */
     const updateOwnPlaces = (newPlace) => {
-        // console.log(ownPlaces)
-        // console.log(newPlace)
+        console.log('ownPlaces within update', ownPlaces)
+        console.log('newPlace within update',newPlace)
         setOwnPlaces([newPlace].concat(ownPlaces))
+        console.log('ownPlaces after update', ownPlaces)
     }
 
     useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
