@@ -14,7 +14,7 @@ import './Sidebar.css'
 
 
 /**
- * Sidebarin pääkompinentti
+ * Sidebarin pääkomponentti
  * @param {int} windowWidth - nykyinen ikkunan leveys
  * @returns SidebarOffcanvas, jos ikkunan leveys alle thresholdin. Muutoin SidebarRegular
  */
@@ -251,15 +251,29 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 onExtend(venue.sportsPlaceId).then(res => setDetails(res))
             }
             if (weather === null) {
-                const lat = venue.location.geometries.features[0].geometry.coordinates[1]
-                const lon = venue.location.geometries.features[0].geometry.coordinates[0]
-                // setWeather(haeSaa(`${lat},${lon}`))
-                setWeather(haeSaa(`${lat},${lon}`))
+                //Lisätty lat ja lon jokaisen venuen tyypin koordinaattirakenteen mukaisesti -J
+                if(venue.location.geometries.features[0].geometry.type === 'Point') {
+                    const lat = venue.location.geometries.features[0].geometry.coordinates[1]
+                    const lon = venue.location.geometries.features[0].geometry.coordinates[0]
+                    // setWeather(haeSaa(`${lat},${lon}`))
+                    setWeather(haeSaa(`${lat},${lon}`))
+                } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
+                    const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
+                    const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
+                    // setWeather(haeSaa(`${lat},${lon}`))
+                    setWeather(haeSaa(`${lat},${lon}`))
+                } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
+                    const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
+                    const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
+                    // setWeather(haeSaa(`${lat},${lon}`))
+                    setWeather(haeSaa(`${lat},${lon}`))
+                }
             }
         }
         animateArrow('arrow-' + venue.sportsPlaceId)
         setOpen(!open)
         console.log(details)
+        console.log('w', weather)
     }
 
     /**
@@ -287,7 +301,7 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
     return (
         <>
             <Card id={`sidebar-vc-id-${venue.sportsPlaceId}`} className='mb-2 shadow'>
-                <Card.Title>{venue.name}<span onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end'>🧐</span></Card.Title>
+                <Card.Title>{venue.name}<img src='/images/pin.svg' onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end pe-1 pt-1'/ ></Card.Title>
                 <Card.Body className='p-0'>
                     <Container className='w-100'>
                         <Row>
