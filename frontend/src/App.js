@@ -146,10 +146,10 @@ const App = () => {
      * @param newPlace Lisättävä liikuntapaikka
      */
     const updateOwnPlaces = (newPlace) => {
-        console.log('ownPlaces within update', ownPlaces)
-        console.log('newPlace within update',newPlace)
+        //console.log('ownPlaces within update', ownPlaces)
+        //console.log('newPlace within update',newPlace)
         setOwnPlaces([newPlace].concat(ownPlaces))
-        console.log('ownPlaces after update', ownPlaces)
+        //console.log('ownPlaces after update', ownPlaces)
     }
 
     useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
