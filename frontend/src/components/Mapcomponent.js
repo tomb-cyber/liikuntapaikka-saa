@@ -47,6 +47,8 @@ var markerLG = L.markerClusterGroup({
 
 var lineStringLG = L.layerGroup()
 
+//var omatLayer = L.layerGroup()
+
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
@@ -153,6 +155,9 @@ const alustaPiirto = (map, updateOwnPlaces) => {
         console.log(event)
         console.log(id, latlon)
         marker.bindPopup(form)
+        console.log(event.layer)
+        //omatLayer.addLayer(event.layer)
+        //console.log(omatLayer)
 
         event.layer.on('popupopen', e => {
             const formElem = e.popup._wrapper.firstChild.firstChild

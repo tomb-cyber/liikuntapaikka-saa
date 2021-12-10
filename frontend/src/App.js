@@ -76,6 +76,8 @@ const App = () => {
         return false
     }
 
+    console.log(mainMap)
+
     // testailua
     const findByName = (array, string) => {
         return array.find(elem => elem.name === string)

@@ -68,6 +68,7 @@ liikuntapaikkaRouter.get('/', (request, response) => {
         let filtered = input.filter(each => each.location !== undefined)
         response.status(status)
         console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
+        //console.log(response)
         response.send({ places: filtered, count: count })
     })
 
