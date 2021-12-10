@@ -190,13 +190,18 @@ const App = () => {
     }
 
     const checkUpdatesForDrawing = (updates) => {
-        //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data
+        //Jos päivityksiä tapahtuu ja kartta on jo olemassa niin silloin lisätään päivitykset, jos karttaa ei oltu vielä luotu lisätään kaikki data.
         if(updates !== undefined) {
             if(mainMap !== undefined && isMapCreated === true) {
                 drawGeoJsonOnMap(updates, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
             }
             else if(mainMap !== undefined && isMapCreated === false) {
-                drawGeoJsonOnMap(data, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
+                //Yhdistetään aiempaan dataan viimeisessä päivityksessä tulleet, jotta saadaan "koko data" kartan alustuksen jälkeen lisättyä.
+                var combineddata = data
+                updates.forEach(sportsplace => {
+                    combineddata.push(sportsplace)
+                })
+                drawGeoJsonOnMap(combineddata, markerLayerGroup, mainMap, handleMapMarkerClick, lineStringLG)
                 setMapCreated(true)
             }
         }
