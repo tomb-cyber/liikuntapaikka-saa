@@ -213,7 +213,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
             { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
             {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
-            { venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc} />) }
+            { venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc} timeRange={value} />) }
             <Pagination className='d-flex justify-content-center'>
                 <Pagination.First onClick={() => activatePage(0)} />
                 <Pagination.Prev onClick={() => activatePage(currentPage - 1)} />
@@ -228,7 +228,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
 /**
  * Liikuntapaikka-kortti, joita näytetään sidebarissa.
  */
-const VenueCard = ( { venue, handleVCC, onExtend } ) => {
+const VenueCard = ( { venue, handleVCC, onExtend, timeRange } ) => {
     const [open, setOpen] = useState(false)
     const [details, setDetails] = useState(null)
     const [weather, setWeather] = useState(null)
@@ -274,15 +274,15 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 if(venue.location.geometries.features[0].geometry.type === 'Point') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0]
-                    haeSaa(`${lat},${lon}`, setWeather)
+                    haeSaa(`${lat},${lon}`, setWeather, timeRange)
                 } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
-                    haeSaa(`${lat},${lon}`, setWeather)
+                    haeSaa(`${lat},${lon}`, setWeather, timeRange)
                 } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
-                    haeSaa(`${lat},${lon}`, setWeather)
+                    haeSaa(`${lat},${lon}`, setWeather, timeRange)
                 }
             }
         }
