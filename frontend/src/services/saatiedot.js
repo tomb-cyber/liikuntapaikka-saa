@@ -13,13 +13,29 @@ const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
 function haeSaa(latlon, setWeather, timeRange) {
     console.log('time range:', timeRange)
     var saaLista = []
+    var alkuAika
+    var loppuAika
     var paivat = ['Su','Ma','Ti','Ke','To','Pe','La']
+    // Jos ajanvalinnassa on valmiina Date objekti, käytetään sitä, muuten
+    // parsitaan stringistä tunnit ja minuutit erilleen
+    if (timeRange[0] instanceof Date) {
+        alkuAika = timeRange[0]
+    } else {
+        let aikaSplit = timeRange[0].split(':')
+        alkuAika = new Date().setHours(aikaSplit[0], aikaSplit[1])
+    }
+    if (timeRange[1] instanceof Date) {
+        loppuAika = timeRange[1]
+    } else {
+        let aikaSplit = timeRange[1].split(':')
+        loppuAika = new Date().setHours(aikaSplit[0], aikaSplit[1])
+    }
     parser.getData({
         url: url,
         storedQueryId: query,
         requestParameter: 'Temperature,WeatherSymbol3,WindSpeedMS,WindDirection',
-        begin: new Date(),
-        end: new Date((new Date()).getTime() + 2 * 60 * 60 * 1000),
+        begin: alkuAika,
+        end: loppuAika,
         timestep: 20 * 60 * 1000,
         latlon: latlon,
         callback : function(data) {
@@ -32,7 +48,7 @@ function haeSaa(latlon, setWeather, timeRange) {
                 saaTiedot = {
                     aika: paivat[new Date().getDay()] + ' ' + new Date(tempList[i].time).toLocaleString('fi-FI', {
                         day: 'numeric', month: 'numeric', hour: 'numeric', minute: 'numeric' }),
-                    lampotila: tempList[i].value,
+                    lampotila: tempList[i].value + '°C',
                     saasymboli: symbolList[i].value,
                     tuuli_ms: windSpeedList[i].value,
                     tuulen_suunta: windDirectionList[i].value
