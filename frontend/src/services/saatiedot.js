@@ -28,7 +28,7 @@ function haeSaa(latlon) {
             let windDirectionList = data.locations[0].data.WindDirection.timeValuePairs
             var saaTiedot = {}
             for (let i = 0; i < tempList.length; i++) {
-                saaTiedot[i] = {
+                saaTiedot = {
                     aika: paivat[new Date().getDay()] + ' ' + new Date(tempList[i].time).toLocaleString('fi-FI', {
                         day: 'numeric', month: 'numeric', hour: 'numeric', minute: 'numeric' }),
                     lampotila: tempList[i].value,
@@ -36,7 +36,7 @@ function haeSaa(latlon) {
                     tuuli_ms: windSpeedList[i].value,
                     tuulen_suunta: windDirectionList[i].value
                 }
-                saaLista.push(saaTiedot[i])
+                saaLista.push(saaTiedot)
             }
         }
     })
