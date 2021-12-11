@@ -11,6 +11,7 @@ import {
     VENUES_PER_PAGE } from '../constants'
 import haeSaa from '../services/saatiedot'
 import './Sidebar.css'
+import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 
 
 /**
@@ -167,6 +168,10 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
             setListedVenues(liikuntapaikat)
         }
     }
+    const aikaNyt = new Date()
+    const seuraavaTunti = new Date()
+    seuraavaTunti.setHours(seuraavaTunti.getHours() + 1)
+    const [value, onChange] = useState([aikaNyt, seuraavaTunti])
     return (
         <div>
             <form onSubmit={initiateSearch}>
@@ -190,6 +195,13 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                     }
                 </Container>
             </form>
+            {/* Ajanvalinta input -laatikko */}
+            <TimeRangePicker
+                onChange={onChange}
+                value={value}
+                disableClock={true}
+                minTime={aikaNyt}
+            />
             <div ref={topOfPage}></div>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
             { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
@@ -255,17 +267,14 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 if(venue.location.geometries.features[0].geometry.type === 'Point') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0]
-                    // setWeather(haeSaa(`${lat},${lon}`))
                     setWeather(haeSaa(`${lat},${lon}`))
                 } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
-                    // setWeather(haeSaa(`${lat},${lon}`))
                     setWeather(haeSaa(`${lat},${lon}`))
                 } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
-                    // setWeather(haeSaa(`${lat},${lon}`))
                     setWeather(haeSaa(`${lat},${lon}`))
                 }
             }
