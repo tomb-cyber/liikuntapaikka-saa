@@ -267,15 +267,15 @@ const VenueCard = ( { venue, handleVCC, onExtend } ) => {
                 if(venue.location.geometries.features[0].geometry.type === 'Point') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0]
-                    setWeather(haeSaa(`${lat},${lon}`))
+                    haeSaa(`${lat},${lon}`, setWeather)
                 } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
-                    setWeather(haeSaa(`${lat},${lon}`))
+                    haeSaa(`${lat},${lon}`, setWeather)
                 } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
-                    setWeather(haeSaa(`${lat},${lon}`))
+                    haeSaa(`${lat},${lon}`, setWeather)
                 }
             }
         }

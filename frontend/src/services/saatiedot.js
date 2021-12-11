@@ -10,7 +10,7 @@ const query = 'fmi::forecast::hirlam::surface::point::multipointcoverage'
  * @param latlon 'Latitude, longitude' -sijainti jolle haku tehdään
  * @returns saaLista, joka sisältää hakutulosobjekteja aika-arvottain
  */
-function haeSaa(latlon) {
+function haeSaa(latlon, setWeather) {
     var saaLista = []
     var paivat = ['Su','Ma','Ti','Ke','To','Pe','La']
     parser.getData({
@@ -38,9 +38,9 @@ function haeSaa(latlon) {
                 }
                 saaLista.push(saaTiedot)
             }
+            setWeather(saaLista)
         }
     })
-    return saaLista
 }
 
 export default haeSaa
