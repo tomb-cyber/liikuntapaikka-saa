@@ -116,6 +116,8 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     const [currentPage, setCurrentPage] = useState(0)
     // nykyisella sivulla naytettavat liikuntapaikat
     const [venuesOnPage, setVenuesOnPage] = useState([])
+    // smooth scrollauksen laastarointi
+    const [pageUpdateTime, setPageUpdateTime] = useState(Date.now())
     // spagetin minimointi
     const lastPageNumber = () => Math.floor(listedVenues.length / VENUES_PER_PAGE)
     // elementti johon skrollataan esim. sivua vaihdettaessa
@@ -126,9 +128,14 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
         setCurrentPage(clampedNewPage)
         setVenuesOnPage(listedVenues.slice(clampedNewPage * VENUES_PER_PAGE, clampedNewPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
         // TODO: miksei scrollaa kaikilla sivuilla kun smooth?
+        setPageUpdateTime(Date.now())
         // topOfPage.current.scrollIntoView({ behavior: 'smooth' })
-        topOfPage.current.scrollIntoView()
+        // topOfPage.current.scrollIntoView()
     }
+    // smooth scrollauksen laastarointi
+    useEffect(() => {
+        topOfPage.current.scrollIntoView({ behavior: 'smooth' })
+    }, [pageUpdateTime])
     useEffect(() => {
         if (filter === '') setListedVenues(liikuntapaikat)
     }, [liikuntapaikat.length])
