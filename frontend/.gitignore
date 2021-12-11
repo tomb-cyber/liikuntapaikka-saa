@@ -10,8 +10,8 @@
 
 # production
 /build
-.eslintignore
-.eslintrc.js
+# .eslintignore
+# .eslintrc.js
 
 # misc
 .DS_Store
