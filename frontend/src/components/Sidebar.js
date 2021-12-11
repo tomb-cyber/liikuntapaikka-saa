@@ -207,7 +207,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                 onChange={onChange}
                 value={value}
                 disableClock={true}
-                minTime={aikaNyt}
+                format={'HH:mm'}
             />
             <div ref={topOfPage}></div>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
