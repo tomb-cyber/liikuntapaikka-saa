@@ -211,7 +211,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
             />
             <div ref={topOfPage}></div>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
-            { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} /> : '' }
+            { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} timeRange={value} /> : '' }
             {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
             { venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc} timeRange={value} />) }
             <Pagination className='d-flex justify-content-center'>
@@ -269,7 +269,7 @@ const VenueCard = ( { venue, handleVCC, onExtend, timeRange } ) => {
             if (details === null) {
                 onExtend(venue.sportsPlaceId).then(res => setDetails(res))
             }
-            if (weather === null) {
+            // if (weather === null) {
                 //Lisätty lat ja lon jokaisen venuen tyypin koordinaattirakenteen mukaisesti -J
                 if(venue.location.geometries.features[0].geometry.type === 'Point') {
                     const lat = venue.location.geometries.features[0].geometry.coordinates[1]
@@ -284,7 +284,7 @@ const VenueCard = ( { venue, handleVCC, onExtend, timeRange } ) => {
                     const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
                     haeSaa(`${lat},${lon}`, setWeather, timeRange)
                 }
-            }
+            //}
         }
         animateArrow('arrow-' + venue.sportsPlaceId)
         setOpen(!open)
