@@ -193,21 +193,20 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                             <button className='w-100' onClick={clearSearch}>X</button>
                         </Col>
                     </Row>
-                    { filter !== '' ?
-                        <Row>
-                            <Col>Löytyi {listedVenues.length} liikuntapaikkaa hakusanalla {`"${filter}"`}</Col>
-                        </Row>
-                        : ''
-                    }
                 </Container>
             </form>
             {/* Ajanvalinta input -laatikko */}
             <TimeRangePicker
+                className='w-100 pb-2'
                 onChange={onChange}
                 value={value}
                 disableClock={true}
                 format={'HH:mm'}
             />
+            { filter !== '' ?
+                    <div className='w-100'>Löytyi {listedVenues.length} liikuntapaikkaa hakusanalla {`"${filter}"`}</div>
+                : ''
+            }
             <div ref={topOfPage}></div>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
             <div ref={activeRef}>
@@ -318,16 +317,11 @@ const VenueCard = ( { venue, handleVCC, onExtend, timeRange } ) => {
     return (
         <>
             <Card id={`sidebar-vc-id-${venue.sportsPlaceId}`} className='mb-2 shadow'>
-                <Card.Title>{venue.name}<img src='/images/pin.svg' onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end pe-1 pt-1'/ ></Card.Title>
+                <Card.Title className='mb-0'>
+                    {venue.name}<img src='/images/pin.svg' onClick={() => handleVCC(venue.sportsPlaceId)} className='float-end pe-1 pt-1'/ >
+                </Card.Title>
                 <Card.Body className='p-0'>
-                    <Container className='w-100'>
-                        <Row>
-                            <Col xs={12} className='p-0'>{venue.type.name}</Col>
-                        </Row>
-                        {/* <Row>
-                            <Col xs={12} className='p-0 pt-1 ps-1'>placeholder</Col>
-                        </Row> */}
-                    </Container>
+                    <div className='p-0'>{venue.type.name}</div>
                     <Collapse in={open}>
                         <div id={collapseId}>
                             <ListGroup>
