@@ -1,4 +1,4 @@
-## Käytettyjen kirjastojen lisenssejä
+## Käytettyjen kirjastojen, tietokantojen ja frameworkien lisenssejä:
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ### Ilmatieteenlaitoksen avoin data
