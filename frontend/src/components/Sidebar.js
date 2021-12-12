@@ -103,7 +103,12 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     // muutoin kaikki
     const [listedVenues, setListedVenues] = useState([])
     //kartalla aktivoituun liikuntapaikkaan liittyvia hommia
-    const activeVenueCard = liikuntapaikat.find(lp => lp.sportsPlaceId === activeVenueCardId)
+    const [activeVenueCard, setActiveVenueCard] = useState()
+    useEffect(() => setActiveVenueCard(liikuntapaikat.find(lp => lp.sportsPlaceId === activeVenueCardId)), [activeVenueCardId])
+    const resetActivatedVenue = () => {
+        setActiveVenueCard()
+    }
+    // const activeVenueCard = liikuntapaikat.find(lp => lp.sportsPlaceId === activeVenueCardId)
     const activeRef = useRef()
     useEffect(() => {
         // TODO: tahan jotaki elegantimpaa
@@ -127,10 +132,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
         const clampedNewPage = Math.min(Math.max(0, newPage), lastPageNumber())
         setCurrentPage(clampedNewPage)
         setVenuesOnPage(listedVenues.slice(clampedNewPage * VENUES_PER_PAGE, clampedNewPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
-        // TODO: miksei scrollaa kaikilla sivuilla kun smooth?
         setPageUpdateTime(Date.now())
-        // topOfPage.current.scrollIntoView({ behavior: 'smooth' })
-        // topOfPage.current.scrollIntoView()
     }
     // smooth scrollauksen laastarointi
     useEffect(() => {
@@ -142,10 +144,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
     useEffect(() => {
         // jos uusia liikuntapaikkoja ladatessa nykyisella sivulla alle maksimi lkm liikuntapaikkakortteja
         // laitetaan uusien paikkojen kortteja jonon jatkeeksi
-        // if (venuesOnPage.length < VENUES_PER_PAGE) {
         setVenuesOnPage(listedVenues.slice(currentPage * VENUES_PER_PAGE, currentPage * VENUES_PER_PAGE + VENUES_PER_PAGE))
-        console.log(listedVenues)
-        // }
     }, [listedVenues.length])
     // hakutulosten filtteroimiseen liittyvia juttuja
     const [filter, setFilter] = useState('')
@@ -155,17 +154,17 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
         setVenuesOnPage([])
         setListedVenues(results)
     }
-    // useEffect(() => {
-    //     setCurrentPage(0)
-    //     setVenuesOnPage([])
-    //     setListedVenues(filter === '' ? liikuntapaikat : liikuntapaikat.filter(lp => lp.name !== null && lp.name.toUpperCase().includes(searchValue.toUpperCase())))
-    // }, [filter])
+    // haun valmistelu
     const initiateSearch = (event) => {
         event.preventDefault()
+        // ei tee hakua, jos hakusana sama kuin naytettavien hakutulosten filtteri
+        // ts. ei tee mitaan jos ramppaa haku-painiketta muuttamatta hakusanaa
         if (filter !== searchValue) {
+            resetActivatedVenue()
             handleSearchSubmit(searchValue, filterSearchResults)
         }
     }
+    // nollaa filtterin, eli nayttaa esim hakutulosten sijaan koko datan
     const clearSearch = () => {
         if (filter !== '') {
             setFilter('')
@@ -211,7 +210,9 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
             />
             <div ref={topOfPage}></div>
             {/* Kartalla aktivoidun liikuntapaikan kortti */}
-            { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper innerRef={activeRef} key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} timeRange={value} /> : '' }
+            <div ref={activeRef}>
+                { activeVenueCard !== undefined ? <ActivatedVenueCardWrapper key={`a${activeVenueCard.sportsPlaceId}`} venue={activeVenueCard} handleVCC={handleVCC} onExtend={extensionFunc} timeRange={value} /> : '' }
+            </div>
             {/* {activeVenueCard !== undefined ? <div ref={activeRef}> <VenueCard key={'active'} venue={activeVenueCard} handleVCC={handleVCC} weather={mockData.saatilat} onExtend={extensionFunc}/> </div> : '' } */}
             { venuesOnPage.map((lp) => <VenueCard key={lp.sportsPlaceId} venue={lp} handleVCC={handleVCC} onExtend={extensionFunc} timeRange={value} />) }
             <Pagination className='d-flex justify-content-center'>
@@ -407,7 +408,7 @@ const ActivatedVenueCardWrapper = (props) => {
         setClassName('flashfade')
         setTimeout(() => setClassName(''), 900)
     }, [])
-    return <div className={className} ref={props.innerRef}><VenueCard {...props} /></div>
+    return <div className={className}><VenueCard {...props} /></div>
 }
 
 /**
