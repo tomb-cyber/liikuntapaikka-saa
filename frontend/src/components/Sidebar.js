@@ -404,8 +404,8 @@ const WeatherRow = ({ info }) => {
 const ActivatedVenueCardWrapper = (props) => {
     const [className, setClassName] = useState({})
     useEffect(() => {
-        setClassName('blinker')
-        setTimeout(() => setClassName(''), 1000)
+        setClassName('flashfade')
+        setTimeout(() => setClassName(''), 900)
     }, [])
     return <div className={className} ref={props.innerRef}><VenueCard {...props} /></div>
 }

@@ -39,7 +39,7 @@
     "not dead",
     "not op_mini all"
   ],
-  "proxy": "http://localhost:3001",
+  "proxy": "https://liikuntapaikat.hannesi.xyz/",
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.26.1"
