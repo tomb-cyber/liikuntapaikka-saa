@@ -3,7 +3,6 @@ const http = require('http')
 const utils = require('../utils/utilityFuncs')
 
 
-
 const defaultPath = '/api/sports-places'
 
 // Default kysely vaihtoehdot, lähinnä muunnellaan tarpeen mukaan path
@@ -15,8 +14,6 @@ const options = {
         'Content-Type': 'application/json'
     }
 }
-
-
 
 
 // Peruskysely tietyn alueen paikoista (tai muilla parametreillä)
@@ -63,41 +60,12 @@ liikuntapaikkaRouter.get('/', (request, response) => {
 
 
     getNHandleJSON(options, (input, status, count) => {
-        //console.log(input)
         console.log(status, 'Number of places:', count) // Jos undefined kaikki palautettu
         let filtered = input.filter(each => each.location !== undefined)
         response.status(status)
         console.log('Has duplicates: ' + utils.hasDuplicates(filtered))
-        //console.log(response)
         response.send({ places: filtered, count: count })
     })
-
-    // let objArray = []
-
-    // const perusGet = options => {
-    //     getNHandleJSON(options, (input, status, count) => {
-    //         console.log(status, 'Number of places:', count)
-    //         let filtered = input.filter(each => each.location !== undefined)
-    //         objArray = objArray.concat(filtered)
-    //         const fetchMore = count < 800 | count === undefined
-    //         if (fetchMore && status === 206)
-    //         {
-    //             //response.write(JSON.stringify(filtered))
-    //             options.path = utils.nextPage(options.path)
-    //             perusGet(options)
-    //         }
-    //         else {
-    //             const idArray = objArray.map(paikka => paikka.sportsPlaceId)
-    //             console.log('Has duplicates: ' + utils.hasDuplicates(idArray))
-    //             response.status(status)
-    //             //objArray = fetchMore ? objArray : []
-    //             console.log('Length: ' + objArray.length)
-    //             response.send(objArray)
-    //         }
-    //     })
-    // }
-
-    // perusGet(options)
 })
 
 
@@ -156,8 +124,6 @@ liikuntapaikkaRouter.get('/categories', async (request, response) => {
 liikuntapaikkaRouter.get('/:id', async (request, response) => {
     options.path = defaultPath + '/' + request.params.id
     getNHandleJSON(options, input => response.send(input))
-    //'Lon: ' + input.location.coordinates.wgs84.lon +
-    //', Lat: ' + input.location.coordinates.wgs84.lat
 })
 
 
@@ -190,55 +156,6 @@ const getNHandleJSON = (options, handleResult) => {
 
     request.end()
 }
-
-
-
-
-// säilytetään varulta, kunnes tiedetään varmaksi, ettei WFS tarvita
-// liikuntapaikkaRouter.get('/wfs', async (request, response) => {
-//     options.path = '/geoserver/ows?service=wfs&version=2.0.0&request=Getfeature&typename=lipas_kaikki_pisteet&count=5&outputformat=application/json'
-//     getNHandleJSON(options, (input => response.send(stripCollection(input))))
-// })
-
-// liikuntapaikkaRouter.get('/:id', async (request, response) => {
-//     options.path = getWFSQuery('pisteet', request.params.id)
-
-//     // TODO if-else-paska järkeväksi!!
-//     getNHandleJSON(options, (input => {
-//         if (input.numberMatched !== 0)
-//             response.send(stripCollection(input))
-//         else {
-//             options.path = getWFSQuery('alueet', request.params.id)
-
-//             getNHandleJSON(options, (input => {
-//                 if (input.numberMatched !== 0)
-//                     response.send(stripCollection(input))
-//                 else {
-//                     options.path = getWFSQuery('reitit', request.params.id)
-//                     getNHandleJSON(options, (input => {
-//                         response.send(stripCollection(input))
-//                     }))
-//                 }
-//             }))
-//         }
-//     }))
-// })
-
-// /**
-//  * Palauttaa WFS hakuqueryn. Liikuntapaikat jaettu lipas_kaikki_pisteet, -alueet ja -reitit, joten "geometriatyyppi" pitää määritellä.
-//  * @param geometria Täsmällisesti joko 'pisteet', 'alueet' tai 'reitit'
-//  * @param id Liikuntapaikan id
-//  * @returns WFS hakuquery
-//  */
-// const getWFSQuery = (geometria, id) => `/geoserver/ows?service=wfs&version=2.0.0&request=Getfeature&typename=lipas_kaikki_${ geometria }&CQL_FILTER=id=${ id }&outputformat=application/json`
-
-
-// /**
-//   * Extractaa liikuntapaikat Featureina FeatureCollectionista
-//   * @param collection FeatureCollection
-//   * @returns Liikuntapaikat Featureina
-//   */
-// const stripCollection = (collection) => collection.features
 
 
 module.exports = liikuntapaikkaRouter

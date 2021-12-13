@@ -9,7 +9,6 @@ import Sidebar from './components/Sidebar'
 import Mapcomponent from './components/Mapcomponent'
 import { WIDE_SCREEN_THRESHOLD, SIDEBAR_WIDTH } from './constants'
 import { boundsToCoordsNRad, drawGeoJsonOnMap, moveWhenSidebarClicked } from './utils/mapGeoJsonFunctions'
-//import saaService from './services/saatiedot'
 
 const App = () => {
 
@@ -23,8 +22,6 @@ const App = () => {
             lng: 25.9542980009038
         }
     }
-
-    //saaService.haeSaa('62.19663677298255,25.628828030200676', (input => console.log(input.locations[0].info.name)))
 
     const [data, setData] = useState([])
     const [ownPlaces, setOwnPlaces] = useState([])
@@ -75,18 +72,6 @@ const App = () => {
         }
         return false
     }
-
-    console.log(mainMap)
-
-    // testailua
-    const findByName = (array, string) => {
-        return array.find(elem => elem.name === string)
-    }
-
-    console.log('onko duplikaatteja: ', hasDuplicates(data))
-    const nimi = 'Hippoksen pesäpallostadion'
-    console.log(`löytyikö ${nimi}: `, findByName(data, nimi))
-    //console.log('data', data)
 
     const handleSearchSubmit = (hakusana, callback) => {
         // Tässä muodossa hakee 100 ensimmäistä hakua vastaavaa paikkaa. Tarvitaanko haku, joka palauttaa kaikki matchit? -T
@@ -148,14 +133,8 @@ const App = () => {
      * @param newPlace Lisättävä liikuntapaikka
      */
     const updateOwnPlaces = (newPlace) => {
-        //console.log('ownPlaces within update', ownPlaces)
-        //console.log('newPlace within update',newPlace)
         setOwnPlaces([newPlace].concat(ownPlaces))
-        //console.log('ownPlaces after update', ownPlaces)
     }
-
-    useEffect(() => console.log('ownPlaces: ', ownPlaces), [ownPlaces])
-    //console.log(ownPlaces)
 
     /**
      * Zoomin eventille tarkoitettu funktio. Päivittää uuden mapBounds ja tekee liikuntapaikka haun
@@ -208,10 +187,13 @@ const App = () => {
     }
 
 
+    /**
+     * Hakee liikuntapaikan sportsPlaceIdllä itse piirretyistä paikoista tai Lippaasta
+     * @param id Liikuntapaikan sportsPlaceId
+     * @returns Promise joka palauttaa idtä vastaavan liikuntapaikan, jos sellainen löytyy
+     */
     const getFromLocalOrAPI = (id) => {
         const found = ownPlaces.find(each => each.sportsPlaceId === id)
-        console.log(id)
-        console.log(found)
 
         return found ? new Promise((resolve) => {
             resolve(found)
@@ -227,7 +209,6 @@ const App = () => {
                     handleVCC={handleVenueCardClick}
                     handleSearchSubmit={handleSearchSubmit}
                     extensionFunc={getFromLocalOrAPI}
-                    //(id) => liikuntaService.getById(id)}
                     activeVenueCardId={activeVenueCardId} />
             </div>
             <div

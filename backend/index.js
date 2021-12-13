@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()   //app kannattaa laittaa omaan app.js tiedostoon, jos controllerit/routterit/middlewaret lisääntyy
 const cors = require('cors')
 app.use(cors())
-require('dotenv').config()
 
 
 const liikuntapaikkaRouter = require('./controllers/liikuntapaikat')

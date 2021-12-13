@@ -47,8 +47,6 @@ var markerLG = L.markerClusterGroup({
 
 var lineStringLG = L.layerGroup()
 
-//var omatLayer = L.layerGroup()
-
 
 //Funktiomuotoinen komponentti, hookkien käyttöön parempi.
 const Mapcomponent = (props) => {
@@ -115,11 +113,6 @@ const alustaPiirto = (map, updateOwnPlaces) => {
         //dragMode: false
     })
 
-    // Eventhandlereitä
-    // map.on('pm:drawstart', (e) => {
-    //     console.log(e)
-    //     console.log(e.workingLayer._leaflet_id)
-    // })
 
     const form = '<form id="testform" class="grid-container">' +
                     '<div class="grid-item">' +
@@ -152,20 +145,12 @@ const alustaPiirto = (map, updateOwnPlaces) => {
         const id = event.marker._leaflet_id
         const latlon = event.marker._latlng
         const marker = event.marker
-        console.log(event)
-        console.log(id, latlon)
         marker.bindPopup(form)
-        console.log(event.layer)
-        //omatLayer.addLayer(event.layer)
-        //console.log(omatLayer)
 
         event.layer.on('popupopen', e => {
             const formElem = e.popup._wrapper.firstChild.firstChild
-            //console.log(formElem)
             formElem.onsubmit = (e) => {
                 e.preventDefault()
-                console.log(formElem.name.value)
-
 
                 const newPlace = {
                     name: formElem.name.value,
@@ -187,20 +172,12 @@ const alustaPiirto = (map, updateOwnPlaces) => {
                         name: formElem.tyyppi.value
                     }
                 }
-                //props.
                 console.log(newPlace)
-                //console.log(ownPlaces)
                 updateOwnPlaces(newPlace)
-                //setOwnPlaces([newPlace].concat(ownPlaces))
                 marker.bindPopup(newPlace.name)
             }
         })
     })
-
-    // map.on('pm:drawstart', (e) => {
-    //     console.log(e)
-    //     console.log(e.workingLayer._leaflet_id)
-    // })
 }
 
 

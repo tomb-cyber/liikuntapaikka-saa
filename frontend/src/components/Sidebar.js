@@ -204,7 +204,7 @@ const SidebarContent = ({ handleVCC, liikuntapaikat, handleSearchSubmit, searchV
                 format={'HH:mm'}
             />
             { filter !== '' ?
-                    <div className='w-100'>Löytyi {listedVenues.length} liikuntapaikkaa hakusanalla {`"${filter}"`}</div>
+                <div className='w-100'>Löytyi {listedVenues.length} liikuntapaikkaa hakusanalla {`"${filter}"`}</div>
                 : ''
             }
             <div ref={topOfPage}></div>
@@ -269,22 +269,20 @@ const VenueCard = ( { venue, handleVCC, onExtend, timeRange } ) => {
             if (details === null) {
                 onExtend(venue.sportsPlaceId).then(res => setDetails(res))
             }
-            // if (weather === null) {
-                //Lisätty lat ja lon jokaisen venuen tyypin koordinaattirakenteen mukaisesti -J
-                if(venue.location.geometries.features[0].geometry.type === 'Point') {
-                    const lat = venue.location.geometries.features[0].geometry.coordinates[1]
-                    const lon = venue.location.geometries.features[0].geometry.coordinates[0]
-                    haeSaa(`${lat},${lon}`, setWeather, timeRange)
-                } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
-                    const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
-                    const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
-                    haeSaa(`${lat},${lon}`, setWeather, timeRange)
-                } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
-                    const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
-                    const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
-                    haeSaa(`${lat},${lon}`, setWeather, timeRange)
-                }
-            //}
+            //Lisätty lat ja lon jokaisen venuen tyypin koordinaattirakenteen mukaisesti -J
+            if(venue.location.geometries.features[0].geometry.type === 'Point') {
+                const lat = venue.location.geometries.features[0].geometry.coordinates[1]
+                const lon = venue.location.geometries.features[0].geometry.coordinates[0]
+                haeSaa(`${lat},${lon}`, setWeather, timeRange)
+            } else if(venue.location.geometries.features[0].geometry.type === 'Polygon') {
+                const lat = venue.location.geometries.features[0].geometry.coordinates[0][0][1]
+                const lon = venue.location.geometries.features[0].geometry.coordinates[0][0][0]
+                haeSaa(`${lat},${lon}`, setWeather, timeRange)
+            } else if(venue.location.geometries.features[0].geometry.type === 'LineString') {
+                const lat = venue.location.geometries.features[0].geometry.coordinates[0][1]
+                const lon = venue.location.geometries.features[0].geometry.coordinates[0][0]
+                haeSaa(`${lat},${lon}`, setWeather, timeRange)
+            }
         }
         animateArrow('arrow-' + venue.sportsPlaceId)
         setOpen(!open)
